@@ -1735,7 +1735,7 @@ js.poly2tri.sweep.FlipScanEdgeEvent = function(tcx, ep, eq, flip_triangle, t, p)
         // Turns out at first glance that this is somewhat complicated
         // so it will have to wait.
     } else {
-        var newP = NextFlipPoint(ep, eq, ot, op);
+        var newP = js.poly2tri.sweep.NextFlipPoint(ep, eq, ot, op);
         js.poly2tri.sweep.FlipScanEdgeEvent(tcx, ep, eq, flip_triangle, ot, newP);
     }
 }
