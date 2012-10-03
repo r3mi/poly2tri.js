@@ -793,9 +793,9 @@ js.poly2tri.AdvancingFront.prototype.LocatePoint = function(point) {
 
     if (px == nx) {
         // We might have two nodes with same x value for a short time
-        if (point.equals(node.prev.point)) {
+        if (node.prev && point.equals(node.prev.point)) {
             node = node.prev;
-        } else if (point.equals(node.next.point)) {
+        } else if (node.next && point.equals(node.next.point)) {
             node = node.next;
         } else if (point.equals(node.point)) {
             // do nothing
