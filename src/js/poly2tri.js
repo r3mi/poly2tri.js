@@ -871,6 +871,10 @@ js.poly2tri.SweepContext.prototype.AddHole = function(polyline) {
     }
 }
 
+js.poly2tri.SweepContext.prototype.AddPoint = function(point) {
+		this.points_.push(point);
+}
+		
 js.poly2tri.SweepContext.prototype.front = function() {
     return this.front_;
 }

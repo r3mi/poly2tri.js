@@ -64,8 +64,21 @@
         graphics = new jsGraphics(document.getElementById("content"));
         clr = new jsColor("#e0c4ef");
         pen = new jsPen(new jsColor("#911ccd"), 1);
+        
+        $("#content").click(function(e) {
+            var offset = getOffset();
+            var x = e.pageX - this.offsetLeft - offset.x;
+            var y = e.pageY - this.offsetTop - offset.y;
+            $("#mousex").val((e.pageX + offset.x) + " " + (e.pageY + offset.y));
+            $("#mouse").val(x + " " + y);
+        });
     });
 
+    function getOffset() {
+        var offset = {x: parseInt($("#offsetX").val()), y: parseInt($("#offsetY").val()) };
+        return offset;
+    }
+    
     function triangulate() {
         // clear the canvas
         graphics.clear();
@@ -73,7 +86,8 @@
         //
         var contour = [];
         var holes = [];
-        var offset = [ parseInt($("#offsetX").val()), parseInt($("#offsetY").val()) ];
+        var points = [];
+        var offset = getOffset();
 
         // parse contour
         $.each($("textarea#poly_contour").val().split(","), function(idx, val) {
@@ -97,12 +111,25 @@
             holes.push(hole);
             return true;
         });
+        
+        // parse points
+        $.each($("textarea#poly_points").val().split(","), function(idx, val) {
+            var point = val.split(" ");
+            if (point.length == 2) {
+                points.push(new js.poly2tri.Point(parseInt(point[0]), parseInt(point[1])));
+            } else return false;
+            return true;
+        });
 
         // prepare SweepContext
         var swctx = new js.poly2tri.SweepContext(contour);
         for (var idx in holes)
         {
             swctx.AddHole(holes[idx]);
+        }
+        for (var idx in points)
+        {
+            swctx.AddPoint(points[idx]);
         }
         
         // triangulate
@@ -112,9 +139,9 @@
         $.each(swctx.GetTriangles(), function(idx, val) {
             var trPoints = [ val.GetPoint(0), val.GetPoint(1), val.GetPoint(2) ];
             var grPoints = [
-                new jsPoint(trPoints[0].x+offset[0], trPoints[0].y+offset[1]),
-                new jsPoint(trPoints[1].x+offset[0], trPoints[1].y+offset[1]),
-                new jsPoint(trPoints[2].x+offset[0], trPoints[2].y+offset[1])
+                new jsPoint(trPoints[0].x+offset.x, trPoints[0].y+offset.y),
+                new jsPoint(trPoints[1].x+offset.x, trPoints[1].y+offset.y),
+                new jsPoint(trPoints[2].x+offset.x, trPoints[2].y+offset.y)
             ];
 
             graphics.fillPolygon(clr, grPoints);
@@ -138,9 +165,17 @@
 320.72342 480,338.90617 465.96863,347.99754 480.61584,329.8148 510.41534,339.91632 480.11077,334.86556 478.09046</textarea>
     </div>
     <div class="wrapper">
+        <span>Steiner points:</span>
+        <textarea id="poly_points" rows="5" cols="50">363 379,368 374</textarea>
+    </div>
+    <div class="wrapper">
         <span>Offset (x, y):</span>
         <input id="offsetX" type="text" value="-200">
         <input id="offsetY" type="text" value="-300">
+    </div>
+    <div class="wrapper">
+        <span>Last click x y:</span>
+        <input id="mouse" type="text">
     </div>
     <div class="wrapper">
         <input id="btnTriangulate" type="button" onclick="javascript:triangulate();" value="Triangulate!">
