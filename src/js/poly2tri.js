@@ -36,6 +36,17 @@ if (typeof Namespace === 'function') {
     js.poly2tri = js.poly2tri || {};
 }
 
+// ------------------------------------------------------------------------utils
+/**
+ * Called by the library for fatal error messages.
+ * For backward compatibility, ouputs to window.alert().
+ * You can replace by an exception thrower instead.
+ * @param   message   message string.
+ */
+js.poly2tri.fatal = function(message) {
+    alert(message);
+};
+
 // ------------------------------------------------------------------------Point
 js.poly2tri.Point = function() {
     this.x = null;
@@ -48,7 +59,7 @@ js.poly2tri.Point = function() {
         this.x = arguments[0];
         this.y = arguments[1];
     } else {
-        alert('Invalid js.poly2tri.Point constructor call!');
+        js.poly2tri.fatal('Invalid js.poly2tri.Point constructor call!');
     }
 
     // The edges this point constitutes an upper ending point
@@ -236,7 +247,7 @@ js.poly2tri.cross = function() {
             else return arguments[0]*arguments[1];
         }
     } else {
-        alert('Invalid js.poly2tri.cross call!');
+        js.poly2tri.fatal('Invalid js.poly2tri.cross call!');
         return undefined;
     }
 }
@@ -256,7 +267,7 @@ js.poly2tri.Edge = function() {
                 this.q = arguments[0];
                 this.p = arguments[1];
             } else if (arguments[0].x == arguments[1].x) {
-                alert('Invalid js.poly2tri.edge constructor call: repeated points!');
+                js.poly2tri.fatal('Invalid js.poly2tri.edge constructor call: repeated points!');
             } else {
                 this.p = arguments[0];
                 this.q = arguments[1];
@@ -266,7 +277,7 @@ js.poly2tri.Edge = function() {
             this.q = arguments[1];
         }
     } else {
-        alert('Invalid js.poly2tri.Edge constructor call!');
+        js.poly2tri.fatal('Invalid js.poly2tri.Edge constructor call!');
     }
 
     this.q.edge_list.push(this);
@@ -369,7 +380,7 @@ js.poly2tri.Triangle.prototype.MarkNeighbor = function() {
         if ((p1.equals(this.points_[2]) && p2.equals(this.points_[1])) || (p1.equals(this.points_[1]) && p2.equals(this.points_[2]))) this.neighbors_[0] = t;
         else if ((p1.equals(this.points_[0]) && p2.equals(this.points_[2])) || (p1.equals(this.points_[2]) && p2.equals(this.points_[0]))) this.neighbors_[1] = t;
         else if ((p1.equals(this.points_[0]) && p2.equals(this.points_[1])) || (p1.equals(this.points_[1]) && p2.equals(this.points_[0]))) this.neighbors_[2] = t;
-        else alert('Invalid js.poly2tri.Triangle.MarkNeighbor call (1)!');
+        else js.poly2tri.fatal('Invalid js.poly2tri.Triangle.MarkNeighbor call (1)!');
     } else if (arguments.length == 1) {
         // exhaustive search to update neighbor pointers
         t = arguments[0];
@@ -384,7 +395,7 @@ js.poly2tri.Triangle.prototype.MarkNeighbor = function() {
             t.MarkNeighbor(this.points_[0], this.points_[1], this);
         }
     } else {
-        alert('Invalid js.poly2tri.Triangle.MarkNeighbor call! (2)');
+        js.poly2tri.fatal('Invalid js.poly2tri.Triangle.MarkNeighbor call! (2)');
     }
 }
 
@@ -580,10 +591,10 @@ js.poly2tri.Triangle.prototype.Legalize = function() {
             this.points_[2] = this.points_[1];
             this.points_[1] = npoint;
         } else {
-            alert('Invalid js.poly2tri.Triangle.Legalize call!');
+            js.poly2tri.fatal('Invalid js.poly2tri.Triangle.Legalize call!');
         }
     } else {
-        alert('Invalid js.poly2tri.Triangle.Legalize call!');
+        js.poly2tri.fatal('Invalid js.poly2tri.Triangle.Legalize call!');
     }
 }
 
@@ -640,7 +651,7 @@ js.poly2tri.Triangle.prototype.MarkConstrainedEdge = function() {
             this.constrained_edge[0] = true;
         }
     } else {
-        alert('Invalid js.poly2tri.Triangle.MarkConstrainedEdge call!');
+        js.poly2tri.fatal('Invalid js.poly2tri.Triangle.MarkConstrainedEdge call!');
     }
 }
 
@@ -732,7 +743,7 @@ js.poly2tri.Node = function() {
         this.triangle = arguments[1];
         this.value = this.point.x;
     } else {
-        alert('Invalid js.poly2tri.Node constructor call!');
+        js.poly2tri.fatal('Invalid js.poly2tri.Node constructor call!');
     }
 }
 
@@ -805,7 +816,7 @@ js.poly2tri.AdvancingFront.prototype.LocatePoint = function(point) {
         } else if (point.equals(node.point)) {
             // do nothing
         } else {
-            alert('Invalid js.poly2tri.AdvancingFront.LocatePoint call!');
+            js.poly2tri.fatal('Invalid js.poly2tri.AdvancingFront.LocatePoint call!');
             return null;
         }
     } else if (px < nx) {
@@ -1107,14 +1118,14 @@ js.poly2tri.sweep.EdgeEvent = function() {
         var p1 = triangle.PointCCW(point);
         var o1 = js.poly2tri.Orient2d(eq, p1, ep);
         if (o1 == js.poly2tri.Orientation.COLLINEAR) {
-            alert('js.poly2tri.sweep.EdgeEvent: Collinear not supported!');
+            js.poly2tri.fatal('js.poly2tri.sweep.EdgeEvent: Collinear not supported!');
             return;
         }
 
         var p2 = triangle.PointCW(point);
         var o2 = js.poly2tri.Orient2d(eq, p2, ep);
         if (o2 == js.poly2tri.Orientation.COLLINEAR) {
-            alert('js.poly2tri.sweep.EdgeEvent: Collinear not supported!');
+            js.poly2tri.fatal('js.poly2tri.sweep.EdgeEvent: Collinear not supported!');
             return;
         }
 
@@ -1132,7 +1143,7 @@ js.poly2tri.sweep.EdgeEvent = function() {
             js.poly2tri.sweep.FlipEdgeEvent(tcx, ep, eq, triangle, point);
         }
     } else {
-        alert('Invalid js.poly2tri.sweep.EdgeEvent call!');
+        js.poly2tri.fatal('Invalid js.poly2tri.sweep.EdgeEvent call!');
     }
 }
 
@@ -1660,7 +1671,7 @@ js.poly2tri.sweep.FlipEdgeEvent = function(tcx, ep, eq, t, p) {
     if (ot == null) {
         // If we want to integrate the fillEdgeEvent do it here
         // With current implementation we should never get here
-        alert('[BUG:FIXME] FLIP failed due to missing triangle!');
+        js.poly2tri.fatal('[BUG:FIXME] FLIP failed due to missing triangle!');
         return;
     }
     var op = ot.OppositePoint(t, p);
@@ -1721,7 +1732,7 @@ js.poly2tri.sweep.NextFlipPoint = function(ep, eq, ot, op) {
         // Left
         return ot.PointCW(op);
     } else {
-        alert("[Unsupported] js.poly2tri.sweep.NextFlipPoint: opposing point on constrained edge!");
+        js.poly2tri.fatal("[Unsupported] js.poly2tri.sweep.NextFlipPoint: opposing point on constrained edge!");
         return undefined;
     }
 }
@@ -1732,7 +1743,7 @@ js.poly2tri.sweep.FlipScanEdgeEvent = function(tcx, ep, eq, flip_triangle, t, p)
     if (ot == null) {
         // If we want to integrate the fillEdgeEvent do it here
         // With current implementation we should never get here
-        alert('[BUG:FIXME] FLIP failed due to missing triangle');
+        js.poly2tri.fatal('[BUG:FIXME] FLIP failed due to missing triangle');
         return;
     }
     var op = ot.OppositePoint(t, p);
