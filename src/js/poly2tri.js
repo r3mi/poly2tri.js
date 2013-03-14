@@ -29,7 +29,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-Namespace('js.poly2tri');
+if (typeof Namespace === 'function') {
+    Namespace('js.poly2tri');
+} else {
+    var js = js || {};
+    js.poly2tri = js.poly2tri || {};
+}
 
 // ------------------------------------------------------------------------Point
 js.poly2tri.Point = function() {
@@ -872,9 +877,9 @@ js.poly2tri.SweepContext.prototype.AddHole = function(polyline) {
 }
 
 js.poly2tri.SweepContext.prototype.AddPoint = function(point) {
-		this.points_.push(point);
+    this.points_.push(point);
 }
-		
+
 js.poly2tri.SweepContext.prototype.front = function() {
     return this.front_;
 }
@@ -1007,7 +1012,11 @@ js.poly2tri.SweepContext.prototype.MeshClean = function(triangle) {
 }
 
 // ------------------------------------------------------------------------Sweep
-Namespace('js.poly2tri.sweep');
+if (typeof Namespace === 'function') {
+    Namespace('js.poly2tri.sweep');
+} else {
+    js.poly2tri.sweep = js.poly2tri.sweep || {};
+}
 
 /**
  * Triangulate simple polygon with holes.
@@ -1745,5 +1754,7 @@ js.poly2tri.sweep.FlipScanEdgeEvent = function(tcx, ep, eq, flip_triangle, t, p)
 }
 
 // -----------------------------------------------------------------------------
-Namespace.provide('js.poly2tri');
-Namespace.provide('js.poly2tri.sweep');
+if (typeof Namespace === 'function') {
+    Namespace.provide('js.poly2tri');
+    Namespace.provide('js.poly2tri.sweep');
+}
