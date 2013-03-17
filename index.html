@@ -4,7 +4,6 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>poly2tri tester</title>
     <script type="text/javascript" src="lib/js/jquery.js"></script>
-    <script type="text/javascript" src="lib/js/jsDraw2D.js"></script>
     <script type="text/javascript" src="lib/js/Namespace.min.js"></script>
     <script type="text/javascript" src="src/js/poly2tri.js"></script>
     <style type="text/css" media="screen">
@@ -28,11 +27,18 @@
         
         #content {
             z-index: 0;
-            margin-right: 400px;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
             padding: 0;
+            margin: 0;
+            position: absolute;
+            top: 10px;
+            right: 410px;
+            left: 10px;
+            bottom: 10px;
+        }
+        
+        #canvas {
+            height: 100%;
+            width: 100%;
         }
 
         .wrapper {
@@ -56,131 +62,193 @@
     </style>
     <script type="text/javascript">
     <!--
-    var graphics;
-    var clr;
-    var pen;
-
+    var ctx;
+    var TRIANGLE_FILL_STYLE = "#e0c4ef";
+    var TRIANGLE_STROKE_STYLE = "#911ccd";
+    var CONSTRAINTS_STYLE = "rgba(0,0,0,0.6)";
+    
     $(document).ready(function() {
-        graphics = new jsGraphics(document.getElementById("content"));
-        clr = new jsColor("#e0c4ef");
-        pen = new jsPen(new jsColor("#911ccd"), 1);
+        var $canvas = $('#canvas');
+        ctx = $canvas[0].getContext('2d');
+        canvas.width = $canvas.width();
+        canvas.height = $canvas.height();
+           
+        if (typeof ctx.setLineDash === "undefined") {
+            ctx.setLineDash = function(a) { 
+                ctx.mozDash = a;
+            };
+        }
         
-        $("#content").click(function(e) {
-            var offset = getOffset();
-            var x = e.pageX - this.offsetLeft - offset.x;
-            var y = e.pageY - this.offsetTop - offset.y;
-            $("#mousex").val((e.pageX + offset.x) + " " + (e.pageY + offset.y));
-            $("#mouse").val(x + " " + y);
-        });
+        // Default points
+        $("#poly_contour").val("280.35714 648.79075,286.78571 662.8979,263.28607 661.17871,262.31092 671.41548,250.53571 677.00504,250.53571 683.43361,256.42857 685.21933,297.14286 669.50504,289.28571 649.50504,285 631.6479,285 608.79075,292.85714 585.21932,306.42857 563.79075,323.57143 548.79075,339.28571 545.21932,357.85714 547.36218,375 550.21932,391.42857 568.07647,404.28571 588.79075,413.57143 612.36218,417.14286 628.07647,438.57143 619.1479,438.03572 618.96932,437.5 609.50504,426.96429 609.86218,424.64286 615.57647,419.82143 615.04075,420.35714 605.04075,428.39286 598.43361,437.85714 599.68361,443.57143 613.79075,450.71429 610.21933,431.42857 575.21932,405.71429 550.21932,372.85714 534.50504,349.28571 531.6479,346.42857 521.6479,346.42857 511.6479,350.71429 496.6479,367.85714 476.6479,377.14286 460.93361,385.71429 445.21932,388.57143 404.50504,360 352.36218,337.14286 325.93361,330.71429 334.50504,347.14286 354.50504,337.85714 370.21932,333.57143 359.50504,319.28571 353.07647,312.85714 366.6479,350.71429 387.36218,368.57143 408.07647,375.71429 431.6479,372.14286 454.50504,366.42857 462.36218,352.85714 462.36218,336.42857 456.6479,332.85714 438.79075,338.57143 423.79075,338.57143 411.6479,327.85714 405.93361,320.71429 407.36218,315.71429 423.07647,314.28571 440.21932,325 447.71932,324.82143 460.93361,317.85714 470.57647,304.28571 483.79075,287.14286 491.29075,263.03571 498.61218,251.60714 503.07647,251.25 533.61218,260.71429 533.61218,272.85714 528.43361,286.07143 518.61218,297.32143 508.25504,297.85714 507.36218,298.39286 506.46932,307.14286 496.6479,312.67857 491.6479,317.32143 503.07647,322.5 514.1479,325.53571 521.11218,327.14286 525.75504,326.96429 535.04075,311.78571 540.04075,291.07143 552.71932,274.82143 568.43361,259.10714 592.8979,254.28571 604.50504,251.07143 621.11218,250.53571 649.1479,268.1955 654.36208");
+        $("#poly_holes").val("325 437,320 423,329 413,332 423\n320.72342 480,338.90617 465.96863,347.99754 480.61584,329.8148 510.41534,339.91632 480.11077,334.86556 478.09046");
+        $("#poly_points").val("363 379,368 374");
     });
+    
+    function parsePoints(str) {
+        var floats = str.split(/[^-eE\.\d]+/).filter(function(val){return val;}).map(parseFloat);
+        var i, points = [];
+        for (i = 0; i < floats.length; i += 2) {
+            points.push(new js.poly2tri.Point(floats[i], floats[i + 1]));
+        }
+        return points;
+    };
+    
+    // array copy (to keep unmodified versions of the arguments to SweepContext
+    function clone(a) {
+        return a.slice(0);
+    }
 
-    function getOffset() {
-        var offset = {x: parseInt($("#offsetX").val()), y: parseInt($("#offsetY").val()) };
-        return offset;
+    function polygonPath(points) {
+        ctx.beginPath();
+        points.forEach(function(point, index) {
+            if (index === 0) {
+                ctx.moveTo(point.x, point.y);
+            } else {
+                ctx.lineTo(point.x, point.y);
+            }
+        });
+        ctx.closePath();
     }
     
     function triangulate() {
-        // clear the canvas
-        graphics.clear();
-
         //
         var contour = [];
         var holes = [];
         var points = [];
-        var offset = getOffset();
+        var xmin, ymin, xmax, ymax;
+        var xscale, yscale, scale, linescale;
 
+        // find min/max values
+        xmin = ymin = Number.MAX_VALUE;
+        xmax = ymax = Number.MIN_VALUE;
+        function pointMinMax(point) {
+            (point.x < xmin) && (xmin = point.x);
+            (point.y < ymin) && (ymin = point.y);
+            (point.x > xmax) && (xmax = point.x);
+            (point.y > ymax) && (ymax = point.y);
+        }
+ 
+        // clear the canvas
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect (0, 0, ctx.canvas.width, ctx.canvas.height);
+        
         // parse contour
-        $.each($("textarea#poly_contour").val().split(","), function(idx, val) {
-            var point = val.split(" ");
-            if (point.length == 2) {
-                contour.push(new js.poly2tri.Point(parseInt(point[0]), parseInt(point[1])));
-            } else return false;
-            return true;
-        });
-
+        contour = parsePoints($("textarea#poly_contour").val());
+        contour.forEach(pointMinMax);
+                
         // parse holes
         $.each($("textarea#poly_holes").val().split("\n"), function(idx, val) {
-            var hole = [];
-            $.each(val.split(","), function(idx, val) {
-                var point = val.split(" ");
-                if (point.length == 2) {
-                    hole.push(new js.poly2tri.Point(parseInt(point[0]), parseInt(point[1])));
-                } else return false;
-                return true;
-            });
+            var hole = parsePoints(val);
             holes.push(hole);
+            hole.forEach(pointMinMax);
             return true;
         });
         
         // parse points
-        $.each($("textarea#poly_points").val().split(","), function(idx, val) {
-            var point = val.split(" ");
-            if (point.length == 2) {
-                points.push(new js.poly2tri.Point(parseInt(point[0]), parseInt(point[1])));
-            } else return false;
-            return true;
-        });
+        points = parsePoints($("textarea#poly_points").val());
+        points.forEach(pointMinMax);
+        
+        try {
+            // prepare SweepContext
+            var swctx = new js.poly2tri.SweepContext(clone(contour));
+            for (var idx in holes) {
+                swctx.AddHole(clone(holes[idx]));
+            }
+            for (var idx in points) {
+                swctx.AddPoint(points[idx]);
+            }
 
-        // prepare SweepContext
-        var swctx = new js.poly2tri.SweepContext(contour);
-        for (var idx in holes)
-        {
-            swctx.AddHole(holes[idx]);
-        }
-        for (var idx in points)
-        {
-            swctx.AddPoint(points[idx]);
+            // triangulate
+            js.poly2tri.sweep.Triangulate(swctx);
+        } catch (e) {
+            alert(e);
         }
         
-        // triangulate
-        js.poly2tri.sweep.Triangulate(swctx);
-
-        // draw result
-        $.each(swctx.GetTriangles(), function(idx, val) {
-            var trPoints = [ val.GetPoint(0), val.GetPoint(1), val.GetPoint(2) ];
-            var grPoints = [
-                new jsPoint(trPoints[0].x+offset.x, trPoints[0].y+offset.y),
-                new jsPoint(trPoints[1].x+offset.x, trPoints[1].y+offset.y),
-                new jsPoint(trPoints[2].x+offset.x, trPoints[2].y+offset.y)
-            ];
-
-            graphics.fillPolygon(clr, grPoints);
-            graphics.drawPolygon(pen, grPoints);
-            return true;
+        // find min/max values
+        swctx.GetTriangles().forEach(function(triangle) {
+            [0, 1, 2].forEach(function(index) {
+                pointMinMax (triangle.GetPoint(index));
+            });
         });
+
+        // auto scale / translate
+        xscale = ctx.canvas.width / (xmax - xmin);
+        yscale = ctx.canvas.height / (ymax - ymin);
+        scale  = Math.min(xscale, yscale);
+        ctx.scale(scale, scale);
+        ctx.translate(-xmin, -ymin);
+        linescale = (scale > 1) ? (1 / scale) : 1;
+        
+        // draw result
+        ctx.lineWidth = linescale;
+        ctx.fillStyle = TRIANGLE_FILL_STYLE;
+        ctx.strokeStyle = TRIANGLE_STROKE_STYLE;
+        ctx.setLineDash(null);
+        
+        swctx.GetTriangles().forEach(function(t) {
+            polygonPath([ t.GetPoint(0), t.GetPoint(1), t.GetPoint(2) ]);
+            ctx.fill();
+            ctx.stroke();
+        });
+        
+        // draw constraints
+        if ($("#draw_constraints").attr('checked')) {
+            ctx.lineWidth = 4 * linescale;
+            ctx.strokeStyle = CONSTRAINTS_STYLE;
+            ctx.fillStyle = CONSTRAINTS_STYLE;
+            ctx.setLineDash([10 * linescale, 5 * linescale]);
+            
+            polygonPath(contour);
+            ctx.stroke();
+
+            holes.forEach(function(hole) {
+                polygonPath(hole);
+                ctx.stroke();
+            });
+
+            points.forEach(function(point) {
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, ctx.lineWidth, 0, 2 * Math.PI, false);
+                ctx.closePath();
+                ctx.fill();
+            });
+        }
     }
 
     // -->
     </script>
 </head>
 <body>
-<div id="control">
-    <div class="wrapper">
-        <span>Contour of the polygon:</span>
-        <textarea id="poly_contour" rows="5" cols="50">280.35714 648.79075,286.78571 662.8979,263.28607 661.17871,262.31092 671.41548,250.53571 677.00504,250.53571 683.43361,256.42857 685.21933,297.14286 669.50504,289.28571 649.50504,285 631.6479,285 608.79075,292.85714 585.21932,306.42857 563.79075,323.57143 548.79075,339.28571 545.21932,357.85714 547.36218,375 550.21932,391.42857 568.07647,404.28571 588.79075,413.57143 612.36218,417.14286 628.07647,438.57143 619.1479,438.03572 618.96932,437.5 609.50504,426.96429 609.86218,424.64286 615.57647,419.82143 615.04075,420.35714 605.04075,428.39286 598.43361,437.85714 599.68361,443.57143 613.79075,450.71429 610.21933,431.42857 575.21932,405.71429 550.21932,372.85714 534.50504,349.28571 531.6479,346.42857 521.6479,346.42857 511.6479,350.71429 496.6479,367.85714 476.6479,377.14286 460.93361,385.71429 445.21932,388.57143 404.50504,360 352.36218,337.14286 325.93361,330.71429 334.50504,347.14286 354.50504,337.85714 370.21932,333.57143 359.50504,319.28571 353.07647,312.85714 366.6479,350.71429 387.36218,368.57143 408.07647,375.71429 431.6479,372.14286 454.50504,366.42857 462.36218,352.85714 462.36218,336.42857 456.6479,332.85714 438.79075,338.57143 423.79075,338.57143 411.6479,327.85714 405.93361,320.71429 407.36218,315.71429 423.07647,314.28571 440.21932,325 447.71932,324.82143 460.93361,317.85714 470.57647,304.28571 483.79075,287.14286 491.29075,263.03571 498.61218,251.60714 503.07647,251.25 533.61218,260.71429 533.61218,272.85714 528.43361,286.07143 518.61218,297.32143 508.25504,297.85714 507.36218,298.39286 506.46932,307.14286 496.6479,312.67857 491.6479,317.32143 503.07647,322.5 514.1479,325.53571 521.11218,327.14286 525.75504,326.96429 535.04075,311.78571 540.04075,291.07143 552.71932,274.82143 568.43361,259.10714 592.8979,254.28571 604.50504,251.07143 621.11218,250.53571 649.1479,268.1955 654.36208</textarea>
+    <div id="control">
+        <form>
+            <div class="wrapper">
+                <label for="poly_contour">Contour of the polygon (any separator between coordinates):</label>
+                <textarea id="poly_contour" rows="7" cols="50"></textarea>
+            </div>
+            <div class="wrapper">
+                <label for="poly_holes">Holes in the polygon (one hole per line):</label>
+                <textarea id="poly_holes" rows="5" cols="50"></textarea>
+            </div>
+            <div class="wrapper">
+                <label for="poly_points">Steiner points (any separator between coordinates):</label>
+                <textarea id="poly_points" rows="5" cols="50"></textarea>
+            </div>
+            <div class="wrapper">
+                <input id="draw_constraints" type="checkbox" value="drawConstraints" checked="checked">
+                <label for="draw_constraints">Draw constraints</label> 
+            </div>
+            <div class="wrapper">
+                <input id="btnTriangulate" type="button" onclick="javascript:triangulate();" value="Triangulate!">
+                <input type="reset" value="Clear all constraints">
+            </div>
+            <div class="wrapper">
+                <a href="tests/SpecRunner.html">Link to automated tests</a>
+            </div>
+        </form>
     </div>
-    <div class="wrapper">
-        <span>Holes in the polygon (one hole per line):</span>
-        <textarea id="poly_holes" rows="5" cols="50">325 437,320 423,329 413,332 423
-320.72342 480,338.90617 465.96863,347.99754 480.61584,329.8148 510.41534,339.91632 480.11077,334.86556 478.09046</textarea>
+    <div id="content">
+        <canvas id="canvas"></canvas>
     </div>
-    <div class="wrapper">
-        <span>Steiner points:</span>
-        <textarea id="poly_points" rows="5" cols="50">363 379,368 374</textarea>
-    </div>
-    <div class="wrapper">
-        <span>Offset (x, y):</span>
-        <input id="offsetX" type="text" value="-200">
-        <input id="offsetY" type="text" value="-300">
-    </div>
-    <div class="wrapper">
-        <span>Last click x y:</span>
-        <input id="mouse" type="text">
-    </div>
-    <div class="wrapper">
-        <input id="btnTriangulate" type="button" onclick="javascript:triangulate();" value="Triangulate!">
-    </div>
-</div>
-<div id="content"></div>
 </body>
 </html>
