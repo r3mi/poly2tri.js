@@ -66,6 +66,13 @@ js.poly2tri.Point = function() {
     this.edge_list = [];
 
 }
+      
+/**
+ * For pretty printing ex. <i>"(5;42)"</i>)
+ */
+js.poly2tri.Point.prototype.toString = function() {
+    return ("(" + this.x + ";" + this.y + ")");
+};
 
 /**
  * Set this Point instance to the origo. <code>(0; 0)</code>
@@ -267,7 +274,7 @@ js.poly2tri.Edge = function() {
                 this.q = arguments[0];
                 this.p = arguments[1];
             } else if (arguments[0].x == arguments[1].x) {
-                js.poly2tri.fatal('Invalid js.poly2tri.edge constructor call: repeated points!');
+                js.poly2tri.fatal('Invalid js.poly2tri.edge constructor call: repeated points! ' + arguments[0]);
             } else {
                 this.p = arguments[0];
                 this.q = arguments[1];
@@ -313,6 +320,13 @@ js.poly2tri.Triangle = function(p1, p2, p3) {
         this.points_[2] = p3;
     }
 }
+ 
+/**
+ * For pretty printing ex. <i>"[(5;42)(10;20)(21;30)]"</i>)
+ */
+js.poly2tri.Triangle.prototype.toString = function() {
+    return ("[" + this.points_[0] + this.points_[1] + this.points_[2] + "]");
+};
 
 js.poly2tri.Triangle.prototype.GetPoint = function(index) {
     return this.points_[index];
@@ -1118,14 +1132,14 @@ js.poly2tri.sweep.EdgeEvent = function() {
         var p1 = triangle.PointCCW(point);
         var o1 = js.poly2tri.Orient2d(eq, p1, ep);
         if (o1 == js.poly2tri.Orientation.COLLINEAR) {
-            js.poly2tri.fatal('js.poly2tri.sweep.EdgeEvent: Collinear not supported!');
+            js.poly2tri.fatal('js.poly2tri.sweep.EdgeEvent: Collinear not supported! ' + eq + p1 + ep);
             return;
         }
 
         var p2 = triangle.PointCW(point);
         var o2 = js.poly2tri.Orient2d(eq, p2, ep);
         if (o2 == js.poly2tri.Orientation.COLLINEAR) {
-            js.poly2tri.fatal('js.poly2tri.sweep.EdgeEvent: Collinear not supported!');
+            js.poly2tri.fatal('js.poly2tri.sweep.EdgeEvent: Collinear not supported! ' + eq + p2 + ep);
             return;
         }
 
