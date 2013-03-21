@@ -984,7 +984,7 @@ js.poly2tri.SweepContext.prototype.InitTriangulation = function() {
     var dx = js.poly2tri.kAlpha * (xmax - xmin);
     var dy = js.poly2tri.kAlpha * (ymax - ymin);
     this.head_ = new js.poly2tri.Point(xmax + dx, ymin - dy);
-    this.tail_ = new js.poly2tri.Point(xmin - dy, ymin - dy);
+    this.tail_ = new js.poly2tri.Point(xmin - dx, ymin - dy);
 
     // Sort points along y-axis
     this.points_.sort(js.poly2tri.cmp);
