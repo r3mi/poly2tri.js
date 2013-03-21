@@ -1,5 +1,5 @@
 /*
- * Poly2Tri Copyright (c) 2009-2010, Poly2Tri Contributors
+ * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  *
  * All rights reserved.
@@ -1024,17 +1024,23 @@ js.poly2tri.SweepContext.prototype.RemoveFromMap = function(triangle) {
     }
 }
 
+// Do a depth first traversal to collect triangles
 js.poly2tri.SweepContext.prototype.MeshClean = function(triangle) {
-    if (triangle != null && !triangle.IsInterior()) {
-        triangle.IsInterior(true);
-        this.triangles_.push(triangle);
-        for (var i=0; i<3; ++i) {
-            if (!triangle.constrained_edge[i]) {
-                this.MeshClean(triangle.GetNeighbor(i));
+    // New implementation avoids recursive calls and use a loop instead.
+    // Cf. issues # 57, 65 and 69.
+    var triangles = [ triangle ], t, i;
+    while (t = triangles.pop()) {
+        if (!t.IsInterior()) {
+            t.IsInterior(true);
+            this.triangles_.push(t);
+            for (i = 0; i < 3; i++) {
+                if (!t.constrained_edge[i]) {
+                    triangles.push(t.GetNeighbor(i));
+                }
             }
         }
     }
-}
+};
 
 // ------------------------------------------------------------------------Sweep
 if (typeof Namespace === 'function') {
