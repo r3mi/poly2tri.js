@@ -1,5 +1,5 @@
 /*
- * Poly2Tri Copyright (c) 2009-2010, Poly2Tri Contributors
+ * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  *
  * Unit tests for poly2tri.js
@@ -36,6 +36,25 @@ describe("js.poly2tri", function() {
 
     "use strict";
 
+    /*
+     * Utilities
+     * =========
+     */
+
+    // array copy (to keep unmodified versions of the arguments to SweepContext
+    function clone(a) {
+        return a.slice(0);
+    }
+
+    // Creates list of Point from list of coordinates [ x1, y1, x2, y2 ...]
+    function makePoints(a) {
+        var i, len = a.length, points = [];
+        for (i = 0; i < len; i += 2) {
+            points.push(new P.Point(a[i], a[i + 1]));
+        }
+        return points;
+    }
+
     // Simple polygon generation (star shaped)
     // http://stackoverflow.com/questions/8997099/algorithm-to-generate-random-2d-polygon
     function randomPolygon(generator, n) {
@@ -54,6 +73,65 @@ describe("js.poly2tri", function() {
         return points;
     }
 
+    
+    /**
+     * Checks that all the triangles vertices are in the list of points
+     * @param   triangles   array of triangles
+     * @param   pointslists array of array of Points
+     * @returns a triangle failing the test, or null if success
+     */
+    function testTrianglesToBeInPoints(triangles, pointslists) {
+        var i, tlen = triangles.length, failed = null;
+        for (i = 0; i < tlen && !failed; i++) {
+            var triangle = triangles[i], found0 = false, found1 = false, found2 = false;
+            pointslists.forEach(function(points) {
+                var j, plen = points.length;
+                for (j = 0; j < plen && !(found0 && found1 && found2); j++) {
+                    var point = points[j];
+                    found0 = found0 || triangle.GetPoint(0).equals(point);
+                    found1 = found1 || triangle.GetPoint(1).equals(point);
+                    found2 = found2 || triangle.GetPoint(2).equals(point);
+                }
+            });
+            if (!(found0 && found1 && found2)) {
+                failed = triangle;
+            }
+        };
+        return failed;
+    }
+        
+    /**
+     * Checks that all the points are in at least one triangle
+     * @param   triangles   array of triangles
+     * @param   pointslists array of array of Points
+     * @returns a point failing the test, or null if success
+     */
+    function testTrianglesToContainPoints(triangles, pointslists) {
+        var failed = null;
+        pointslists.forEach(function(points) {
+            var i, plen = points.length;
+            for (i = 0; i < plen && !failed; i++) {
+                var point = points[i], found = false, j, tlen = triangles.length;
+                for (j = 0; j < tlen && !found; j++) {
+                    found = found || triangles[j].ContainsP(point);
+                }
+                if (!found) {
+                    failed = point;
+                }
+            };
+        });
+        return failed;
+    }
+
+            
+            
+    /*
+     * Tests
+     * =====
+     *   TODO we test only part of the "public API" of js.poly2tri for the time being
+     *   (methods used in the sweep.Triangulate tests),
+     *   not all the methods or all sub-classes.
+     */
 
     it("should have js.poly2tri namespace", function() {
         expect(js.poly2tri).toBeDefined();
@@ -66,12 +144,6 @@ describe("js.poly2tri", function() {
         throw new Error(message);
     };
 
-
-    /*
-     * TODO we test only part of the "public API" of js.poly2tri for the time being
-     * (methods used in the sweep.Triangulate tests),
-     * not all the methods or all sub-classes.
-     */
 
     describe("Point", function() {
         it("should have a default constructor", function() {
@@ -159,41 +231,14 @@ describe("js.poly2tri", function() {
     });
 
     describe("sweep.Triangulate", function() {
-        // array copy (to keep unmodified versions of the arguments to SweepContext
-        function clone(a) {
-            return a.slice(0);
-        }
-
-        // Creates list of Point from list of coordinates [ x1, y1, x2, y2 ...]
-        function makePoints(a) {
-            var i, points = [];
-            for (i = 0; i < a.length; i += 2) {
-                points.push(new P.Point(a[i], a[i + 1]));
-            }
-            return points;
-        }
 
         // Helper matchers to ease test writing
         beforeEach(function() {
             this.addMatchers({
                 // Checks that all the triangles vertices are in the list of points
                 toBeInPoints: function() {
-                    var triangles = this.actual, pointslists = Array.prototype.slice.call(arguments), failed = null;
-                    triangles.forEach(function(triangle) {
-                        var found0 = false, found1 = false, found2 = false;
-                        pointslists.forEach(function(points) {
-                            var i;
-                            for (i= 0; i < points.length && !(found0 && found1 && found2); i++) {
-                                var point = points[i];
-                                found0 = found0 || triangle.GetPoint(0).equals(point);
-                                found1 = found1 || triangle.GetPoint(1).equals(point);
-                                found2 = found2 || triangle.GetPoint(2).equals(point);
-                            }
-                        });
-                        if (!(found0 && found1 && found2)) { 
-                            failed = triangle;
-                        }
-                    });
+                    var triangles = this.actual, pointslists = Array.prototype.slice.call(arguments), failed;
+                    failed = testTrianglesToBeInPoints(triangles, pointslists);
                     // Customize message for easier debugging
                     // (because of isNot, message might be printed event if !failed)
                     this.message = function() {
@@ -204,18 +249,8 @@ describe("js.poly2tri", function() {
                 },
                 // Checks that all the points are in at least one triangle
                 toContainPoints: function() {
-                    var triangles = this.actual, pointslists = Array.prototype.slice.call(arguments), failed = null;
-                    pointslists.forEach(function(points) {
-                        points.forEach(function(point) {
-                            var found = false, i;
-                            for (i = 0; i < triangles.length && !found; i++) {
-                                found = found || triangles[i].ContainsP(point);
-                            }
-                            if (!found) {
-                                failed = point;
-                            }
-                        });
-                    });
+                    var triangles = this.actual, pointslists = Array.prototype.slice.call(arguments), failed;
+                    failed = testTrianglesToContainPoints(triangles, pointslists);
                     // Customize message for easier debugging
                     // (because of isNot, message might be printed event if !failed)
                     this.message = function() {
@@ -396,7 +431,31 @@ describe("js.poly2tri", function() {
                 expect(t).toContainPoints(contour, hole);
             });
         });
-        describe("a complex polygon", function() {
+        describe("a polygon with 1 hole close to edge", function() {
+            // not reset between tests
+            var contour, hole, t;
+            // same as issue #13
+            contour = makePoints([2.10229524019, -0.760509508136, 2.15571376911, -0.752653842118, 2.00173917352, 0.294373407871, 1.9483206446, 0.286517741853]);
+            hole = makePoints([1.9968142935, 0.0247609293562, 2.02104796235, 0.0283247041864, 2.08803526014, -0.495188920808, 2.06380159129, -0.498752695638]);
+            it("should triangulate", function() {
+                var swctx = new P.SweepContext(clone(contour));
+                swctx.AddHole(clone(hole));
+                P.sweep.Triangulate(swctx);
+                t = swctx.GetTriangles();
+                expect(t).toBeTruthy();
+            });
+            it("should return 8 triangles", function() {
+                expect(t.length).toBe(8);
+            });
+            it("should be in the contour and hole", function() {
+                expect(t).toBeInPoints(contour, hole);
+            });
+            // FAILS ! Hole is not really valid, see issue #13
+            it("should FAIL to contain the contour and hole", function() {
+                expect(t).not.toContainPoints(contour, hole);
+            });
+        });
+        describe("a complex polygon with 2 holes", function() {
             // not reset between tests
             var contour, hole1, hole2, t;
             // same as default polygon in index.html
@@ -419,6 +478,35 @@ describe("js.poly2tri", function() {
             });
             it("should contain the contour and holes", function() {
                 expect(t).toContainPoints(contour, hole1, hole2);
+            });
+        });
+        describe("a complex polygon with 2 holes and points", function() {
+            // not reset between tests
+            var contour, hole1, hole2, points, t;
+            // same as issue #39
+            contour = makePoints([-311, 774, -216, 418, -48, 343, 23, 318, 44, 284, 59, 262, 84, 242, 92, 161, 131, 134, 140, 77, 134, 30, 118, 6, 115, -32, 67, -85, 213, -85, 211, -53, 198, -13, 182, 63, 165, 120, 194, 137, 238, 111, 265, 5, 243, -87, 502, -93, 446, 772]);
+            hole1 = makePoints([-276, 747, 421, 745, 473, -65, 276, -61, 291, 2, 291, 8, 262, 123, 256, 131, 201, 163, 186, 163, 155, 145, 150, 152, 118, 175, 110, 250, 105, 259, 78, 281, 66, 299, 43, 335, 36, 341, -37, 367, -37, 368, -193, 438]);
+            hole2 = makePoints([161, 32, 172, -19, 171, -20, 184, -58, 127, -58, 138, -46, 141, -38, 144, -2, 157, 17, 160, 23]);
+            points = makePoints([148, 127, 161, 70, 157, 82, 152, 98, 160, 35, 115, -58, 160, 65, 149, 117, -205, 428, -44, 356, 29, 330, 32, 326, 55, 292, 69, 271, 94, 251, 96, 245, 104, 169, 141, 143, 143, 138, 153, 78, 153, 75, 146, 26, 131, 2, 127, -35, 126, -39, 97, -72, 199, -72, 198, -57, 184, -16, 169, 59, 150, 120, 153, 129, 190, 150, 197, 150, 247, 121, 250, 116, 278, 6, 278, 3, 260, -74, 488, -80, 434, 759, -294, 761]);
+            it("should triangulate", function() {
+                var swctx = new P.SweepContext(clone(contour));
+                swctx.AddHole(clone(hole1));
+                swctx.AddHole(clone(hole2));
+                points.forEach(function(point) {
+                    swctx.AddPoint(point);
+                });
+                P.sweep.Triangulate(swctx);
+                t = swctx.GetTriangles();
+                expect(t).toBeTruthy();
+            });
+            it("should return 143 triangles", function() {
+                expect(t.length).toBe(143);
+            });
+            it("should be in the contour and holes and points", function() {
+                expect(t).toBeInPoints(contour, hole1, hole2, points);
+            });
+            it("should contain the contour and holes and points", function() {
+                expect(t).toContainPoints(contour, hole1, hole2, points);
             });
         });
         describe("a quadrilateral containing 1000 Steiner points", function() {
@@ -545,6 +633,9 @@ describe("js.poly2tri", function() {
         });
         describe("data files", function() {
             var files = [
+                /*
+                 * Data files copied from poly2tri c++ version 
+                 */
                 "2.dat",
                 "bird.dat",
                 //"custom.dat", // invalid: polygon with crossing paths 
