@@ -877,6 +877,10 @@ js.poly2tri.SweepContext = function(polyline) {
     this.points_ = polyline;
     this.edge_list = [];
 
+    // Bounding box of all points. Computed at the start of the triangulation, 
+    // it is stored in case it is needed by the caller.
+    this.pmin_ = this.pmax_ = null;
+    
     // Advancing front
     this.front_ = null; // AdvancingFront
     // head point used with advancing front
@@ -894,16 +898,38 @@ js.poly2tri.SweepContext = function(polyline) {
     this.InitEdges(this.points_);
 }
 
+
+/**
+ * Add a hole to the constraints
+ * @param {Array} polyline  array of Points
+ */
 js.poly2tri.SweepContext.prototype.AddHole = function(polyline) {
     this.InitEdges(polyline);
     for (var i in polyline) {
         this.points_.push(polyline[i]);
     }
-}
+};
 
+
+/**
+ * Add a Steiner point to the constraints
+ * @param {Point} point     point to add
+ */
 js.poly2tri.SweepContext.prototype.AddPoint = function(point) {
     this.points_.push(point);
-}
+};
+
+
+/**
+ * Get the bounding box of the provided constraints (contour, holes and 
+ * Steinter points). Warning : these values are not available if the triangulation 
+ * has not been done yet.
+ * @returns {Object} object with 'min' and 'max' Point
+ */
+js.poly2tri.SweepContext.prototype.GetBoundingBox = function() {
+    return { min: this.pmin_, max: this.pmax_ };
+};
+
 
 js.poly2tri.SweepContext.prototype.front = function() {
     return this.front_;
@@ -944,13 +970,16 @@ js.poly2tri.SweepContext.prototype.InitTriangulation = function() {
     var ymin = this.points_[0].y;
 
     // Calculate bounds
-    for (var i in this.points_) {
+    var i, len = this.points_.length;
+    for (i = 1; i < len; i++) {
         var p = this.points_[i];
         if (p.x > xmax) xmax = p.x;
         if (p.x < xmin) xmin = p.x;
         if (p.y > ymax) ymax = p.y;
         if (p.y < ymin) ymin = p.y;
     }
+    this.pmin_ = new js.poly2tri.Point(xmin, ymin);
+    this.pmax_ = new js.poly2tri.Point(xmax, ymax);
 
     var dx = js.poly2tri.kAlpha * (xmax - xmin);
     var dy = js.poly2tri.kAlpha * (ymax - ymin);
@@ -959,7 +988,7 @@ js.poly2tri.SweepContext.prototype.InitTriangulation = function() {
 
     // Sort points along y-axis
     this.points_.sort(js.poly2tri.cmp);
-}
+};
 
 js.poly2tri.SweepContext.prototype.InitEdges = function(polyline) {
     for (var i=0; i < polyline.length; ++i) {

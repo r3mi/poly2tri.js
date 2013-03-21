@@ -73,7 +73,7 @@ describe("js.poly2tri", function() {
         return points;
     }
 
-    
+
     /**
      * Checks that all the triangles vertices are in the list of points
      * @param   triangles   array of triangles
@@ -99,7 +99,7 @@ describe("js.poly2tri", function() {
         };
         return failed;
     }
-        
+
     /**
      * Checks that all the points are in at least one triangle
      * @param   triangles   array of triangles
@@ -123,8 +123,8 @@ describe("js.poly2tri", function() {
         return failed;
     }
 
-            
-            
+
+
     /*
      * Tests
      * =====
@@ -235,6 +235,10 @@ describe("js.poly2tri", function() {
         // Helper matchers to ease test writing
         beforeEach(function() {
             this.addMatchers({
+                // Checks that a point equals another
+                toEqualPoint: function(p2) {
+                    return this.actual.equals(p2);
+                },
                 // Checks that all the triangles vertices are in the list of points
                 toBeInPoints: function() {
                     var triangles = this.actual, pointslists = Array.prototype.slice.call(arguments), failed;
@@ -264,16 +268,20 @@ describe("js.poly2tri", function() {
 
         describe("a triangle", function() {
             // not reset between tests
-            var contour, t;
+            var contour, t, swctx;
             contour = makePoints([100, 100, 100, 200, 200, 200]);
             it("should triangulate", function() {
-                var swctx = new P.SweepContext(clone(contour));
+                swctx = new P.SweepContext(clone(contour));
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
                 expect(t).toBeTruthy();
             });
             it("should return 1 triangle", function() {
                 expect(t.length).toBe(1);
+            });
+            it("should have a bounding box", function() {
+                expect(swctx.GetBoundingBox().min).toEqualPoint({x: 100, y: 100});
+                expect(swctx.GetBoundingBox().max).toEqualPoint({x: 200, y: 200});
             });
             it("should return the same triangle", function() {
                 expect(t[0].ContainsP(contour[0])).toBeTruthy();
@@ -283,16 +291,20 @@ describe("js.poly2tri", function() {
         });
         describe("a square", function() {
             // not reset between tests
-            var contour, t;
+            var contour, t, swctx;
             contour = makePoints([0, 0, 0, 1, 1, 1, 2, 1]); // same as issue #7
             it("should triangulate", function() {
-                var swctx = new P.SweepContext(clone(contour));
+                swctx = new P.SweepContext(clone(contour));
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
                 expect(t).toBeTruthy();
             });
             it("should return 2 triangles", function() {
                 expect(t.length).toBe(2);
+            });
+            it("should have a bounding box", function() {
+                expect(swctx.GetBoundingBox().min).toEqualPoint({x: 0, y: 0});
+                expect(swctx.GetBoundingBox().max).toEqualPoint({x: 2, y: 1});
             });
             it("should be in the contour", function() {
                 expect(t).toBeInPoints(contour);
@@ -345,16 +357,20 @@ describe("js.poly2tri", function() {
         });
         describe("an octogon", function() {
             // not reset between tests
-            var contour, t;
+            var contour, t, swctx;
             contour = makePoints([200, 100, 300, 100, 400, 200, 400, 300, 300, 400, 200, 400, 100, 300, 100, 200]);
             it("should triangulate", function() {
-                var swctx = new P.SweepContext(clone(contour));
+                swctx = new P.SweepContext(clone(contour));
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
                 expect(t).toBeTruthy();
             });
             it("should return 6 triangles", function() {
                 expect(t.length).toBe(6);
+            });
+            it("should have a bounding box", function() {
+                expect(swctx.GetBoundingBox().min).toEqualPoint({x: 100, y: 100});
+                expect(swctx.GetBoundingBox().max).toEqualPoint({x: 400, y: 400});
             });
             it("should be in the contour", function() {
                 expect(t).toBeInPoints(contour);
@@ -387,12 +403,12 @@ describe("js.poly2tri", function() {
         });
         describe("a polygon containing 1 hole", function() {
             // not reset between tests
-            var contour, hole, t;
+            var contour, hole, t, swctx;
             // same as issue #44
             contour = makePoints([71, 161, 100, 66, 280, 97, 282, 223, 201, 238, 75, 243]);
             hole = makePoints([101, 102, 103, 204, 205, 206, 207, 108]);
             it("should triangulate", function() {
-                var swctx = new P.SweepContext(clone(contour));
+                swctx = new P.SweepContext(clone(contour));
                 swctx.AddHole(clone(hole));
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
@@ -400,6 +416,10 @@ describe("js.poly2tri", function() {
             });
             it("should return 10 triangles", function() {
                 expect(t.length).toBe(10);
+            });
+            it("should have a bounding box", function() {
+                expect(swctx.GetBoundingBox().min).toEqualPoint({x: 71, y: 66});
+                expect(swctx.GetBoundingBox().max).toEqualPoint({x: 282, y: 243});
             });
             it("should be in the contour and hole", function() {
                 expect(t).toBeInPoints(contour, hole);
@@ -691,7 +711,7 @@ describe("js.poly2tri", function() {
             files.forEach(function(filename) {
                 describe('"' + filename + '"', function() {
                     // not reset between tests : loaded once only
-                    var data, contour, t;
+                    var data, contour, t, swctx;
                     it("should load (if fails for local files Access-Control-Allow-Origin => use web server)", function() {
                         var success = jasmine.createSpy('success');
                         $.ajax({
@@ -712,13 +732,17 @@ describe("js.poly2tri", function() {
                         contour = makePoints(contour);
                     });
                     it("should triangulate", function() {
-                        var swctx = new P.SweepContext(clone(contour));
+                        swctx = new P.SweepContext(clone(contour));
                         P.sweep.Triangulate(swctx);
                         t = swctx.GetTriangles();
                         expect(t).toBeTruthy();
                     });
                     it("should return enough triangles", function() {
                         expect(t.length).toBeGreaterThan(contour.length / 3);
+                    });
+                    it("should have a bounding box", function() {
+                        expect(swctx.GetBoundingBox().min).toEqual(jasmine.any(P.Point));
+                        expect(swctx.GetBoundingBox().max).toEqual(jasmine.any(P.Point));
                     });
                     it("should be in the contour", function() {
                         expect(t).toBeInPoints(contour);

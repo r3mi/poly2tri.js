@@ -121,18 +121,7 @@
         var contour = [];
         var holes = [];
         var points = [];
-        var xmin, ymin, xmax, ymax;
-        var xscale, yscale, scale, linescale;
-
-        // find min/max values
-        xmin = ymin = Number.MAX_VALUE;
-        xmax = ymax = Number.MIN_VALUE;
-        function pointMinMax(point) {
-            (point.x < xmin) && (xmin = point.x);
-            (point.y < ymin) && (ymin = point.y);
-            (point.x > xmax) && (xmax = point.x);
-            (point.y > ymax) && (ymax = point.y);
-        }
+        var bounds, xscale, yscale, scale, linescale;
  
         // clear the canvas
         ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -141,7 +130,6 @@
         
         // parse contour
         contour = parsePoints($("textarea#poly_contour").val());
-        contour.forEach(pointMinMax);
         $("#contour_size").text(contour.length);
         
         // parse holes
@@ -149,14 +137,12 @@
             var hole = parsePoints(val);
             if (hole.length > 0) {
                 holes.push(hole);
-                hole.forEach(pointMinMax);
             }
         });
         $("#holes_size").text(holes.length);
         
         // parse points
         points = parsePoints($("textarea#poly_points").val());
-        points.forEach(pointMinMax);
         $("#points_size").text(points.length);
         
         try {
@@ -176,19 +162,13 @@
         }
         $("#triangles_size").text(swctx.GetTriangles().length);
         
-        // find min/max values
-        swctx.GetTriangles().forEach(function(triangle) {
-            [0, 1, 2].forEach(function(index) {
-                pointMinMax (triangle.GetPoint(index));
-            });
-        });
-
         // auto scale / translate
-        xscale = ctx.canvas.width / (xmax - xmin);
-        yscale = ctx.canvas.height / (ymax - ymin);
+        bounds = swctx.GetBoundingBox();
+        xscale = ctx.canvas.width / (bounds.max.x - bounds.min.x);
+        yscale = ctx.canvas.height / (bounds.max.y - bounds.min.y);
         scale  = Math.min(xscale, yscale);
         ctx.scale(scale, scale);
-        ctx.translate(-xmin, -ymin);
+        ctx.translate(-bounds.min.x, -bounds.min.y);
         linescale = (scale > 1) ? (1 / scale) : 1;
         
         // draw result
