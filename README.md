@@ -98,6 +98,9 @@ is valid data to describe 4 points.
 
 You can get additional sample files from the `tests/data` directory.
 
+You need a modern browser to draw the results, supporting the HTML5 `<canvas>`.
+
+
 
 Running the automated tests
 ---------------------------
