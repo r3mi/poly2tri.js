@@ -134,16 +134,12 @@ describe("js.poly2tri", function() {
 
     var P = js.poly2tri; // shortcut
 
-    // Replace default alert() handler by an exception thrower
-    js.poly2tri.fatal = function(message) {
-        throw new Error(message);
-    };
-
-
     describe("Point", function() {
         it("should have a default constructor", function() {
             var point = new P.Point();
             expect(point).toEqual(jasmine.any(P.Point));
+            expect(point.x).toBe(0);
+            expect(point.y).toBe(0);
         });
         it("should have a constructor", function() {
             var point = new P.Point(1, 2);
