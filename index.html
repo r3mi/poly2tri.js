@@ -99,11 +99,6 @@
         return points;
     };
     
-    // array copy (to keep unmodified versions of the arguments to SweepContext
-    function clone(a) {
-        return a.slice(0);
-    }
-
     function polygonPath(points) {
         ctx.beginPath();
         points.forEach(function(point, index) {
@@ -147,9 +142,9 @@
         
         try {
             // prepare SweepContext
-            var swctx = new js.poly2tri.SweepContext(clone(contour));
+            var swctx = new js.poly2tri.SweepContext(contour, {cloneArrays: true});
             for (var idx in holes) {
-                swctx.AddHole(clone(holes[idx]));
+                swctx.AddHole(holes[idx]);
             }
             for (var idx in points) {
                 swctx.AddPoint(points[idx]);

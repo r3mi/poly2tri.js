@@ -41,11 +41,6 @@ describe("js.poly2tri", function() {
      * =========
      */
 
-    // array copy (to keep unmodified versions of the arguments to SweepContext
-    function clone(a) {
-        return a.slice(0);
-    }
-
     // Creates list of Point from list of coordinates [ x1, y1, x2, y2 ...]
     function makePoints(a) {
         var i, len = a.length, points = [];
@@ -232,6 +227,9 @@ describe("js.poly2tri", function() {
 
     describe("sweep.Triangulate", function() {
 
+        // Common options for SweepContext
+        var options = { cloneArrays: true };
+        
         // Helper matchers to ease test writing
         beforeEach(function() {
             this.addMatchers({
@@ -271,7 +269,7 @@ describe("js.poly2tri", function() {
             var contour, t, swctx;
             contour = makePoints([100, 100, 100, 200, 200, 200]);
             it("should triangulate", function() {
-                swctx = new P.SweepContext(clone(contour));
+                swctx = new P.SweepContext(contour, options);
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
                 expect(t).toBeTruthy();
@@ -294,7 +292,7 @@ describe("js.poly2tri", function() {
             var contour, t, swctx;
             contour = makePoints([0, 0, 0, 1, 1, 1, 2, 1]); // same as issue #7
             it("should triangulate", function() {
-                swctx = new P.SweepContext(clone(contour));
+                swctx = new P.SweepContext(contour, options);
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
                 expect(t).toBeTruthy();
@@ -318,7 +316,7 @@ describe("js.poly2tri", function() {
             var contour, t;
             contour = makePoints([100, 100, 100, 300, 300, 300, 300, 100]);
             it("should triangulate", function() {
-                var swctx = new P.SweepContext(clone(contour));
+                var swctx = new P.SweepContext(contour, options);
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
                 expect(t).toBeTruthy();
@@ -339,7 +337,7 @@ describe("js.poly2tri", function() {
             contour = makePoints([100, 100, 100, 300, 300, 300, 300, 100]);
             points = makePoints([150, 150]);
             it("should triangulate", function() {
-                var swctx = new P.SweepContext(clone(contour));
+                var swctx = new P.SweepContext(contour, options);
                 swctx.AddPoint(points[0]);
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
@@ -355,12 +353,29 @@ describe("js.poly2tri", function() {
                 expect(t).toContainPoints(contour, points);
             });
         });
+        describe("a rectangle not cloned", function() {
+            // not reset between tests
+            var contour, copy, points, t;
+            contour = makePoints([100, 100, 100, 300, 300, 300, 300, 100]);
+            copy = contour.slice(0);
+            points = makePoints([150, 150]);
+            it("should triangulate", function() {
+                var swctx = new P.SweepContext(contour, {});
+                swctx.AddPoint(points[0]);
+                P.sweep.Triangulate(swctx);
+                t = swctx.GetTriangles();
+                expect(t).toBeTruthy();
+            });
+            it("should have modified the original contour", function() {
+                expect(contour.length).toBeGreaterThan(copy.length);
+            });
+        });
         describe("an octogon", function() {
             // not reset between tests
             var contour, t, swctx;
             contour = makePoints([200, 100, 300, 100, 400, 200, 400, 300, 300, 400, 200, 400, 100, 300, 100, 200]);
             it("should triangulate", function() {
-                swctx = new P.SweepContext(clone(contour));
+                swctx = new P.SweepContext(contour, options);
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
                 expect(t).toBeTruthy();
@@ -385,8 +400,8 @@ describe("js.poly2tri", function() {
             contour = makePoints([200, 100, 300, 100, 400, 200, 400, 300, 300, 400, 200, 400, 100, 300, 100, 200]);
             hole = makePoints([250, 250, 280, 250, 280, 280, 250, 280]);
             it("should triangulate", function() {
-                var swctx = new P.SweepContext(clone(contour));
-                swctx.AddHole(clone(hole));
+                var swctx = new P.SweepContext(contour, options);
+                swctx.AddHole(hole);
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
                 expect(t).toBeTruthy();
@@ -408,8 +423,8 @@ describe("js.poly2tri", function() {
             contour = makePoints([71, 161, 100, 66, 280, 97, 282, 223, 201, 238, 75, 243]);
             hole = makePoints([101, 102, 103, 204, 205, 206, 207, 108]);
             it("should triangulate", function() {
-                swctx = new P.SweepContext(clone(contour));
-                swctx.AddHole(clone(hole));
+                swctx = new P.SweepContext(contour, options);
+                swctx.AddHole(hole);
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
                 expect(t).toBeTruthy();
@@ -435,8 +450,8 @@ describe("js.poly2tri", function() {
             contour = makePoints([256, 288, 339, 123, 174, 41, 8, 222]);
             hole = makePoints([116, 233, 107, 233, 99, 233, 95, 233, 88, 221, 124, 233]);
             it("should triangulate", function() {
-                var swctx = new P.SweepContext(clone(contour));
-                swctx.AddHole(clone(hole));
+                var swctx = new P.SweepContext(contour, options);
+                swctx.AddHole(hole);
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
                 expect(t).toBeTruthy();
@@ -458,8 +473,8 @@ describe("js.poly2tri", function() {
             contour = makePoints([2.10229524019, -0.760509508136, 2.15571376911, -0.752653842118, 2.00173917352, 0.294373407871, 1.9483206446, 0.286517741853]);
             hole = makePoints([1.9968142935, 0.0247609293562, 2.02104796235, 0.0283247041864, 2.08803526014, -0.495188920808, 2.06380159129, -0.498752695638]);
             it("should triangulate", function() {
-                var swctx = new P.SweepContext(clone(contour));
-                swctx.AddHole(clone(hole));
+                var swctx = new P.SweepContext(contour, options);
+                swctx.AddHole(hole);
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
                 expect(t).toBeTruthy();
@@ -483,9 +498,9 @@ describe("js.poly2tri", function() {
             hole1 = makePoints([325, 437, 320, 423, 329, 413, 332, 423]);
             hole2 = makePoints([320.72342, 480, 338.90617, 465.96863, 347.99754, 480.61584, 329.8148, 510.41534, 339.91632, 480.11077, 334.86556, 478.09046]);
             it("should triangulate", function() {
-                var swctx = new P.SweepContext(clone(contour));
-                swctx.AddHole(clone(hole1));
-                swctx.AddHole(clone(hole2));
+                var swctx = new P.SweepContext(contour, options);
+                swctx.AddHole(hole1);
+                swctx.AddHole(hole2);
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
                 expect(t).toBeTruthy();
@@ -509,9 +524,9 @@ describe("js.poly2tri", function() {
             hole2 = makePoints([161, 32, 172, -19, 171, -20, 184, -58, 127, -58, 138, -46, 141, -38, 144, -2, 157, 17, 160, 23]);
             points = makePoints([148, 127, 161, 70, 157, 82, 152, 98, 160, 35, 115, -58, 160, 65, 149, 117, -205, 428, -44, 356, 29, 330, 32, 326, 55, 292, 69, 271, 94, 251, 96, 245, 104, 169, 141, 143, 143, 138, 153, 78, 153, 75, 146, 26, 131, 2, 127, -35, 126, -39, 97, -72, 199, -72, 198, -57, 184, -16, 169, 59, 150, 120, 153, 129, 190, 150, 197, 150, 247, 121, 250, 116, 278, 6, 278, 3, 260, -74, 488, -80, 434, 759, -294, 761]);
             it("should triangulate", function() {
-                var swctx = new P.SweepContext(clone(contour));
-                swctx.AddHole(clone(hole1));
-                swctx.AddHole(clone(hole2));
+                var swctx = new P.SweepContext(contour, options);
+                swctx.AddHole(hole1);
+                swctx.AddHole(hole2);
                 points.forEach(function(point) {
                     swctx.AddPoint(point);
                 });
@@ -542,7 +557,7 @@ describe("js.poly2tri", function() {
             }
             points = makePoints(points);
             it("should triangulate", function() {
-                var swctx = new P.SweepContext(clone(contour));
+                var swctx = new P.SweepContext(contour, options);
                 points.forEach(function(point) {
                     swctx.AddPoint(point);
                 });
@@ -570,7 +585,7 @@ describe("js.poly2tri", function() {
             }, max);
             contour = makePoints(contour);
             it("should triangulate", function() {
-                var swctx = new P.SweepContext(clone(contour));
+                var swctx = new P.SweepContext(contour, options);
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
                 expect(t).toBeTruthy();
@@ -598,7 +613,7 @@ describe("js.poly2tri", function() {
                 point.myfield = "f" + index;
             });
             it("should triangulate", function() {
-                var swctx = new P.SweepContext(clone(contour));
+                var swctx = new P.SweepContext(contour, options);
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
                 expect(t).toBeTruthy();
@@ -616,7 +631,7 @@ describe("js.poly2tri", function() {
             var contour = makePoints([100, 100, 100, 300, 300, 300, 300, 100, 100, 100]);
             it("should throw", function() {
                 expect(function() {
-                    var swctx = new P.SweepContext(clone(contour));
+                    var swctx = new P.SweepContext(contour, options);
                     P.sweep.Triangulate(swctx);
                 }).toThrow("Invalid js.poly2tri.edge constructor call: repeated points! (100;100)");
             });
@@ -626,7 +641,7 @@ describe("js.poly2tri", function() {
             var contour = makePoints([100, 100, 200, 100, 300, 100]);
             it("should throw", function() {
                 expect(function() {
-                    var swctx = new P.SweepContext(clone(contour));
+                    var swctx = new P.SweepContext(contour, options);
                     P.sweep.Triangulate(swctx);
                 }).toThrow("js.poly2tri.sweep.EdgeEvent: Collinear not supported! (300;100)(200;100)(100;100)");
             });
@@ -637,7 +652,7 @@ describe("js.poly2tri", function() {
             // same as polygon in "data/custom.dat"
             var contour = makePoints([0, 130, -270, 0, 130, -40, 10, -60, -10, -20, 100, 30, 40, -40]);
             it("should triangulate", function() {
-                var swctx = new P.SweepContext(clone(contour));
+                var swctx = new P.SweepContext(contour, options);
                 P.sweep.Triangulate(swctx);
                 t = swctx.GetTriangles();
                 expect(t).toBeTruthy();
@@ -732,7 +747,7 @@ describe("js.poly2tri", function() {
                         contour = makePoints(contour);
                     });
                     it("should triangulate", function() {
-                        swctx = new P.SweepContext(clone(contour));
+                        swctx = new P.SweepContext(contour, options);
                         P.sweep.Triangulate(swctx);
                         t = swctx.GetTriangles();
                         expect(t).toBeTruthy();

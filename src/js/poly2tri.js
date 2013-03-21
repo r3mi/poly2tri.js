@@ -871,10 +871,22 @@ js.poly2tri.EdgeEvent = function() {
 }
 
 // -----------------------------------------------------------------SweepContext
-js.poly2tri.SweepContext = function(polyline) {
+/**
+ * Constructor for the triangulation context.
+ * It accepts a simple polyline, which defines the constrained edges.
+ * Possible options are:
+ *    cloneArrays:  if true, do a shallow copy of the Array parameters 
+ *                  (contour, holes). Points inside arrays are never copied.
+ *                  Default is false : keep a reference to the array arguments,
+ *                  who will be modified in place.
+ * @param {Array} contour  a simple polyline (array of Points).
+ * @param {Object} options  constructor options
+ */
+js.poly2tri.SweepContext = function(contour, options) {
+    this.options_ = options = options || {};
     this.triangles_ = [];
     this.map_ = [];
-    this.points_ = polyline;
+    this.points_ = (options.cloneArrays ? contour.slice(0) : contour);
     this.edge_list = [];
 
     // Bounding box of all points. Computed at the start of the triangulation, 
@@ -896,7 +908,7 @@ js.poly2tri.SweepContext = function(polyline) {
     this.edge_event = new js.poly2tri.EdgeEvent();
 
     this.InitEdges(this.points_);
-}
+};
 
 
 /**
