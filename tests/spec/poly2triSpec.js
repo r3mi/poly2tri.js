@@ -651,7 +651,42 @@ describe("js.poly2tri", function() {
                 "strange.dat",
                 "tank.dat",
                 "test.dat",
-                "debug2.dat" // 10000 points, done last
+                "debug2.dat", // 10000 points
+                /*
+                 * Data files extracted from poly2tri issues
+                 */
+                "issue49.dat",
+                "issue58.dat",
+                /*
+                 * Data files extracted from poly2tri issue 34
+                 * https://code.google.com/p/poly2tri/issues/detail?id=34
+                 */
+                /* XXX TODO currently fails => see issue 34
+                 "issue34/stackoverflow.dat", // RangeError: Maximum call stack size exceeded
+                 "issue34/stackoverflow_uncommented.dat", // RangeError: Maximum call stack size exceeded
+                 "issue34/assertion.dat", // NextFlipPoint: opposing point on constrained edge!
+                 "issue34/overflow2.dat", // RangeError: Maximum call stack size exceeded
+                 "issue34/dump.dat", // RangeError: Maximum call stack size exceeded
+                 */
+                "issue34/dump_.dat",
+                "issue34/dump157.dat",
+                "issue34/dump438.dat",
+                "issue34/dump495.dat",
+                "issue34/dump542.dat",
+                "issue34/dump591.dat",
+                "issue34/dump594.dat",
+                "issue34/dump621.dat",
+                "issue34/dump627.dat",
+                "issue34/dump640.dat",
+                "issue34/dump675.dat",
+                "issue34/dump690.dat",
+                "issue34/dump720.dat",
+                "issue34/dump737.dat",
+                "issue34/dump805.dat",
+                "issue34/dump857.dat",
+                "issue34/dump862.dat",
+                "issue34/dump910.dat",
+                "issue34/dump1208.dat"
             ];
             files.forEach(function(filename) {
                 describe('"' + filename + '"', function() {
