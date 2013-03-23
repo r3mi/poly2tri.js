@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/* jshint browser:false */
+/* global Namespace */
 
 if (typeof Namespace === 'function') {
     // "Namespace.js" support, for backward compatilibilty
@@ -38,7 +40,8 @@ if (typeof Namespace === 'function') {
     js.poly2tri = js.poly2tri || {};
 }
 
-(function (poly2tri) {
+(function(poly2tri) {
+    "use strict";
 
 // ------------------------------------------------------------------------Point
     /**
@@ -329,8 +332,8 @@ if (typeof Namespace === 'function') {
         var back = true;
         for (var aidx = 0; aidx < arguments.length; ++aidx) {
             back = back && (arguments[aidx].equals(this.points_[0]) ||
-                            arguments[aidx].equals(this.points_[1]) ||
-                            arguments[aidx].equals(this.points_[2]));
+                    arguments[aidx].equals(this.points_[1]) ||
+                    arguments[aidx].equals(this.points_[2]));
         }
         return back;
     };
@@ -688,7 +691,7 @@ if (typeof Namespace === 'function') {
      *              =  (x1-x3)*(y2-y3) - (y1-y3)*(x2-x3)
      * </pre>
      */
-    function Orient2d(pa, pb, pc) {
+    function orient2d(pa, pb, pc) {
         var detleft = (pa.x - pc.x) * (pb.y - pc.y);
         var detright = (pa.y - pc.y) * (pb.x - pc.x);
         var val = detleft - detright;
@@ -701,7 +704,7 @@ if (typeof Namespace === 'function') {
         }
     }
 
-    function InScanArea(pa, pb, pc, pd) {
+    function inScanArea(pa, pb, pc, pd) {
         var pdx = pd.x;
         var pdy = pd.y;
         var adx = pa.x - pdx;
@@ -777,22 +780,24 @@ if (typeof Namespace === 'function') {
         this.search_node_ = node;
     };
 
-    AdvancingFront.prototype.FindSearchNode = function(x) {
+    AdvancingFront.prototype.FindSearchNode = function(/*x*/) {
+        // TODO: implement BST index
         return this.search_node_;
     };
 
     AdvancingFront.prototype.LocateNode = function(x) {
         var node = this.search_node_;
 
+        /* jshint boss:true */
         if (x < node.value) {
-            while ((node = node.prev) != null) {
+            while (node = node.prev) {
                 if (x >= node.value) {
                     this.search_node_ = node;
                     return node;
                 }
             }
         } else {
-            while ((node = node.next) != null) {
+            while (node = node.next) {
                 if (x < node.value) {
                     this.search_node_ = node.prev;
                     return node.prev;
@@ -807,7 +812,7 @@ if (typeof Namespace === 'function') {
         var node = this.FindSearchNode(px);
         var nx = node.point.x;
 
-        if (px == nx) {
+        if (px === nx) {
             // We might have two nodes with same x value for a short time
             if (node.prev && point.equals(node.prev.point)) {
                 node = node.prev;
@@ -815,24 +820,26 @@ if (typeof Namespace === 'function') {
                 node = node.next;
             } else if (point.equals(node.point)) {
                 // do nothing
+                /* jshint noempty:false */
             } else {
                 throw new Error('poly2tri Invalid AdvancingFront.LocatePoint() call!');
             }
         } else if (px < nx) {
-            while ((node = node.prev) != null) {
+            /* jshint boss:true */
+            while (node = node.prev) {
                 if (point.equals(node.point)) {
                     break;
                 }
             }
         } else {
-            while ((node = node.next) != null) {
+            while (node = node.next) {
                 if (point.equals(node.point)) {
                     break;
                 }
             }
         }
 
-        if (node != null) {
+        if (node) {
             this.search_node_ = node;
         }
         return node;
@@ -908,7 +915,8 @@ if (typeof Namespace === 'function') {
      */
     SweepContext.prototype.AddHole = function(polyline) {
         this.InitEdges(polyline);
-        for (var i in polyline) {
+        var i, len = polyline.length;
+        for (i = 0; i < len; i++) {
             this.points_.push(polyline[i]);
         }
     };
@@ -976,14 +984,11 @@ if (typeof Namespace === 'function') {
         var i, len = this.points_.length;
         for (i = 1; i < len; i++) {
             var p = this.points_[i];
-            if (p.x > xmax)
-                xmax = p.x;
-            if (p.x < xmin)
-                xmin = p.x;
-            if (p.y > ymax)
-                ymax = p.y;
-            if (p.y < ymin)
-                ymin = p.y;
+            /* jshint expr:true */
+            (p.x > xmax) && (xmax = p.x);
+            (p.x < xmin) && (xmin = p.x);
+            (p.y > ymax) && (ymax = p.y);
+            (p.y < ymin) && (ymin = p.y);
         }
         this.pmin_ = new Point(xmin, ymin);
         this.pmax_ = new Point(xmax, ymax);
@@ -1038,13 +1043,14 @@ if (typeof Namespace === 'function') {
 
     SweepContext.prototype.RemoveNode = function(node) {
         // do nothing
+        /* jshint unused:false */
     };
 
     SweepContext.prototype.MapTriangleToNodes = function(t) {
         for (var i = 0; i < 3; ++i) {
-            if (t.GetNeighbor(i) == null) {
+            if (! t.GetNeighbor(i)) {
                 var n = this.front_.LocatePoint(t.PointCW(t.GetPoint(i)));
-                if (n != null) {
+                if (n) {
                     n.triangle = t;
                 }
             }
@@ -1052,9 +1058,10 @@ if (typeof Namespace === 'function') {
     };
 
     SweepContext.prototype.RemoveFromMap = function(triangle) {
-        for (var i in this.map_) {
-            if (this.map_[i] == triangle) {
-                delete this.map_[i];
+        var i, map = this.map_, len = map.length;
+        for (i = 0; i < len; i++) {
+            if (map[i] === triangle) {
+                map.splice(i, 1);
                 break;
             }
         }
@@ -1063,11 +1070,12 @@ if (typeof Namespace === 'function') {
     /**
      * Do a depth first traversal to collect triangles
      * @param {Triangle} triangle start
-     */ 
+     */
     SweepContext.prototype.MeshClean = function(triangle) {
         // New implementation avoids recursive calls and use a loop instead.
         // Cf. issues # 57, 65 and 69.
         var triangles = [triangle], t, i;
+        /* jshint boss:true */
         while (t = triangles.pop()) {
             if (!t.IsInterior()) {
                 t.IsInterior(true);
@@ -1083,8 +1091,8 @@ if (typeof Namespace === 'function') {
 
 // ------------------------------------------------------------------------Sweep
 
-    var Sweep = { };
-    
+    var Sweep = {};
+
     /**
      * Triangulate simple polygon with holes.
      * @param   tcx SweepContext object.
@@ -1169,13 +1177,13 @@ if (typeof Namespace === 'function') {
             }
 
             var p1 = triangle.PointCCW(point);
-            var o1 = Orient2d(eq, p1, ep);
+            var o1 = orient2d(eq, p1, ep);
             if (o1 === Orientation.COLLINEAR) {
                 throw new Error('poly2tri EdgeEvent: Collinear not supported! ' + eq + p1 + ep);
             }
 
             var p2 = triangle.PointCW(point);
-            var o2 = Orient2d(eq, p2, ep);
+            var o2 = orient2d(eq, p2, ep);
             if (o2 === Orientation.COLLINEAR) {
                 throw new Error('poly2tri EdgeEvent: Collinear not supported! ' + eq + p2 + ep);
             }
@@ -1203,7 +1211,7 @@ if (typeof Namespace === 'function') {
         if (index !== -1) {
             triangle.MarkConstrainedEdge(index);
             var t = triangle.GetNeighbor(index);
-            if (t != null) {
+            if (t) {
                 t.MarkConstrainedEdge(ep, eq);
             }
             return true;
@@ -1266,7 +1274,7 @@ if (typeof Namespace === 'function') {
         var node = n.next;
         var angle;
 
-        while (node.next != null) {
+        while (node.next) {
             angle = Sweep.HoleAngle(node);
             if (angle > PI_2 || angle < -(PI_2)) {
                 break;
@@ -1278,7 +1286,7 @@ if (typeof Namespace === 'function') {
         // Fill left holes
         node = n.prev;
 
-        while (node.prev != null) {
+        while (node.prev) {
             angle = Sweep.HoleAngle(node);
             if (angle > PI_2 || angle < -(PI_2)) {
                 break;
@@ -1288,7 +1296,7 @@ if (typeof Namespace === 'function') {
         }
 
         // Fill right basins
-        if (n.next != null && n.next.next != null) {
+        if (n.next && n.next.next) {
             angle = Sweep.BasinAngle(n);
             if (angle < PI_3div4) {
                 Sweep.FillBasin(tcx, n);
@@ -1334,7 +1342,7 @@ if (typeof Namespace === 'function') {
                 continue;
             }
             var ot = t.GetNeighbor(i);
-            if (ot != null) {
+            if (ot) {
                 var p = t.GetPoint(i);
                 var op = ot.OppositePoint(t, p);
                 var oi = ot.Index(op);
@@ -1497,14 +1505,18 @@ if (typeof Namespace === 'function') {
         //      the right side.
         t.ClearNeigbors();
         ot.ClearNeigbors();
-        if (n1)
+        if (n1) {
             ot.MarkNeighbor(n1);
-        if (n2)
+        }
+        if (n2) {
             t.MarkNeighbor(n2);
-        if (n3)
+        }
+        if (n3) {
             t.MarkNeighbor(n3);
-        if (n4)
+        }
+        if (n4) {
             ot.MarkNeighbor(n4);
+        }
         t.MarkNeighbor(ot);
     };
 
@@ -1518,7 +1530,7 @@ if (typeof Namespace === 'function') {
      * @param node - starting node, this or next node will be left node
      */
     Sweep.FillBasin = function(tcx, node) {
-        if (Orient2d(node.point, node.next.point, node.next.next.point) === Orientation.CCW) {
+        if (orient2d(node.point, node.next.point, node.next.next.point) === Orientation.CCW) {
             tcx.basin.left_node = node.next.next;
         } else {
             tcx.basin.left_node = node.next;
@@ -1526,19 +1538,19 @@ if (typeof Namespace === 'function') {
 
         // Find the bottom and right node
         tcx.basin.bottom_node = tcx.basin.left_node;
-        while (tcx.basin.bottom_node.next != null && tcx.basin.bottom_node.point.y >= tcx.basin.bottom_node.next.point.y) {
+        while (tcx.basin.bottom_node.next && tcx.basin.bottom_node.point.y >= tcx.basin.bottom_node.next.point.y) {
             tcx.basin.bottom_node = tcx.basin.bottom_node.next;
         }
-        if (tcx.basin.bottom_node == tcx.basin.left_node) {
+        if (tcx.basin.bottom_node === tcx.basin.left_node) {
             // No valid basin
             return;
         }
 
         tcx.basin.right_node = tcx.basin.bottom_node;
-        while (tcx.basin.right_node.next != null && tcx.basin.right_node.point.y < tcx.basin.right_node.next.point.y) {
+        while (tcx.basin.right_node.next && tcx.basin.right_node.point.y < tcx.basin.right_node.next.point.y) {
             tcx.basin.right_node = tcx.basin.right_node.next;
         }
-        if (tcx.basin.right_node == tcx.basin.bottom_node) {
+        if (tcx.basin.right_node === tcx.basin.bottom_node) {
             // No valid basins
             return;
         }
@@ -1564,16 +1576,16 @@ if (typeof Namespace === 'function') {
         Sweep.Fill(tcx, node);
 
         var o;
-        if (node.prev == tcx.basin.left_node && node.next == tcx.basin.right_node) {
+        if (node.prev === tcx.basin.left_node && node.next === tcx.basin.right_node) {
             return;
-        } else if (node.prev == tcx.basin.left_node) {
-            o = Orient2d(node.point, node.next.point, node.next.next.point);
+        } else if (node.prev === tcx.basin.left_node) {
+            o = orient2d(node.point, node.next.point, node.next.next.point);
             if (o === Orientation.CW) {
                 return;
             }
             node = node.next;
-        } else if (node.next == tcx.basin.right_node) {
-            o = Orient2d(node.point, node.prev.point, node.prev.prev.point);
+        } else if (node.next === tcx.basin.right_node) {
+            o = orient2d(node.point, node.prev.point, node.prev.prev.point);
             if (o === Orientation.CCW) {
                 return;
             }
@@ -1616,7 +1628,7 @@ if (typeof Namespace === 'function') {
     Sweep.FillRightAboveEdgeEvent = function(tcx, edge, node) {
         while (node.next.point.x < edge.p.x) {
             // Check if next node is below the edge
-            if (Orient2d(edge.q, node.next.point, edge.p) === Orientation.CCW) {
+            if (orient2d(edge.q, node.next.point, edge.p) === Orientation.CCW) {
                 Sweep.FillRightBelowEdgeEvent(tcx, edge, node);
             } else {
                 node = node.next;
@@ -1626,7 +1638,7 @@ if (typeof Namespace === 'function') {
 
     Sweep.FillRightBelowEdgeEvent = function(tcx, edge, node) {
         if (node.point.x < edge.p.x) {
-            if (Orient2d(node.point, node.next.point, node.next.next.point) === Orientation.CCW) {
+            if (orient2d(node.point, node.next.point, node.next.next.point) === Orientation.CCW) {
                 // Concave
                 Sweep.FillRightConcaveEdgeEvent(tcx, edge, node);
             } else {
@@ -1640,15 +1652,16 @@ if (typeof Namespace === 'function') {
 
     Sweep.FillRightConcaveEdgeEvent = function(tcx, edge, node) {
         Sweep.Fill(tcx, node.next);
-        if (node.next.point != edge.p) {
+        if (node.next.point !== edge.p) {
             // Next above or below edge?
-            if (Orient2d(edge.q, node.next.point, edge.p) === Orientation.CCW) {
+            if (orient2d(edge.q, node.next.point, edge.p) === Orientation.CCW) {
                 // Below
-                if (Orient2d(node.point, node.next.point, node.next.next.point) === Orientation.CCW) {
+                if (orient2d(node.point, node.next.point, node.next.next.point) === Orientation.CCW) {
                     // Next is concave
                     Sweep.FillRightConcaveEdgeEvent(tcx, edge, node);
                 } else {
                     // Next is convex
+                    /* jshint noempty:false */
                 }
             }
         }
@@ -1656,17 +1669,18 @@ if (typeof Namespace === 'function') {
 
     Sweep.FillRightConvexEdgeEvent = function(tcx, edge, node) {
         // Next concave or convex?
-        if (Orient2d(node.next.point, node.next.next.point, node.next.next.next.point) === Orientation.CCW) {
+        if (orient2d(node.next.point, node.next.next.point, node.next.next.next.point) === Orientation.CCW) {
             // Concave
             Sweep.FillRightConcaveEdgeEvent(tcx, edge, node.next);
         } else {
             // Convex
             // Next above or below edge?
-            if (Orient2d(edge.q, node.next.next.point, edge.p) === Orientation.CCW) {
+            if (orient2d(edge.q, node.next.next.point, edge.p) === Orientation.CCW) {
                 // Below
                 Sweep.FillRightConvexEdgeEvent(tcx, edge, node.next);
             } else {
                 // Above
+                /* jshint noempty:false */
             }
         }
     };
@@ -1674,7 +1688,7 @@ if (typeof Namespace === 'function') {
     Sweep.FillLeftAboveEdgeEvent = function(tcx, edge, node) {
         while (node.prev.point.x > edge.p.x) {
             // Check if next node is below the edge
-            if (Orient2d(edge.q, node.prev.point, edge.p) === Orientation.CW) {
+            if (orient2d(edge.q, node.prev.point, edge.p) === Orientation.CW) {
                 Sweep.FillLeftBelowEdgeEvent(tcx, edge, node);
             } else {
                 node = node.prev;
@@ -1684,7 +1698,7 @@ if (typeof Namespace === 'function') {
 
     Sweep.FillLeftBelowEdgeEvent = function(tcx, edge, node) {
         if (node.point.x > edge.p.x) {
-            if (Orient2d(node.point, node.prev.point, node.prev.prev.point) === Orientation.CW) {
+            if (orient2d(node.point, node.prev.point, node.prev.prev.point) === Orientation.CW) {
                 // Concave
                 Sweep.FillLeftConcaveEdgeEvent(tcx, edge, node);
             } else {
@@ -1698,32 +1712,34 @@ if (typeof Namespace === 'function') {
 
     Sweep.FillLeftConvexEdgeEvent = function(tcx, edge, node) {
         // Next concave or convex?
-        if (Orient2d(node.prev.point, node.prev.prev.point, node.prev.prev.prev.point) === Orientation.CW) {
+        if (orient2d(node.prev.point, node.prev.prev.point, node.prev.prev.prev.point) === Orientation.CW) {
             // Concave
             Sweep.FillLeftConcaveEdgeEvent(tcx, edge, node.prev);
         } else {
             // Convex
             // Next above or below edge?
-            if (Orient2d(edge.q, node.prev.prev.point, edge.p) === Orientation.CW) {
+            if (orient2d(edge.q, node.prev.prev.point, edge.p) === Orientation.CW) {
                 // Below
                 Sweep.FillLeftConvexEdgeEvent(tcx, edge, node.prev);
             } else {
                 // Above
+                /* jshint noempty:false */
             }
         }
     };
 
     Sweep.FillLeftConcaveEdgeEvent = function(tcx, edge, node) {
         Sweep.Fill(tcx, node.prev);
-        if (node.prev.point != edge.p) {
+        if (node.prev.point !== edge.p) {
             // Next above or below edge?
-            if (Orient2d(edge.q, node.prev.point, edge.p) === Orientation.CW) {
+            if (orient2d(edge.q, node.prev.point, edge.p) === Orientation.CW) {
                 // Below
-                if (Orient2d(node.point, node.prev.point, node.prev.prev.point) === Orientation.CW) {
+                if (orient2d(node.point, node.prev.point, node.prev.prev.point) === Orientation.CW) {
                     // Next is concave
                     Sweep.FillLeftConcaveEdgeEvent(tcx, edge, node);
                 } else {
                     // Next is convex
+                    /* jshint noempty:false */
                 }
             }
         }
@@ -1731,30 +1747,36 @@ if (typeof Namespace === 'function') {
 
     Sweep.FlipEdgeEvent = function(tcx, ep, eq, t, p) {
         var ot = t.NeighborAcross(p);
-        if (ot == null) {
+        if (!ot) {
             // If we want to integrate the fillEdgeEvent do it here
             // With current implementation we should never get here
             throw new Error('poly2tri [BUG:FIXME] FLIP failed due to missing triangle!');
         }
         var op = ot.OppositePoint(t, p);
 
-        if (InScanArea(p, t.PointCCW(p), t.PointCW(p), op)) {
+        if (inScanArea(p, t.PointCCW(p), t.PointCW(p), op)) {
             // Lets rotate shared edge one vertex CW
             Sweep.RotateTrianglePair(t, p, ot, op);
             tcx.MapTriangleToNodes(t);
             tcx.MapTriangleToNodes(ot);
 
-            if (p == eq && op == ep) {
-                if (eq == tcx.edge_event.constrained_edge.q && ep == tcx.edge_event.constrained_edge.p) {
+            // XXX: in the original C++ code for the next 2 lines, we are
+            // comparing point values (and not pointers). In this JavaScript
+            // code, we are comparing point references (pointers). This works
+            // because we can't have 2 different points with the same values.
+            // But to be really equivalent, we should use "Point.equals" here.
+            if (p === eq && op === ep) {
+                if (eq === tcx.edge_event.constrained_edge.q && ep === tcx.edge_event.constrained_edge.p) {
                     t.MarkConstrainedEdge(ep, eq);
                     ot.MarkConstrainedEdge(ep, eq);
                     Sweep.Legalize(tcx, t);
                     Sweep.Legalize(tcx, ot);
                 } else {
                     // XXX: I think one of the triangles should be legalized here?
+                    /* jshint noempty:false */
                 }
             } else {
-                var o = Orient2d(eq, op, ep);
+                var o = orient2d(eq, op, ep);
                 t = Sweep.NextFlipTriangle(tcx, o, t, ot, p, op);
                 Sweep.FlipEdgeEvent(tcx, ep, eq, t, p);
             }
@@ -1786,7 +1808,7 @@ if (typeof Namespace === 'function') {
     };
 
     Sweep.NextFlipPoint = function(ep, eq, ot, op) {
-        var o2d = Orient2d(eq, op, ep);
+        var o2d = orient2d(eq, op, ep);
         if (o2d === Orientation.CW) {
             // Right
             return ot.PointCCW(op);
@@ -1800,15 +1822,14 @@ if (typeof Namespace === 'function') {
 
     Sweep.FlipScanEdgeEvent = function(tcx, ep, eq, flip_triangle, t, p) {
         var ot = t.NeighborAcross(p);
-
-        if (ot == null) {
+        if (!ot) {
             // If we want to integrate the fillEdgeEvent do it here
             // With current implementation we should never get here
             throw new Error('poly2tri [BUG:FIXME] FLIP failed due to missing triangle');
         }
         var op = ot.OppositePoint(t, p);
 
-        if (InScanArea(eq, flip_triangle.PointCCW(eq), flip_triangle.PointCW(eq), op)) {
+        if (inScanArea(eq, flip_triangle.PointCCW(eq), flip_triangle.PointCW(eq), op)) {
             // flip with new edge op.eq
             Sweep.FlipEdgeEvent(tcx, eq, op, ot, op);
             // TODO: Actually I just figured out that it should be possible to
@@ -1826,14 +1847,14 @@ if (typeof Namespace === 'function') {
 
 // ---------------------------------------------------------Exports (public API)
 
-    poly2tri.Point          = Point;
-    poly2tri.Triangle       = Triangle;
-    poly2tri.SweepContext   = SweepContext;
-    poly2tri.triangulate    = Sweep.Triangulate;
+    poly2tri.Point = Point;
+    poly2tri.Triangle = Triangle;
+    poly2tri.SweepContext = SweepContext;
+    poly2tri.triangulate = Sweep.Triangulate;
 
     // Backward compatibility
-    poly2tri.sweep = { Triangulate: Sweep.Triangulate };
-    
+    poly2tri.sweep = {Triangulate: Sweep.Triangulate};
+
 }(js.poly2tri));
 
 // -----------------------------------------------------------------------------
