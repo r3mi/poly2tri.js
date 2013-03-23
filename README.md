@@ -77,7 +77,7 @@ there is no mandatory dependency.
 
 4. Triangulate
 
-        js.poly2tri.sweep.Triangulate(swctx);
+        js.poly2tri.triangulate(swctx);
         triangles = swctx.GetTriangles();
 
 See [`index.html`](index.html) for a complete sample.
