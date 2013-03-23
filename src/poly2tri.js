@@ -44,8 +44,8 @@ if (typeof Namespace === 'function') {
  * @param {Number} y    coordinate (0 if undefined)
  */
 js.poly2tri.Point = function(x, y) {
-    this.x = x || 0;
-    this.y = y || 0;
+    this.x = +x || 0;
+    this.y = +y || 0;
     
     // The edges this point constitutes an upper ending point
     this.edge_list = [];
@@ -65,7 +65,7 @@ js.poly2tri.Point.prototype.toString = function() {
 js.poly2tri.Point.prototype.set_zero = function() {
     this.x = 0.0;
     this.y = 0.0;
-}
+};
 
 /**
  * Set the coordinates of this instance.
@@ -73,9 +73,9 @@ js.poly2tri.Point.prototype.set_zero = function() {
  * @param   y   number;
  */
 js.poly2tri.Point.prototype.set = function(x, y) {
-    this.x = x;
-    this.y = y;
-}
+    this.x = +x || 0;
+    this.y = +y || 0;
+};
 
 /**
  * Negate this Point instance. (component-wise)
