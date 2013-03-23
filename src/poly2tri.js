@@ -1008,8 +1008,9 @@ if (typeof Namespace === 'function') {
     };
 
     SweepContext.prototype.InitEdges = function(polyline) {
-        for (var i = 0; i < polyline.length; ++i) {
-            this.edge_list.push(new Edge(polyline[i], polyline[(i + 1) % polyline.length]));
+        var i, len = polyline.length;
+        for (var i = 0; i < len; ++i) {
+            this.edge_list.push(new Edge(polyline[i], polyline[(i + 1) % len]));
         }
     };
 
@@ -1112,7 +1113,8 @@ if (typeof Namespace === 'function') {
     };
 
     Sweep.SweepPoints = function(tcx) {
-        for (var i = 1; i < tcx.point_count(); ++i) {
+        var i, len = tcx.point_count();
+        for (i = 1; i < len; ++i) {
             var point = tcx.GetPoint(i);
             var node = Sweep.PointEvent(tcx, point);
             for (var j = 0; j < point.edge_list.length; ++j) {
