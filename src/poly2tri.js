@@ -46,7 +46,7 @@ if (typeof Namespace === 'function') {
 js.poly2tri.Point = function(x, y) {
     this.x = +x || 0;
     this.y = +y || 0;
-    
+
     // The edges this point constitutes an upper ending point
     this.edge_list = [];
 };
@@ -83,7 +83,7 @@ js.poly2tri.Point.prototype.set = function(x, y) {
 js.poly2tri.Point.prototype.negate = function() {
     this.x = -this.x;
     this.y = -this.y;
-}
+};
 
 /**
  * Add another Point object to this instance. (component-wise)
@@ -92,7 +92,7 @@ js.poly2tri.Point.prototype.negate = function() {
 js.poly2tri.Point.prototype.add = function(n) {
     this.x += n.x;
     this.y += n.y;
-}
+};
 
 /**
  * Subtract this Point instance with another point given. (component-wise)
@@ -101,7 +101,7 @@ js.poly2tri.Point.prototype.add = function(n) {
 js.poly2tri.Point.prototype.sub = function(n) {
     this.x -= n.x;
     this.y -= n.y;
-}
+};
 
 /**
  * Multiply this Point instance by a scalar. (component-wise)
@@ -110,14 +110,14 @@ js.poly2tri.Point.prototype.sub = function(n) {
 js.poly2tri.Point.prototype.mul = function(s) {
     this.x *= s;
     this.y *= s;
-}
+};
 
 /**
  * Return the distance of this Point instance from the origo.
  */
 js.poly2tri.Point.prototype.length = function() {
     return Math.sqrt(this.x*this.x + this.y*this.y);
-}
+};
 
 /**
  * Normalize this Point instance (as a vector).
@@ -128,7 +128,7 @@ js.poly2tri.Point.prototype.normalize = function() {
     this.x /= len;
     this.y /= len;
     return len;
-}
+};
 
 /**
  * Test this Point object with another for equality.
@@ -137,7 +137,7 @@ js.poly2tri.Point.prototype.normalize = function() {
  */
 js.poly2tri.Point.prototype.equals = function(p) {
     return js.poly2tri.equals(this, p);
-}
+};
 
 /**
  * Negate a point component-wise and return the result as a new Point object.
@@ -146,7 +146,7 @@ js.poly2tri.Point.prototype.equals = function(p) {
  */
 js.poly2tri.negate = function(p) {
     return new js.poly2tri.Point(-p.x, -p.y);
-}
+};
 
 /**
  * Compare two points component-wise.
@@ -161,7 +161,7 @@ js.poly2tri.cmp = function(a, b) {
     } else {
         return a.y - b.y;
     }
-}
+};
 
 /**
  * Add two points component-wise and return the result as a new Point object.
@@ -171,7 +171,7 @@ js.poly2tri.cmp = function(a, b) {
  */
 js.poly2tri.add = function(a, b) {
     return new js.poly2tri.Point(a.x+b.x, a.y+b.y);
-}
+};
 
 /**
  * Subtract two points component-wise and return the result as a new Point object.
@@ -181,7 +181,7 @@ js.poly2tri.add = function(a, b) {
  */
 js.poly2tri.sub = function(a, b) {
     return new js.poly2tri.Point(a.x-b.x, a.y-b.y);
-}
+};
 
 /**
  * Multiply a point by a scalar and return the result as a new Point object.
@@ -191,7 +191,7 @@ js.poly2tri.sub = function(a, b) {
  */
 js.poly2tri.mul = function(s, p) {
     return new js.poly2tri.Point(s*p.x, s*p.y);
-}
+};
 
 /**
  * Test two Point objects for equality.
@@ -201,7 +201,7 @@ js.poly2tri.mul = function(s, p) {
  */
 js.poly2tri.equals = function(a, b) {
     return a.x == b.x && a.y == b.y;
-}
+};
 
 /**
  * Peform the dot product on two vectors.
@@ -211,7 +211,7 @@ js.poly2tri.equals = function(a, b) {
  */
 js.poly2tri.dot = function(a, b) {
     return a.x*b.x + a.y*b.y;
-}
+};
 
 /**
  * Perform the cross product on either two points (this produces a scalar)
@@ -241,14 +241,14 @@ js.poly2tri.cross = function() {
     } else {
         throw new TypeError('Invalid js.poly2tri.cross call!');
     }
-}
+};
 
 
 // -------------------------------------------------------------------------Edge
 js.poly2tri.Edge = function() {
     this.p = null;
     this.q = null;
-    
+
     if (arguments.length == 2) {
         if (arguments[0].y > arguments[1].y) {
             this.q = arguments[0];
@@ -272,7 +272,7 @@ js.poly2tri.Edge = function() {
     }
 
     this.q.edge_list.push(this);
-}
+};
 
 // ---------------------------------------------------------------------Triangle
 /**
@@ -303,8 +303,8 @@ js.poly2tri.Triangle = function(p1, p2, p3) {
         this.points_[1] = p2;
         this.points_[2] = p3;
     }
-}
- 
+};
+
 /**
  * For pretty printing ex. <i>"[(5;42)(10;20)(21;30)]"</i>)
  */
@@ -314,11 +314,11 @@ js.poly2tri.Triangle.prototype.toString = function() {
 
 js.poly2tri.Triangle.prototype.GetPoint = function(index) {
     return this.points_[index];
-}
+};
 
 js.poly2tri.Triangle.prototype.GetNeighbor = function(index) {
     return this.neighbors_[index];
-}
+};
 
 /**
  * Test if this Triangle contains the Point objects given as parameters as its
@@ -330,12 +330,12 @@ js.poly2tri.Triangle.prototype.ContainsP = function() {
     var back = true;
     for (var aidx=0; aidx < arguments.length; ++aidx) {
         back = back && (arguments[aidx].equals(this.points_[0]) ||
-                        arguments[aidx].equals(this.points_[1]) ||
-                        arguments[aidx].equals(this.points_[2])
-        );
+                arguments[aidx].equals(this.points_[1]) ||
+                arguments[aidx].equals(this.points_[2])
+                );
     }
     return back;
-}
+};
 
 /**
  * Test if this Triangle contains the Edge objects given as parameters as its
@@ -349,7 +349,7 @@ js.poly2tri.Triangle.prototype.ContainsE = function() {
         back = back && this.ContainsP(arguments[aidx].p, arguments[aidx].q);
     }
     return back;
-}
+};
 
 js.poly2tri.Triangle.prototype.IsInterior = function() {
     if (arguments.length == 0) {
@@ -358,7 +358,7 @@ js.poly2tri.Triangle.prototype.IsInterior = function() {
         this.interior_ = arguments[0];
         return this.interior_;
     }
-}
+};
 
 /**
  * Update neighbor pointers.<br>
@@ -395,19 +395,19 @@ js.poly2tri.Triangle.prototype.MarkNeighbor = function() {
     } else {
         throw new TypeError('Invalid js.poly2tri.Triangle.MarkNeighbor call! (2)');
     }
-}
+};
 
 js.poly2tri.Triangle.prototype.ClearNeigbors = function() {
     this.neighbors_[0] = null;
     this.neighbors_[1] = null;
     this.neighbors_[2] = null;
-}
+};
 
 js.poly2tri.Triangle.prototype.ClearDelunayEdges = function() {
     this.delaunay_edge[0] = false;
     this.delaunay_edge[1] = false;
     this.delaunay_edge[2] = false;
-}
+};
 
 /**
  * Return the point clockwise to the given point.
@@ -422,7 +422,7 @@ js.poly2tri.Triangle.prototype.PointCW = function(p) {
     } else {
         return null;
     }
-}
+};
 
 /**
  * Return the point counter-clockwise to the given point.
@@ -437,7 +437,7 @@ js.poly2tri.Triangle.prototype.PointCCW = function(p) {
     } else {
         return null;
     }
-}
+};
 
 /**
  * Return the neighbor clockwise to given point.
@@ -450,7 +450,7 @@ js.poly2tri.Triangle.prototype.NeighborCW = function(p) {
     } else {
         return this.neighbors_[0];
     }
-}
+};
 
 /**
  * Return the neighbor counter-clockwise to given point.
@@ -463,7 +463,7 @@ js.poly2tri.Triangle.prototype.NeighborCCW = function(p) {
     } else {
         return this.neighbors_[1];
     }
-}
+};
 
 js.poly2tri.Triangle.prototype.GetConstrainedEdgeCW = function(p) {
     if (p.equals(this.points_[0])) {
@@ -473,7 +473,7 @@ js.poly2tri.Triangle.prototype.GetConstrainedEdgeCW = function(p) {
     } else {
         return this.constrained_edge[0];
     }
-}
+};
 
 js.poly2tri.Triangle.prototype.GetConstrainedEdgeCCW = function(p) {
     if (p.equals(this.points_[0])) {
@@ -483,7 +483,7 @@ js.poly2tri.Triangle.prototype.GetConstrainedEdgeCCW = function(p) {
     } else {
         return this.constrained_edge[1];
     }
-}
+};
 
 js.poly2tri.Triangle.prototype.SetConstrainedEdgeCW = function(p, ce) {
     if (p.equals(this.points_[0])) {
@@ -493,7 +493,7 @@ js.poly2tri.Triangle.prototype.SetConstrainedEdgeCW = function(p, ce) {
     } else {
         this.constrained_edge[0] = ce;
     }
-}
+};
 
 js.poly2tri.Triangle.prototype.SetConstrainedEdgeCCW = function(p, ce) {
     if (p.equals(this.points_[0])) {
@@ -503,7 +503,7 @@ js.poly2tri.Triangle.prototype.SetConstrainedEdgeCCW = function(p, ce) {
     } else {
         this.constrained_edge[1] = ce;
     }
-}
+};
 
 js.poly2tri.Triangle.prototype.GetDelaunayEdgeCW = function(p) {
     if (p.equals(this.points_[0])) {
@@ -513,7 +513,7 @@ js.poly2tri.Triangle.prototype.GetDelaunayEdgeCW = function(p) {
     } else {
         return this.delaunay_edge[0];
     }
-}
+};
 
 js.poly2tri.Triangle.prototype.GetDelaunayEdgeCCW = function(p) {
     if (p.equals(this.points_[0])) {
@@ -523,7 +523,7 @@ js.poly2tri.Triangle.prototype.GetDelaunayEdgeCCW = function(p) {
     } else {
         return this.delaunay_edge[1];
     }
-}
+};
 
 js.poly2tri.Triangle.prototype.SetDelaunayEdgeCW = function(p, e) {
     if (p.equals(this.points_[0])) {
@@ -533,7 +533,7 @@ js.poly2tri.Triangle.prototype.SetDelaunayEdgeCW = function(p, e) {
     } else {
         this.delaunay_edge[0] = e;
     }
-}
+};
 
 js.poly2tri.Triangle.prototype.SetDelaunayEdgeCCW = function(p, e) {
     if (p.equals(this.points_[0])) {
@@ -543,7 +543,7 @@ js.poly2tri.Triangle.prototype.SetDelaunayEdgeCCW = function(p, e) {
     } else {
         this.delaunay_edge[1] = e;
     }
-}
+};
 
 /**
  * The neighbor across to given point.
@@ -556,12 +556,12 @@ js.poly2tri.Triangle.prototype.NeighborAcross = function(p) {
     } else {
         return this.neighbors_[2];
     }
-}
+};
 
 js.poly2tri.Triangle.prototype.OppositePoint = function(t, p) {
     var cw = t.PointCW(p);
     return this.PointCW(cw);
-}
+};
 
 /**
  * Legalize triangle by rotating clockwise.<br>
@@ -594,7 +594,7 @@ js.poly2tri.Triangle.prototype.Legalize = function() {
     } else {
         throw new TypeError('Invalid js.poly2tri.Triangle.Legalize call!');
     }
-}
+};
 
 js.poly2tri.Triangle.prototype.Index = function(p) {
     if (p.equals(this.points_[0])) return 0;
@@ -624,7 +624,7 @@ js.poly2tri.Triangle.prototype.EdgeIndex = function(p1, p2) {
         }
     }
     return -1;
-}
+};
 
 /**
  * Mark an edge of this triangle as constrained.<br>
@@ -651,7 +651,7 @@ js.poly2tri.Triangle.prototype.MarkConstrainedEdge = function() {
     } else {
         throw new TypeError('Invalid js.poly2tri.Triangle.MarkConstrainedEdge call!');
     }
-}
+};
 
 // ------------------------------------------------------------------------utils
 js.poly2tri.PI_3div4 = 3 * Math.PI / 4;
@@ -691,7 +691,7 @@ js.poly2tri.Orient2d = function(pa, pb, pc) {
     } else {
         return js.poly2tri.Orientation.CW;
     }
-}
+};
 
 js.poly2tri.InScanArea = function(pa, pb, pc, pd) {
     var pdx = pd.x;
@@ -721,7 +721,7 @@ js.poly2tri.InScanArea = function(pa, pb, pc, pd) {
     }
 
     return true;
-}
+};
 
 // ---------------------------------------------------------------AdvancingFront
 js.poly2tri.Node = function() {
@@ -743,41 +743,41 @@ js.poly2tri.Node = function() {
     } else {
         throw new TypeError('Invalid js.poly2tri.Node constructor call!');
     }
-}
+};
 
 js.poly2tri.AdvancingFront = function(head, tail) {
     this.head_ = head; // Node
     this.tail_ = tail; // Node
     this.search_node_ = head; // Node
-}
+};
 
 js.poly2tri.AdvancingFront.prototype.head = function() {
     return this.head_;
-}
+};
 
 js.poly2tri.AdvancingFront.prototype.set_head = function(node) {
     this.head_ = node;
-}
+};
 
 js.poly2tri.AdvancingFront.prototype.tail = function() {
     return this.tail_;
-}
+};
 
 js.poly2tri.AdvancingFront.prototype.set_tail = function(node) {
     this.tail_ = node;
-}
+};
 
 js.poly2tri.AdvancingFront.prototype.search = function() {
     return this.search_node_;
-}
+};
 
 js.poly2tri.AdvancingFront.prototype.set_search = function(node) {
     this.search_node_ = node;
-}
+};
 
 js.poly2tri.AdvancingFront.prototype.FindSearchNode = function(x) {
     return this.search_node_;
-}
+};
 
 js.poly2tri.AdvancingFront.prototype.LocateNode = function(x) {
     var node = this.search_node_;
@@ -798,7 +798,7 @@ js.poly2tri.AdvancingFront.prototype.LocateNode = function(x) {
         }
     }
     return null;
-}
+};
 
 js.poly2tri.AdvancingFront.prototype.LocatePoint = function(point) {
     var px = point.x;
@@ -828,7 +828,7 @@ js.poly2tri.AdvancingFront.prototype.LocatePoint = function(point) {
 
     if (node != null) this.search_node_ = node;
     return node;
-}
+};
 
 // ------------------------------------------------------------------------Basin
 js.poly2tri.Basin = function() {
@@ -837,7 +837,7 @@ js.poly2tri.Basin = function() {
     this.right_node = null; // Node
     this.width = 0.0; // number
     this.left_highest = false;
-}
+};
 
 js.poly2tri.Basin.prototype.Clear = function() {
     this.left_node = null;
@@ -845,13 +845,13 @@ js.poly2tri.Basin.prototype.Clear = function() {
     this.right_node = null;
     this.width = 0.0;
     this.left_highest = false;
-}
+};
 
 // --------------------------------------------------------------------EdgeEvent
 js.poly2tri.EdgeEvent = function() {
     this.constrained_edge = null; // Edge
     this.right = false;
-}
+};
 
 // -----------------------------------------------------------------SweepContext
 /**
@@ -875,7 +875,7 @@ js.poly2tri.SweepContext = function(contour, options) {
     // Bounding box of all points. Computed at the start of the triangulation, 
     // it is stored in case it is needed by the caller.
     this.pmin_ = this.pmax_ = null;
-    
+
     // Advancing front
     this.front_ = null; // AdvancingFront
     // head point used with advancing front
@@ -928,35 +928,35 @@ js.poly2tri.SweepContext.prototype.GetBoundingBox = function() {
 
 js.poly2tri.SweepContext.prototype.front = function() {
     return this.front_;
-}
+};
 
 js.poly2tri.SweepContext.prototype.point_count = function() {
     return this.points_.length;
-}
+};
 
 js.poly2tri.SweepContext.prototype.head = function() {
     return this.head_;
-}
+};
 
 js.poly2tri.SweepContext.prototype.set_head = function(p1) {
     this.head_ = p1;
-}
+};
 
 js.poly2tri.SweepContext.prototype.tail = function() {
     return this.tail_;
-}
+};
 
 js.poly2tri.SweepContext.prototype.set_tail = function(p1) {
     this.tail_ = p1;
-}
+};
 
 js.poly2tri.SweepContext.prototype.GetTriangles = function() {
     return this.triangles_;
-}
+};
 
 js.poly2tri.SweepContext.prototype.GetMap = function() {
     return this.map_;
-}
+};
 
 js.poly2tri.SweepContext.prototype.InitTriangulation = function() {
     var xmax = this.points_[0].x;
@@ -989,19 +989,19 @@ js.poly2tri.SweepContext.prototype.InitEdges = function(polyline) {
     for (var i=0; i < polyline.length; ++i) {
         this.edge_list.push(new js.poly2tri.Edge(polyline[i], polyline[(i+1) % polyline.length]));
     }
-}
+};
 
 js.poly2tri.SweepContext.prototype.GetPoint = function(index) {
     return this.points_[index];
-}
+};
 
 js.poly2tri.SweepContext.prototype.AddToMap = function(triangle) {
     this.map_.push(triangle);
-}
+};
 
 js.poly2tri.SweepContext.prototype.LocateNode = function(point) {
     return this.front_.LocateNode(point.x);
-}
+};
 
 js.poly2tri.SweepContext.prototype.CreateAdvancingFront = function() {
     var head;
@@ -1022,11 +1022,11 @@ js.poly2tri.SweepContext.prototype.CreateAdvancingFront = function() {
     middle.next = tail;
     middle.prev = head;
     tail.prev = middle;
-}
+};
 
 js.poly2tri.SweepContext.prototype.RemoveNode = function(node) {
     // do nothing
-}
+};
 
 js.poly2tri.SweepContext.prototype.MapTriangleToNodes = function(t) {
     for (var i=0; i<3; ++i) {
@@ -1037,7 +1037,7 @@ js.poly2tri.SweepContext.prototype.MapTriangleToNodes = function(t) {
             }
         }
     }
-}
+};
 
 js.poly2tri.SweepContext.prototype.RemoveFromMap = function(triangle) {
     for (var i in this.map_) {
@@ -1046,7 +1046,7 @@ js.poly2tri.SweepContext.prototype.RemoveFromMap = function(triangle) {
             break;
         }
     }
-}
+};
 
 // Do a depth first traversal to collect triangles
 js.poly2tri.SweepContext.prototype.MeshClean = function(triangle) {
@@ -1084,7 +1084,7 @@ js.poly2tri.sweep.Triangulate = function(tcx) {
     js.poly2tri.sweep.SweepPoints(tcx);
     // Clean up
     js.poly2tri.sweep.FinalizationPolygon(tcx);
-}
+};
 
 js.poly2tri.sweep.SweepPoints = function(tcx) {
     for (var i=1; i < tcx.point_count(); ++i) {
@@ -1094,7 +1094,7 @@ js.poly2tri.sweep.SweepPoints = function(tcx) {
             js.poly2tri.sweep.EdgeEvent(tcx, point.edge_list[j], node);
         }
     }
-}
+};
 
 js.poly2tri.sweep.FinalizationPolygon = function(tcx) {
     // Get an Internal triangle to start with
@@ -1106,7 +1106,7 @@ js.poly2tri.sweep.FinalizationPolygon = function(tcx) {
 
     // Collect interior triangles constrained by edges
     tcx.MeshClean(t);
-}
+};
 
 /**
  * Find closes node to the left of the new point and
@@ -1127,7 +1127,7 @@ js.poly2tri.sweep.PointEvent = function(tcx, point) {
 
     js.poly2tri.sweep.FillAdvancingFront(tcx, new_node);
     return new_node;
-}
+};
 
 js.poly2tri.sweep.EdgeEvent = function(tcx) {
     if (arguments.length == 3) {
@@ -1184,7 +1184,7 @@ js.poly2tri.sweep.EdgeEvent = function(tcx) {
     } else {
         throw new TypeError('Invalid js.poly2tri.sweep.EdgeEvent call!');
     }
-}
+};
 
 js.poly2tri.sweep.IsEdgeSideOfTriangle = function(triangle, ep, eq) {
     var index = triangle.EdgeIndex(ep, eq);
@@ -1196,8 +1196,8 @@ js.poly2tri.sweep.IsEdgeSideOfTriangle = function(triangle, ep, eq) {
         }
         return true;
     }
-    return false;    
-}
+    return false;
+};
 
 js.poly2tri.sweep.NewFrontTriangle = function(tcx, point, node) {
     var triangle = new js.poly2tri.Triangle(point, node.point, node.next.point);
@@ -1216,7 +1216,7 @@ js.poly2tri.sweep.NewFrontTriangle = function(tcx, point, node) {
     }
 
     return new_node;
-}
+};
 
 /**
  * Adds a triangle to the advancing front to fill a hole.
@@ -1244,7 +1244,7 @@ js.poly2tri.sweep.Fill = function(tcx, node) {
     }
 
     //tcx.RemoveNode(node);
-}
+};
 
 /**
  * Fills holes in the Advancing Front
@@ -1278,13 +1278,13 @@ js.poly2tri.sweep.FillAdvancingFront = function(tcx, n) {
             js.poly2tri.sweep.FillBasin(tcx, n);
         }
     }
-}
+};
 
 js.poly2tri.sweep.BasinAngle = function(node) {
     var ax = node.point.x - node.next.next.point.x;
     var ay = node.point.y - node.next.next.point.y;
     return Math.atan2(ay, ax);
-}
+};
 
 /**
  *
@@ -1292,20 +1292,20 @@ js.poly2tri.sweep.BasinAngle = function(node) {
  * @return the angle between 3 front nodes
  */
 js.poly2tri.sweep.HoleAngle = function(node) {
-  /* Complex plane
-   * ab = cosA +i*sinA
-   * ab = (ax + ay*i)(bx + by*i) = (ax*bx + ay*by) + i(ax*by-ay*bx)
-   * atan2(y,x) computes the principal value of the argument function
-   * applied to the complex number x+iy
-   * Where x = ax*bx + ay*by
-   *       y = ax*by - ay*bx
-   */
-  var ax = node.next.point.x - node.point.x;
-  var ay = node.next.point.y - node.point.y;
-  var bx = node.prev.point.x - node.point.x;
-  var by = node.prev.point.y - node.point.y;
-  return Math.atan2(ax * by - ay * bx, ax * bx + ay * by);
-}
+    /* Complex plane
+     * ab = cosA +i*sinA
+     * ab = (ax + ay*i)(bx + by*i) = (ax*bx + ay*by) + i(ax*by-ay*bx)
+     * atan2(y,x) computes the principal value of the argument function
+     * applied to the complex number x+iy
+     * Where x = ax*bx + ay*by
+     *       y = ax*by - ay*bx
+     */
+    var ax = node.next.point.x - node.point.x;
+    var ay = node.next.point.y - node.point.y;
+    var bx = node.prev.point.x - node.point.x;
+    var by = node.prev.point.y - node.point.y;
+    return Math.atan2(ax * by - ay * bx, ax * bx + ay * by);
+};
 
 /**
  * Returns true if triangle was legalized
@@ -1364,7 +1364,7 @@ js.poly2tri.sweep.Legalize = function(tcx, t) {
         }
     }
     return false;
-}
+};
 
 /**
  * <b>Requirement</b>:<br>
@@ -1420,7 +1420,7 @@ js.poly2tri.sweep.Incircle = function(pa, pb, pc, pd) {
 
     var det = alift * (bdxcdy - cdxbdy) + blift * ocad + clift * oabd;
     return det > 0;
-}
+};
 
 /**
  * Rotates a triangle pair one vertex CW
@@ -1482,7 +1482,7 @@ js.poly2tri.sweep.RotateTrianglePair = function(t, p, ot, op) {
     if (n3) t.MarkNeighbor(n3);
     if (n4) ot.MarkNeighbor(n4);
     t.MarkNeighbor(ot);
-}
+};
 
 /**
  * Fills a basin that has formed on the Advancing Front to the right
@@ -1523,7 +1523,7 @@ js.poly2tri.sweep.FillBasin = function(tcx, node) {
     tcx.basin.left_highest = tcx.basin.left_node.point.y > tcx.basin.right_node.point.y;
 
     js.poly2tri.sweep.FillBasinReq(tcx, tcx.basin.bottom_node);
-}
+};
 
 /**
  * Recursive algorithm to fill a Basin with triangles
@@ -1564,7 +1564,7 @@ js.poly2tri.sweep.FillBasinReq = function(tcx, node) {
     }
 
     js.poly2tri.sweep.FillBasinReq(tcx, node);
-}
+};
 
 js.poly2tri.sweep.IsShallow = function(tcx, node) {
     var height;
@@ -1579,7 +1579,7 @@ js.poly2tri.sweep.IsShallow = function(tcx, node) {
         return true;
     }
     return false;
-}
+};
 
 js.poly2tri.sweep.FillEdgeEvent = function(tcx, edge, node) {
     if (tcx.edge_event.right) {
@@ -1598,7 +1598,7 @@ js.poly2tri.sweep.FillRightAboveEdgeEvent = function(tcx, edge, node) {
             node = node.next;
         }
     }
-}
+};
 
 js.poly2tri.sweep.FillRightBelowEdgeEvent = function(tcx, edge, node) {
     if (node.point.x < edge.p.x) {
@@ -1612,7 +1612,7 @@ js.poly2tri.sweep.FillRightBelowEdgeEvent = function(tcx, edge, node) {
             js.poly2tri.sweep.FillRightBelowEdgeEvent(tcx, edge, node);
         }
     }
-}
+};
 
 js.poly2tri.sweep.FillRightConcaveEdgeEvent = function(tcx, edge, node) {
     js.poly2tri.sweep.Fill(tcx, node.next);
@@ -1624,11 +1624,11 @@ js.poly2tri.sweep.FillRightConcaveEdgeEvent = function(tcx, edge, node) {
                 // Next is concave
                 js.poly2tri.sweep.FillRightConcaveEdgeEvent(tcx, edge, node);
             } else {
-            // Next is convex
+                // Next is convex
             }
         }
     }
-}
+};
 
 js.poly2tri.sweep.FillRightConvexEdgeEvent = function(tcx, edge, node) {
     // Next concave or convex?
@@ -1645,7 +1645,7 @@ js.poly2tri.sweep.FillRightConvexEdgeEvent = function(tcx, edge, node) {
             // Above
         }
     }
-}
+};
 
 js.poly2tri.sweep.FillLeftAboveEdgeEvent = function(tcx, edge, node) {
     while (node.prev.point.x > edge.p.x) {
@@ -1656,7 +1656,7 @@ js.poly2tri.sweep.FillLeftAboveEdgeEvent = function(tcx, edge, node) {
             node = node.prev;
         }
     }
-}
+};
 
 js.poly2tri.sweep.FillLeftBelowEdgeEvent = function(tcx, edge, node) {
     if (node.point.x > edge.p.x) {
@@ -1670,7 +1670,7 @@ js.poly2tri.sweep.FillLeftBelowEdgeEvent = function(tcx, edge, node) {
             js.poly2tri.sweep.FillLeftBelowEdgeEvent(tcx, edge, node);
         }
     }
-}
+};
 
 js.poly2tri.sweep.FillLeftConvexEdgeEvent = function(tcx, edge, node) {
     // Next concave or convex?
@@ -1687,7 +1687,7 @@ js.poly2tri.sweep.FillLeftConvexEdgeEvent = function(tcx, edge, node) {
             // Above
         }
     }
-}
+};
 
 js.poly2tri.sweep.FillLeftConcaveEdgeEvent = function(tcx, edge, node) {
     js.poly2tri.sweep.Fill(tcx, node.prev);
@@ -1703,7 +1703,7 @@ js.poly2tri.sweep.FillLeftConcaveEdgeEvent = function(tcx, edge, node) {
             }
         }
     }
-}
+};
 
 js.poly2tri.sweep.FlipEdgeEvent = function(tcx, ep, eq, t, p) {
     var ot = t.NeighborAcross(p);
@@ -1739,7 +1739,7 @@ js.poly2tri.sweep.FlipEdgeEvent = function(tcx, ep, eq, t, p) {
         js.poly2tri.sweep.FlipScanEdgeEvent(tcx, ep, eq, t, ot, newP);
         js.poly2tri.sweep.EdgeEvent(tcx, ep, eq, t, p);
     }
-}
+};
 
 js.poly2tri.sweep.NextFlipTriangle = function(tcx, o, t, ot, p, op) {
     var edge_index;
@@ -1759,7 +1759,7 @@ js.poly2tri.sweep.NextFlipTriangle = function(tcx, o, t, ot, p, op) {
     js.poly2tri.sweep.Legalize(tcx, t);
     t.ClearDelunayEdges();
     return ot;
-}
+};
 
 js.poly2tri.sweep.NextFlipPoint = function(ep, eq, ot, op) {
     var o2d = js.poly2tri.Orient2d(eq, op, ep);
@@ -1773,7 +1773,7 @@ js.poly2tri.sweep.NextFlipPoint = function(ep, eq, ot, op) {
         throw new RangeError("[Unsupported] js.poly2tri.sweep.NextFlipPoint: opposing point on constrained edge!");
         return undefined;
     }
-}
+};
 
 js.poly2tri.sweep.FlipScanEdgeEvent = function(tcx, ep, eq, flip_triangle, t, p) {
     var ot = t.NeighborAcross(p);
@@ -1799,7 +1799,7 @@ js.poly2tri.sweep.FlipScanEdgeEvent = function(tcx, ep, eq, flip_triangle, t, p)
         var newP = js.poly2tri.sweep.NextFlipPoint(ep, eq, ot, op);
         js.poly2tri.sweep.FlipScanEdgeEvent(tcx, ep, eq, flip_triangle, ot, newP);
     }
-}
+};
 
 // -----------------------------------------------------------------------------
 if (typeof Namespace === 'function') {
