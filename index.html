@@ -94,7 +94,7 @@
         var i, points = [];
         // bitwise 'and' to ignore any isolated float at the end
         for (i = 0; i < (floats.length & 0x7FFFFFFE); i += 2) {
-            points.push(new js.poly2tri.Point(floats[i], floats[i + 1]));
+            points.push(new poly2tri.Point(floats[i], floats[i + 1]));
         }
         return points;
     };
@@ -142,7 +142,7 @@
         
         try {
             // prepare SweepContext
-            var swctx = new js.poly2tri.SweepContext(contour, {cloneArrays: true});
+            var swctx = new poly2tri.SweepContext(contour, {cloneArrays: true});
             for (var idx in holes) {
                 swctx.AddHole(holes[idx]);
             }
@@ -151,7 +151,7 @@
             }
 
             // triangulate
-            js.poly2tri.triangulate(swctx);
+            poly2tri.triangulate(swctx);
         } catch (e) {
             alert(e);
         }

@@ -32,12 +32,17 @@
 /* jshint browser:false */
 /* global Namespace */
 
+// Tests "Namespace.js" support, for backward compatilibilty
 if (typeof Namespace === 'function') {
-    // "Namespace.js" support, for backward compatilibilty
+    Namespace('poly2tri');
+    // also "js.poly2tri" namespace, for backward compatilibilty
     Namespace('js.poly2tri');
+    js.poly2tri = poly2tri;
 } else {
+    var poly2tri = poly2tri || {};
+    // also "js.poly2tri" namespace, for backward compatilibilty
     var js = js || {};
-    js.poly2tri = js.poly2tri || {};
+    js.poly2tri = poly2tri;
 }
 
 (function(poly2tri) {
@@ -1862,9 +1867,10 @@ if (typeof Namespace === 'function') {
     // Backward compatibility
     poly2tri.sweep = {Triangulate: Sweep.Triangulate};
 
-}(js.poly2tri));
+}(poly2tri));
 
 // -----------------------------------------------------------------------------
 if (typeof Namespace === 'function') {
+    Namespace.provide('poly2tri');
     Namespace.provide('js.poly2tri');
 }

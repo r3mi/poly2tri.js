@@ -32,7 +32,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-describe("js.poly2tri", function() {
+describe("poly2tri", function() {
 
     "use strict";
 
@@ -123,16 +123,20 @@ describe("js.poly2tri", function() {
     /*
      * Tests
      * =====
-     *   TODO we test only part of the "public API" of js.poly2tri for the time being
+     *   TODO we test only part of the "public API" of poly2tri for the time being
      *   (methods used in the "triangulate" tests),
      *   not all the methods or all sub-classes.
      */
 
-    it("should have js.poly2tri namespace", function() {
+    it("should have poly2tri namespace", function() {
+        expect(poly2tri).toBeDefined();
+    });
+    it("should have js.poly2tri namespace (backward compatibility)", function() {
         expect(js.poly2tri).toBeDefined();
+        expect(js.poly2tri).toBe(poly2tri);
     });
 
-    var P = js.poly2tri; // shortcut
+    var P = poly2tri; // shortcut
 
     describe("Point", function() {
         it("should have a default constructor", function() {

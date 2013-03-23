@@ -47,37 +47,38 @@ _The only easy day was yesterday; have a nice day. Mason Green_
 Library usage
 -------------
 
-The library `src/js/poly2tri.js` can be included directly : 
+The library `src/poly2tri.js` can be included directly : 
 there is no mandatory dependency.
+All functions and classes are scoped in the `poly2tri` namespace.
 
 1. Initialize CDT with a simple polyline 
    (this defines the constrained edges)
 
         contour = [
-            new js.poly2tri.Point(100, 100), 
-            new js.poly2tri.Point(100, 300), 
-            new js.poly2tri.Point(300, 300), 
-            new js.poly2tri.Point(300, 100)
+            new poly2tri.Point(100, 100), 
+            new poly2tri.Point(100, 300), 
+            new poly2tri.Point(300, 300), 
+            new poly2tri.Point(300, 100)
         ];
-        swctx = new js.poly2tri.SweepContext(contour);
+        swctx = new poly2tri.SweepContext(contour);
                
 2.  Add holes if necessary (also simple polylines)
 
         hole = [
-            new js.poly2tri.Point(200, 200), 
-            new js.poly2tri.Point(200, 250), 
-            new js.poly2tri.Point(250, 250)
+            new poly2tri.Point(200, 200), 
+            new poly2tri.Point(200, 250), 
+            new poly2tri.Point(250, 250)
         ];  
         swctx.AddHole(hole);
 
 3. Add Steiner points
 
-        point = new js.poly2tri.Point(150, 150);
+        point = new poly2tri.Point(150, 150);
         swctx.AddPoint(point);
 
 4. Triangulate
 
-        js.poly2tri.triangulate(swctx);
+        poly2tri.triangulate(swctx);
         triangles = swctx.GetTriangles();
 
 See [`index.html`](index.html) for a complete sample.
