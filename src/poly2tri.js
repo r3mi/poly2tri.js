@@ -116,7 +116,7 @@ js.poly2tri.Point.prototype.mul = function(s) {
  * Return the distance of this Point instance from the origo.
  */
 js.poly2tri.Point.prototype.length = function() {
-    return Math.sqrt(this.x*this.x + this.y*this.y);
+    return Math.sqrt(this.x * this.x + this.y * this.y);
 };
 
 /**
@@ -156,7 +156,7 @@ js.poly2tri.negate = function(p) {
  *         <code>a &gt; b</code>, <code>0</code> otherwise.
  */
 js.poly2tri.cmp = function(a, b) {
-    if (a.y == b.y) {
+    if (a.y === b.y) {
         return a.x - b.x;
     } else {
         return a.y - b.y;
@@ -200,7 +200,7 @@ js.poly2tri.mul = function(s, p) {
  * @return <code>True</code> if <code>a == b</code>, <code>false</code> otherwise.
  */
 js.poly2tri.equals = function(a, b) {
-    return a.x == b.x && a.y == b.y;
+    return a.x === b.x && a.y === b.y;
 };
 
 /**
@@ -223,11 +223,11 @@ js.poly2tri.dot = function(a, b) {
 js.poly2tri.cross = function() {
     var a0_p = false;
     var a1_p = false;
-    if (arguments.length == 2) {
-        if (typeof(arguments[0]) == 'number') {
+    if (arguments.length === 2) {
+        if (typeof(arguments[0]) === 'number') {
             a0_p = true;
         }
-        if (typeof(arguments[1] == 'number')) {
+        if (typeof(arguments[1] === 'number')) {
             a1_p = true;
         }
 
@@ -249,15 +249,15 @@ js.poly2tri.Edge = function() {
     this.p = null;
     this.q = null;
 
-    if (arguments.length == 2) {
+    if (arguments.length === 2) {
         if (arguments[0].y > arguments[1].y) {
             this.q = arguments[0];
             this.p = arguments[1];
-        } else if (arguments[0].y == arguments[1].y) {
+        } else if (arguments[0].y === arguments[1].y) {
             if (arguments[0].x > arguments[1].x) {
                 this.q = arguments[0];
                 this.p = arguments[1];
-            } else if (arguments[0].x == arguments[1].x) {
+            } else if (arguments[0].x === arguments[1].x) {
                 throw new Error('Invalid js.poly2tri.edge constructor call: repeated points! ' + arguments[0]);
             } else {
                 this.p = arguments[0];
@@ -298,7 +298,7 @@ js.poly2tri.Triangle = function(p1, p2, p3) {
     // Flags to determine if an edge is a Delauney edge
     this.delaunay_edge = [ false, false, false ];
 
-    if (arguments.length == 3) {
+    if (arguments.length === 3) {
         this.points_[0] = p1;
         this.points_[1] = p2;
         this.points_[2] = p3;
@@ -352,7 +352,7 @@ js.poly2tri.Triangle.prototype.ContainsE = function() {
 };
 
 js.poly2tri.Triangle.prototype.IsInterior = function() {
-    if (arguments.length == 0) {
+    if (arguments.length === 0) {
         return this.interior_;
     } else {
         this.interior_ = arguments[0];
@@ -370,7 +370,7 @@ js.poly2tri.Triangle.prototype.IsInterior = function() {
  */
 js.poly2tri.Triangle.prototype.MarkNeighbor = function() {
     var t;
-    if (arguments.length == 3) {
+    if (arguments.length === 3) {
         var p1 = arguments[0];
         var p2 = arguments[1];
         t = arguments[2];
@@ -379,7 +379,7 @@ js.poly2tri.Triangle.prototype.MarkNeighbor = function() {
         else if ((p1.equals(this.points_[0]) && p2.equals(this.points_[2])) || (p1.equals(this.points_[2]) && p2.equals(this.points_[0]))) this.neighbors_[1] = t;
         else if ((p1.equals(this.points_[0]) && p2.equals(this.points_[1])) || (p1.equals(this.points_[1]) && p2.equals(this.points_[0]))) this.neighbors_[2] = t;
         else throw new Error('Invalid js.poly2tri.Triangle.MarkNeighbor call (1)!');
-    } else if (arguments.length == 1) {
+    } else if (arguments.length === 1) {
         // exhaustive search to update neighbor pointers
         t = arguments[0];
         if (t.ContainsP(this.points_[1], this.points_[2])) {
@@ -570,9 +570,9 @@ js.poly2tri.Triangle.prototype.OppositePoint = function(t, p) {
  * parameter).
  */
 js.poly2tri.Triangle.prototype.Legalize = function() {
-    if (arguments.length == 1) {
+    if (arguments.length === 1) {
         this.Legalize(this.points_[0], arguments[0]);
-    } else if (arguments.length == 2) {
+    } else if (arguments.length === 2) {
         var opoint = arguments[0];
         var npoint = arguments[1];
 
@@ -601,7 +601,7 @@ js.poly2tri.Triangle.prototype.Index = function(p) {
     else if (p.equals(this.points_[1])) return 1;
     else if (p.equals(this.points_[2])) return 2;
     else return -1;
-}
+};
 
 js.poly2tri.Triangle.prototype.EdgeIndex = function(p1, p2) {
     if (p1.equals(this.points_[0])) {
@@ -632,13 +632,13 @@ js.poly2tri.Triangle.prototype.EdgeIndex = function(p1, p2) {
  * 2 parameters (two Point instances defining the edge of the triangle).
  */
 js.poly2tri.Triangle.prototype.MarkConstrainedEdge = function() {
-    if (arguments.length == 1) {
-        if (typeof(arguments[0]) == 'number') {
+    if (arguments.length === 1) {
+        if (typeof(arguments[0]) === 'number') {
             this.constrained_edge[arguments[0]] = true;
         } else {
             this.MarkConstrainedEdge(arguments[0].p, arguments[0].q);
         }
-    } else if (arguments.length == 2) {
+    } else if (arguments.length === 2) {
         var p = arguments[0];
         var q = arguments[1];
         if ((q.equals(this.points_[0]) && p.equals(this.points_[1])) || (q.equals(this.points_[1]) && p.equals(this.points_[0]))) {
@@ -733,10 +733,10 @@ js.poly2tri.Node = function() {
 
     this.value = 0.0; // double
 
-    if (arguments.length == 1) {
+    if (arguments.length === 1) {
         this.point = arguments[0];
         this.value = this.point.x;
-    } else if (arguments.length == 2) {
+    } else if (arguments.length === 2) {
         this.point = arguments[0];
         this.triangle = arguments[1];
         this.value = this.point.x;
@@ -1130,7 +1130,7 @@ js.poly2tri.sweep.PointEvent = function(tcx, point) {
 };
 
 js.poly2tri.sweep.EdgeEvent = function(tcx) {
-    if (arguments.length == 3) {
+    if (arguments.length === 3) {
         var edge = arguments[1];
         var node = arguments[2];
 
@@ -1146,7 +1146,7 @@ js.poly2tri.sweep.EdgeEvent = function(tcx) {
         //       but for now this avoid the issue with cases that needs both flips and fills
         js.poly2tri.sweep.FillEdgeEvent(tcx, edge, node);
         js.poly2tri.sweep.EdgeEvent(tcx, edge.p, edge.q, node.triangle, edge.q);
-    } else if (arguments.length == 5) {
+    } else if (arguments.length === 5) {
         var ep = arguments[1];
         var eq = arguments[2];
         var triangle = arguments[3];
@@ -1158,20 +1158,20 @@ js.poly2tri.sweep.EdgeEvent = function(tcx) {
 
         var p1 = triangle.PointCCW(point);
         var o1 = js.poly2tri.Orient2d(eq, p1, ep);
-        if (o1 == js.poly2tri.Orientation.COLLINEAR) {
+        if (o1 === js.poly2tri.Orientation.COLLINEAR) {
             throw new Error('js.poly2tri.sweep.EdgeEvent: Collinear not supported! ' + eq + p1 + ep);
         }
 
         var p2 = triangle.PointCW(point);
         var o2 = js.poly2tri.Orient2d(eq, p2, ep);
-        if (o2 == js.poly2tri.Orientation.COLLINEAR) {
+        if (o2 === js.poly2tri.Orientation.COLLINEAR) {
             throw new Error('js.poly2tri.sweep.EdgeEvent: Collinear not supported! ' + eq + p2 + ep);
         }
 
-        if (o1 == o2) {
+        if (o1 === o2) {
             // Need to decide if we are rotating CW or CCW to get to a triangle
             // that will cross edge
-            if (o1 == js.poly2tri.Orientation.CW) {
+            if (o1 === js.poly2tri.Orientation.CW) {
                 triangle = triangle.NeighborCCW(point);
             } else {
                 triangle = triangle.NeighborCW(point);
@@ -1188,7 +1188,7 @@ js.poly2tri.sweep.EdgeEvent = function(tcx) {
 
 js.poly2tri.sweep.IsEdgeSideOfTriangle = function(triangle, ep, eq) {
     var index = triangle.EdgeIndex(ep, eq);
-    if (index != -1) {
+    if (index !== -1) {
         triangle.MarkConstrainedEdge(index);
         var t = triangle.GetNeighbor(index);
         if (t != null) {
@@ -1494,7 +1494,7 @@ js.poly2tri.sweep.RotateTrianglePair = function(t, p, ot, op) {
  * @param node - starting node, this or next node will be left node
  */
 js.poly2tri.sweep.FillBasin = function(tcx, node) {
-    if (js.poly2tri.Orient2d(node.point, node.next.point, node.next.next.point) == js.poly2tri.Orientation.CCW) {
+    if (js.poly2tri.Orient2d(node.point, node.next.point, node.next.next.point) === js.poly2tri.Orientation.CCW) {
         tcx.basin.left_node = node.next.next;
     } else {
         tcx.basin.left_node = node.next;
@@ -1544,13 +1544,13 @@ js.poly2tri.sweep.FillBasinReq = function(tcx, node) {
         return;
     } else if (node.prev == tcx.basin.left_node) {
         o = js.poly2tri.Orient2d(node.point, node.next.point, node.next.next.point);
-        if (o == js.poly2tri.Orientation.CW) {
+        if (o === js.poly2tri.Orientation.CW) {
             return;
         }
         node = node.next;
     } else if (node.next == tcx.basin.right_node) {
         o = js.poly2tri.Orient2d(node.point, node.prev.point, node.prev.prev.point);
-        if (o == js.poly2tri.Orientation.CCW) {
+        if (o === js.poly2tri.Orientation.CCW) {
             return;
         }
         node = node.prev;
@@ -1592,7 +1592,7 @@ js.poly2tri.sweep.FillEdgeEvent = function(tcx, edge, node) {
 js.poly2tri.sweep.FillRightAboveEdgeEvent = function(tcx, edge, node) {
     while (node.next.point.x < edge.p.x) {
         // Check if next node is below the edge
-        if (js.poly2tri.Orient2d(edge.q, node.next.point, edge.p) == js.poly2tri.Orientation.CCW) {
+        if (js.poly2tri.Orient2d(edge.q, node.next.point, edge.p) === js.poly2tri.Orientation.CCW) {
             js.poly2tri.sweep.FillRightBelowEdgeEvent(tcx, edge, node);
         } else {
             node = node.next;
@@ -1602,7 +1602,7 @@ js.poly2tri.sweep.FillRightAboveEdgeEvent = function(tcx, edge, node) {
 
 js.poly2tri.sweep.FillRightBelowEdgeEvent = function(tcx, edge, node) {
     if (node.point.x < edge.p.x) {
-        if (js.poly2tri.Orient2d(node.point, node.next.point, node.next.next.point) == js.poly2tri.Orientation.CCW) {
+        if (js.poly2tri.Orient2d(node.point, node.next.point, node.next.next.point) === js.poly2tri.Orientation.CCW) {
             // Concave
             js.poly2tri.sweep.FillRightConcaveEdgeEvent(tcx, edge, node);
         } else{
@@ -1618,9 +1618,9 @@ js.poly2tri.sweep.FillRightConcaveEdgeEvent = function(tcx, edge, node) {
     js.poly2tri.sweep.Fill(tcx, node.next);
     if (node.next.point != edge.p) {
         // Next above or below edge?
-        if (js.poly2tri.Orient2d(edge.q, node.next.point, edge.p) == js.poly2tri.Orientation.CCW) {
+        if (js.poly2tri.Orient2d(edge.q, node.next.point, edge.p) === js.poly2tri.Orientation.CCW) {
             // Below
-            if (js.poly2tri.Orient2d(node.point, node.next.point, node.next.next.point) == js.poly2tri.Orientation.CCW) {
+            if (js.poly2tri.Orient2d(node.point, node.next.point, node.next.next.point) === js.poly2tri.Orientation.CCW) {
                 // Next is concave
                 js.poly2tri.sweep.FillRightConcaveEdgeEvent(tcx, edge, node);
             } else {
@@ -1632,13 +1632,13 @@ js.poly2tri.sweep.FillRightConcaveEdgeEvent = function(tcx, edge, node) {
 
 js.poly2tri.sweep.FillRightConvexEdgeEvent = function(tcx, edge, node) {
     // Next concave or convex?
-    if (js.poly2tri.Orient2d(node.next.point, node.next.next.point, node.next.next.next.point) == js.poly2tri.Orientation.CCW) {
+    if (js.poly2tri.Orient2d(node.next.point, node.next.next.point, node.next.next.next.point) === js.poly2tri.Orientation.CCW) {
         // Concave
         js.poly2tri.sweep.FillRightConcaveEdgeEvent(tcx, edge, node.next);
     } else {
         // Convex
         // Next above or below edge?
-        if (js.poly2tri.Orient2d(edge.q, node.next.next.point, edge.p) == js.poly2tri.Orientation.CCW) {
+        if (js.poly2tri.Orient2d(edge.q, node.next.next.point, edge.p) === js.poly2tri.Orientation.CCW) {
             // Below
             js.poly2tri.sweep.FillRightConvexEdgeEvent(tcx, edge, node.next);
         } else {
@@ -1650,7 +1650,7 @@ js.poly2tri.sweep.FillRightConvexEdgeEvent = function(tcx, edge, node) {
 js.poly2tri.sweep.FillLeftAboveEdgeEvent = function(tcx, edge, node) {
     while (node.prev.point.x > edge.p.x) {
         // Check if next node is below the edge
-        if (js.poly2tri.Orient2d(edge.q, node.prev.point, edge.p) == js.poly2tri.Orientation.CW) {
+        if (js.poly2tri.Orient2d(edge.q, node.prev.point, edge.p) === js.poly2tri.Orientation.CW) {
             js.poly2tri.sweep.FillLeftBelowEdgeEvent(tcx, edge, node);
         } else {
             node = node.prev;
@@ -1660,7 +1660,7 @@ js.poly2tri.sweep.FillLeftAboveEdgeEvent = function(tcx, edge, node) {
 
 js.poly2tri.sweep.FillLeftBelowEdgeEvent = function(tcx, edge, node) {
     if (node.point.x > edge.p.x) {
-        if (js.poly2tri.Orient2d(node.point, node.prev.point, node.prev.prev.point) == js.poly2tri.Orientation.CW) {
+        if (js.poly2tri.Orient2d(node.point, node.prev.point, node.prev.prev.point) === js.poly2tri.Orientation.CW) {
             // Concave
             js.poly2tri.sweep.FillLeftConcaveEdgeEvent(tcx, edge, node);
         } else {
@@ -1674,13 +1674,13 @@ js.poly2tri.sweep.FillLeftBelowEdgeEvent = function(tcx, edge, node) {
 
 js.poly2tri.sweep.FillLeftConvexEdgeEvent = function(tcx, edge, node) {
     // Next concave or convex?
-    if (js.poly2tri.Orient2d(node.prev.point, node.prev.prev.point, node.prev.prev.prev.point) == js.poly2tri.Orientation.CW) {
+    if (js.poly2tri.Orient2d(node.prev.point, node.prev.prev.point, node.prev.prev.prev.point) === js.poly2tri.Orientation.CW) {
         // Concave
         js.poly2tri.sweep.FillLeftConcaveEdgeEvent(tcx, edge, node.prev);
     } else {
         // Convex
         // Next above or below edge?
-        if (js.poly2tri.Orient2d(edge.q, node.prev.prev.point, edge.p) == js.poly2tri.Orientation.CW) {
+        if (js.poly2tri.Orient2d(edge.q, node.prev.prev.point, edge.p) === js.poly2tri.Orientation.CW) {
             // Below
             js.poly2tri.sweep.FillLeftConvexEdgeEvent(tcx, edge, node.prev);
         } else {
@@ -1693,9 +1693,9 @@ js.poly2tri.sweep.FillLeftConcaveEdgeEvent = function(tcx, edge, node) {
     js.poly2tri.sweep.Fill(tcx, node.prev);
     if (node.prev.point != edge.p) {
         // Next above or below edge?
-        if (js.poly2tri.Orient2d(edge.q, node.prev.point, edge.p) == js.poly2tri.Orientation.CW) {
+        if (js.poly2tri.Orient2d(edge.q, node.prev.point, edge.p) === js.poly2tri.Orientation.CW) {
             // Below
-            if (js.poly2tri.Orient2d(node.point, node.prev.point, node.prev.prev.point) == js.poly2tri.Orientation.CW) {
+            if (js.poly2tri.Orient2d(node.point, node.prev.point, node.prev.prev.point) === js.poly2tri.Orientation.CW) {
                 // Next is concave
                 js.poly2tri.sweep.FillLeftConcaveEdgeEvent(tcx, edge, node);
             } else {
@@ -1743,7 +1743,7 @@ js.poly2tri.sweep.FlipEdgeEvent = function(tcx, ep, eq, t, p) {
 
 js.poly2tri.sweep.NextFlipTriangle = function(tcx, o, t, ot, p, op) {
     var edge_index;
-    if (o == js.poly2tri.Orientation.CCW) {
+    if (o === js.poly2tri.Orientation.CCW) {
         // ot is not crossing edge after flip
         edge_index = ot.EdgeIndex(p, op);
         ot.delaunay_edge[edge_index] = true;
@@ -1763,10 +1763,10 @@ js.poly2tri.sweep.NextFlipTriangle = function(tcx, o, t, ot, p, op) {
 
 js.poly2tri.sweep.NextFlipPoint = function(ep, eq, ot, op) {
     var o2d = js.poly2tri.Orient2d(eq, op, ep);
-    if (o2d == js.poly2tri.Orientation.CW) {
+    if (o2d === js.poly2tri.Orientation.CW) {
         // Right
         return ot.PointCCW(op);
-    } else if (o2d == js.poly2tri.Orientation.CCW) {
+    } else if (o2d === js.poly2tri.Orientation.CCW) {
         // Left
         return ot.PointCW(op);
     } else {
