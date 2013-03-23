@@ -70,6 +70,7 @@ if (typeof Namespace === 'function') {
     Point.prototype.set_zero = function() {
         this.x = 0.0;
         this.y = 0.0;
+        return this; // for chaining
     };
 
     /**
@@ -80,6 +81,7 @@ if (typeof Namespace === 'function') {
     Point.prototype.set = function(x, y) {
         this.x = +x || 0;
         this.y = +y || 0;
+        return this; // for chaining
     };
 
     /**
@@ -88,6 +90,7 @@ if (typeof Namespace === 'function') {
     Point.prototype.negate = function() {
         this.x = -this.x;
         this.y = -this.y;
+        return this; // for chaining
     };
 
     /**
@@ -97,6 +100,7 @@ if (typeof Namespace === 'function') {
     Point.prototype.add = function(n) {
         this.x += n.x;
         this.y += n.y;
+        return this; // for chaining
     };
 
     /**
@@ -106,6 +110,7 @@ if (typeof Namespace === 'function') {
     Point.prototype.sub = function(n) {
         this.x -= n.x;
         this.y -= n.y;
+        return this; // for chaining
     };
 
     /**
@@ -115,6 +120,7 @@ if (typeof Namespace === 'function') {
     Point.prototype.mul = function(s) {
         this.x *= s;
         this.y *= s;
+        return this; // for chaining
     };
 
     /**
@@ -243,7 +249,6 @@ if (typeof Namespace === 'function') {
                 return a.x * b.y - a.y * b.x;
             }
         }
-
     };
 
 
