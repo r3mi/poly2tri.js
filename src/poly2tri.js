@@ -314,104 +314,88 @@ if (typeof Namespace === 'function') {
         return ("[" + this.points_[0] + this.points_[1] + this.points_[2] + "]");
     };
 
-    Triangle.prototype.GetPoint = function(index) {
+    Triangle.prototype.getPoint = function(index) {
         return this.points_[index];
     };
+    // for backward compatibility
+    Triangle.prototype.GetPoint = Triangle.prototype.getPoint;
 
     Triangle.prototype.GetNeighbor = function(index) {
         return this.neighbors_[index];
     };
 
     /**
-     * Test this Triangle object with another for equality.
-     * @param   t   other Triangle object.
-     * @returns true if equals
-     */
-    Triangle.prototype.equals = function(t) {
-        var a = this.points_, b = t.points_;
-        return (a[0].equals(b[0]) && a[1].equals(b[1]) && a[2].equals(b[2]));
-    };
-
-    /**
-     * Test if this Triangle contains the Point objects given as parameters as its
-     * vertices.
-     * @return <code>True</code> if the Point objects are of the Triangle's vertices,
+     * Test if this Triangle contains the Point object given as parameters as its
+     * vertices. Only point references are compared, not values.
+     * @return <code>True</code> if the Point object is of the Triangle's vertices,
      *         <code>false</code> otherwise.
      */
-    Triangle.prototype.ContainsP = function() {
-        var back = true;
-        for (var aidx = 0; aidx < arguments.length; ++aidx) {
-            back = back && (arguments[aidx].equals(this.points_[0]) ||
-                    arguments[aidx].equals(this.points_[1]) ||
-                    arguments[aidx].equals(this.points_[2]));
-        }
-        return back;
+    Triangle.prototype.containsPoint = function(point) {
+        var points = this.points_;
+        // Here we are comparing point references, not values
+        return (point === points[0] || point === points[1] || point === points[2]);
     };
 
     /**
-     * Test if this Triangle contains the Edge objects given as parameters as its
-     * bounding edges.
-     * @return <code>True</code> if the Edge objects are of the Triangle's bounding
+     * Test if this Triangle contains the Edge object given as parameter as its
+     * bounding edges. Only point references are compared, not values.
+     * @return <code>True</code> if the Edge object is of the Triangle's bounding
      *         edges, <code>false</code> otherwise.
      */
-    Triangle.prototype.ContainsE = function() {
-        var back = true;
-        for (var aidx = 0; aidx < arguments.length; ++aidx) {
-            back = back && this.ContainsP(arguments[aidx].p, arguments[aidx].q);
-        }
-        return back;
+    Triangle.prototype.containsEdge = function(edge) {
+        return this.containsPoint(edge.p) && this.containsPoint(edge.q);
+    };
+    Triangle.prototype.containsPoints = function(p1, p2) {
+        return this.containsPoint(p1) && this.containsPoint(p2);
     };
 
-    Triangle.prototype.IsInterior = function() {
-        if (arguments.length === 0) {
-            return this.interior_;
+
+    Triangle.prototype.isInterior = function() {
+        return this.interior_;
+    };
+    Triangle.prototype.setInterior = function(interior) {
+        this.interior_ = interior;
+        return this;
+    };
+
+    /**
+     * Update neighbor pointers.
+     * @param {Point} p1 Point object.
+     * @param {Point} p2 Point object.
+     * @param {Triangle} t Triangle object.
+     */
+    Triangle.prototype.markNeighborPointers = function(p1, p2, t) {
+        var points = this.points_;
+        // Here we are comparing point references, not values
+        if ((p1 === points[2] && p2 === points[1]) || (p1 === points[1] && p2 === points[2])) {
+            this.neighbors_[0] = t;
+        } else if ((p1 === points[0] && p2 === points[2]) || (p1 === points[2] && p2 === points[0])) {
+            this.neighbors_[1] = t;
+        } else if ((p1 === points[0] && p2 === points[1]) || (p1 === points[1] && p2 === points[0])) {
+            this.neighbors_[2] = t;
         } else {
-            this.interior_ = arguments[0];
-            return this.interior_;
+            throw new Error('poly2tri Invalid Triangle.markNeighborPointers() call');
         }
     };
 
     /**
-     * Update neighbor pointers.<br>
-     * This method takes either 3 parameters (<code>p1</code>, <code>p2</code> and
-     * <code>t</code>) or 1 parameter (<code>t</code>).
-     * @param   p1  Point object.
-     * @param   p2  Point object.
-     * @param   t   Triangle object.
+     * Exhaustive search to update neighbor pointers
+     * @param {Triangle} t
      */
-    Triangle.prototype.MarkNeighbor = function() {
-        var t;
-        if (arguments.length === 3) {
-            var p1 = arguments[0];
-            var p2 = arguments[1];
-            t = arguments[2];
-
-            if ((p1.equals(this.points_[2]) && p2.equals(this.points_[1])) || (p1.equals(this.points_[1]) && p2.equals(this.points_[2]))) {
-                this.neighbors_[0] = t;
-            } else if ((p1.equals(this.points_[0]) && p2.equals(this.points_[2])) || (p1.equals(this.points_[2]) && p2.equals(this.points_[0]))) {
-                this.neighbors_[1] = t;
-            } else if ((p1.equals(this.points_[0]) && p2.equals(this.points_[1])) || (p1.equals(this.points_[1]) && p2.equals(this.points_[0]))) {
-                this.neighbors_[2] = t;
-            } else {
-                throw new Error('poly2tri Invalid Triangle.MarkNeighbor call (1)!');
-            }
-        } else if (arguments.length === 1) {
-            // exhaustive search to update neighbor pointers
-            t = arguments[0];
-            if (t.ContainsP(this.points_[1], this.points_[2])) {
-                this.neighbors_[0] = t;
-                t.MarkNeighbor(this.points_[1], this.points_[2], this);
-            } else if (t.ContainsP(this.points_[0], this.points_[2])) {
-                this.neighbors_[1] = t;
-                t.MarkNeighbor(this.points_[0], this.points_[2], this);
-            } else if (t.ContainsP(this.points_[0], this.points_[1])) {
-                this.neighbors_[2] = t;
-                t.MarkNeighbor(this.points_[0], this.points_[1], this);
-            }
-        } else {
-            throw new TypeError('poly2tri Invalid Triangle.MarkNeighbor call! (2)');
+    Triangle.prototype.MarkNeighbor = function(t) {
+        var points = this.points_;
+        if (t.containsPoints(points[1], points[2])) {
+            this.neighbors_[0] = t;
+            t.markNeighborPointers(points[1], points[2], this);
+        } else if (t.containsPoints(points[0], points[2])) {
+            this.neighbors_[1] = t;
+            t.markNeighborPointers(points[0], points[2], this);
+        } else if (t.containsPoints(points[0], points[1])) {
+            this.neighbors_[2] = t;
+            t.markNeighborPointers(points[0], points[1], this);
         }
     };
+
 
     Triangle.prototype.ClearNeigbors = function() {
         this.neighbors_[0] = null;
@@ -426,42 +410,47 @@ if (typeof Namespace === 'function') {
     };
 
     /**
-     * Return the point clockwise to the given point.
+     * Returns the point clockwise to the given point.
      */
     Triangle.prototype.PointCW = function(p) {
-        if (p.equals(this.points_[0])) {
-            return this.points_[2];
-        } else if (p.equals(this.points_[1])) {
-            return this.points_[0];
-        } else if (p.equals(this.points_[2])) {
-            return this.points_[1];
+        var points = this.points_;
+        // Here we are comparing point references, not values
+        if (p === points[0]) {
+            return points[2];
+        } else if (p === points[1]) {
+            return points[0];
+        } else if (p === points[2]) {
+            return points[1];
         } else {
             return null;
         }
     };
 
     /**
-     * Return the point counter-clockwise to the given point.
+     * Returns the point counter-clockwise to the given point.
      */
     Triangle.prototype.PointCCW = function(p) {
-        if (p.equals(this.points_[0])) {
-            return this.points_[1];
-        } else if (p.equals(this.points_[1])) {
-            return this.points_[2];
-        } else if (p.equals(this.points_[2])) {
-            return this.points_[0];
+        var points = this.points_;
+        // Here we are comparing point references, not values
+        if (p === points[0]) {
+            return points[1];
+        } else if (p === points[1]) {
+            return points[2];
+        } else if (p === points[2]) {
+            return points[0];
         } else {
             return null;
         }
     };
 
     /**
-     * Return the neighbor clockwise to given point.
+     * Returns the neighbor clockwise to given point.
      */
     Triangle.prototype.NeighborCW = function(p) {
-        if (p.equals(this.points_[0])) {
+        // Here we are comparing point references, not values
+        if (p === this.points_[0]) {
             return this.neighbors_[1];
-        } else if (p.equals(this.points_[1])) {
+        } else if (p === this.points_[1]) {
             return this.neighbors_[2];
         } else {
             return this.neighbors_[0];
@@ -469,12 +458,13 @@ if (typeof Namespace === 'function') {
     };
 
     /**
-     * Return the neighbor counter-clockwise to given point.
+     * Returns the neighbor counter-clockwise to given point.
      */
     Triangle.prototype.NeighborCCW = function(p) {
-        if (p.equals(this.points_[0])) {
+        // Here we are comparing point references, not values
+        if (p === this.points_[0]) {
             return this.neighbors_[2];
-        } else if (p.equals(this.points_[1])) {
+        } else if (p === this.points_[1]) {
             return this.neighbors_[0];
         } else {
             return this.neighbors_[1];
@@ -482,9 +472,10 @@ if (typeof Namespace === 'function') {
     };
 
     Triangle.prototype.GetConstrainedEdgeCW = function(p) {
-        if (p.equals(this.points_[0])) {
+        // Here we are comparing point references, not values
+        if (p === this.points_[0]) {
             return this.constrained_edge[1];
-        } else if (p.equals(this.points_[1])) {
+        } else if (p === this.points_[1]) {
             return this.constrained_edge[2];
         } else {
             return this.constrained_edge[0];
@@ -492,9 +483,10 @@ if (typeof Namespace === 'function') {
     };
 
     Triangle.prototype.GetConstrainedEdgeCCW = function(p) {
-        if (p.equals(this.points_[0])) {
+        // Here we are comparing point references, not values
+        if (p === this.points_[0]) {
             return this.constrained_edge[2];
-        } else if (p.equals(this.points_[1])) {
+        } else if (p === this.points_[1]) {
             return this.constrained_edge[0];
         } else {
             return this.constrained_edge[1];
@@ -502,9 +494,10 @@ if (typeof Namespace === 'function') {
     };
 
     Triangle.prototype.SetConstrainedEdgeCW = function(p, ce) {
-        if (p.equals(this.points_[0])) {
+        // Here we are comparing point references, not values
+        if (p === this.points_[0]) {
             this.constrained_edge[1] = ce;
-        } else if (p.equals(this.points_[1])) {
+        } else if (p === this.points_[1]) {
             this.constrained_edge[2] = ce;
         } else {
             this.constrained_edge[0] = ce;
@@ -512,9 +505,10 @@ if (typeof Namespace === 'function') {
     };
 
     Triangle.prototype.SetConstrainedEdgeCCW = function(p, ce) {
-        if (p.equals(this.points_[0])) {
+        // Here we are comparing point references, not values
+        if (p === this.points_[0]) {
             this.constrained_edge[2] = ce;
-        } else if (p.equals(this.points_[1])) {
+        } else if (p === this.points_[1]) {
             this.constrained_edge[0] = ce;
         } else {
             this.constrained_edge[1] = ce;
@@ -522,9 +516,10 @@ if (typeof Namespace === 'function') {
     };
 
     Triangle.prototype.GetDelaunayEdgeCW = function(p) {
-        if (p.equals(this.points_[0])) {
+        // Here we are comparing point references, not values
+        if (p === this.points_[0]) {
             return this.delaunay_edge[1];
-        } else if (p.equals(this.points_[1])) {
+        } else if (p === this.points_[1]) {
             return this.delaunay_edge[2];
         } else {
             return this.delaunay_edge[0];
@@ -532,9 +527,10 @@ if (typeof Namespace === 'function') {
     };
 
     Triangle.prototype.GetDelaunayEdgeCCW = function(p) {
-        if (p.equals(this.points_[0])) {
+        // Here we are comparing point references, not values
+        if (p === this.points_[0]) {
             return this.delaunay_edge[2];
-        } else if (p.equals(this.points_[1])) {
+        } else if (p === this.points_[1]) {
             return this.delaunay_edge[0];
         } else {
             return this.delaunay_edge[1];
@@ -542,9 +538,10 @@ if (typeof Namespace === 'function') {
     };
 
     Triangle.prototype.SetDelaunayEdgeCW = function(p, e) {
-        if (p.equals(this.points_[0])) {
+        // Here we are comparing point references, not values
+        if (p === this.points_[0]) {
             this.delaunay_edge[1] = e;
-        } else if (p.equals(this.points_[1])) {
+        } else if (p === this.points_[1]) {
             this.delaunay_edge[2] = e;
         } else {
             this.delaunay_edge[0] = e;
@@ -552,9 +549,10 @@ if (typeof Namespace === 'function') {
     };
 
     Triangle.prototype.SetDelaunayEdgeCCW = function(p, e) {
-        if (p.equals(this.points_[0])) {
+        // Here we are comparing point references, not values
+        if (p === this.points_[0]) {
             this.delaunay_edge[2] = e;
-        } else if (p.equals(this.points_[1])) {
+        } else if (p === this.points_[1]) {
             this.delaunay_edge[0] = e;
         } else {
             this.delaunay_edge[1] = e;
@@ -565,9 +563,10 @@ if (typeof Namespace === 'function') {
      * The neighbor across to given point.
      */
     Triangle.prototype.NeighborAcross = function(p) {
-        if (p.equals(this.points_[0])) {
+        // Here we are comparing point references, not values
+        if (p === this.points_[0]) {
             return this.neighbors_[0];
-        } else if (p.equals(this.points_[1])) {
+        } else if (p === this.points_[1]) {
             return this.neighbors_[1];
         } else {
             return this.neighbors_[2];
@@ -580,67 +579,69 @@ if (typeof Namespace === 'function') {
     };
 
     /**
-     * Legalize triangle by rotating clockwise.<br>
-     * This method takes either 1 parameter (then the triangle is rotated around
-     * points(0)) or 2 parameters (then the triangle is rotated around the first
-     * parameter).
+     * Legalize triagnle by rotating clockwise around oPoint
+     * @param {Point} opoint
+     * @param {Point} npoint
      */
-    Triangle.prototype.Legalize = function() {
-        if (arguments.length === 1) {
-            this.Legalize(this.points_[0], arguments[0]);
-        } else if (arguments.length === 2) {
-            var opoint = arguments[0];
-            var npoint = arguments[1];
-
-            if (opoint.equals(this.points_[0])) {
-                this.points_[1] = this.points_[0];
-                this.points_[0] = this.points_[2];
-                this.points_[2] = npoint;
-            } else if (opoint.equals(this.points_[1])) {
-                this.points_[2] = this.points_[1];
-                this.points_[1] = this.points_[0];
-                this.points_[0] = npoint;
-            } else if (opoint.equals(this.points_[2])) {
-                this.points_[0] = this.points_[2];
-                this.points_[2] = this.points_[1];
-                this.points_[1] = npoint;
-            } else {
-                throw new Error('poly2tri Invalid Triangle.Legalize() call!');
-            }
+    Triangle.prototype.Legalize = function(opoint, npoint) {
+        var points = this.points_;
+        // Here we are comparing point references, not values
+        if (opoint === points[0]) {
+            points[1] = points[0];
+            points[0] = points[2];
+            points[2] = npoint;
+        } else if (opoint === points[1]) {
+            points[2] = points[1];
+            points[1] = points[0];
+            points[0] = npoint;
+        } else if (opoint === points[2]) {
+            points[0] = points[2];
+            points[2] = points[1];
+            points[1] = npoint;
         } else {
-            throw new TypeError('poly2tri Invalid Triangle.Legalize() call!');
+            throw new Error('poly2tri Invalid Triangle.Legalize() call');
         }
     };
 
+    /**
+     * Returns the index of a point in the triangle. 
+     * The point *must* be a reference to one of the triangle's vertices.
+     * @param {Point} p Point object
+     * @returns {Number} index 0, 1 or 2
+     */
     Triangle.prototype.Index = function(p) {
-        if (p.equals(this.points_[0])) {
+        var points = this.points_;
+        // Here we are comparing point references, not values
+        if (p === points[0]) {
             return 0;
-        } else if (p.equals(this.points_[1])) {
+        } else if (p === points[1]) {
             return 1;
-        } else if (p.equals(this.points_[2])) {
+        } else if (p === points[2]) {
             return 2;
         } else {
-            return -1;
+            throw new Error('poly2tri Invalid Triangle.Index() call');
         }
     };
 
     Triangle.prototype.EdgeIndex = function(p1, p2) {
-        if (p1.equals(this.points_[0])) {
-            if (p2.equals(this.points_[1])) {
+        var points = this.points_;
+        // Here we are comparing point references, not values
+        if (p1 === points[0]) {
+            if (p2 === points[1]) {
                 return 2;
-            } else if (p2.equals(this.points_[2])) {
+            } else if (p2 === points[2]) {
                 return 1;
             }
-        } else if (p1.equals(this.points_[1])) {
-            if (p2.equals(this.points_[2])) {
+        } else if (p1 === points[1]) {
+            if (p2 === points[2]) {
                 return 0;
-            } else if (p2.equals(this.points_[0])) {
+            } else if (p2 === points[0]) {
                 return 2;
             }
-        } else if (p1.equals(this.points_[2])) {
-            if (p2.equals(this.points_[0])) {
+        } else if (p1 === points[2]) {
+            if (p2 === points[0]) {
                 return 1;
-            } else if (p2.equals(this.points_[1])) {
+            } else if (p2 === points[1]) {
                 return 0;
             }
         }
@@ -652,25 +653,21 @@ if (typeof Namespace === 'function') {
      * This method takes either 1 parameter (an edge index or an Edge instance) or
      * 2 parameters (two Point instances defining the edge of the triangle).
      */
-    Triangle.prototype.MarkConstrainedEdge = function() {
-        if (arguments.length === 1) {
-            if (typeof(arguments[0]) === 'number') {
-                this.constrained_edge[arguments[0]] = true;
-            } else {
-                this.MarkConstrainedEdge(arguments[0].p, arguments[0].q);
-            }
-        } else if (arguments.length === 2) {
-            var p = arguments[0];
-            var q = arguments[1];
-            if ((q.equals(this.points_[0]) && p.equals(this.points_[1])) || (q.equals(this.points_[1]) && p.equals(this.points_[0]))) {
-                this.constrained_edge[2] = true;
-            } else if ((q.equals(this.points_[0]) && p.equals(this.points_[2])) || (q.equals(this.points_[2]) && p.equals(this.points_[0]))) {
-                this.constrained_edge[1] = true;
-            } else if ((q.equals(this.points_[1]) && p.equals(this.points_[2])) || (q.equals(this.points_[2]) && p.equals(this.points_[1]))) {
-                this.constrained_edge[0] = true;
-            }
-        } else {
-            throw new TypeError('poly2tri Invalid Triangle.MarkConstrainedEdge() call!');
+    Triangle.prototype.markConstrainedEdgeByIndex = function(index) {
+        this.constrained_edge[index] = true;
+    };
+    Triangle.prototype.markConstrainedEdgeByEdge = function(edge) {
+        this.markConstrainedEdgeByPoints(edge.p, edge.q);
+    };
+    Triangle.prototype.markConstrainedEdgeByPoints = function(p, q) {
+        var points = this.points_;
+        // Here we are comparing point references, not values        
+        if ((q === points[0] && p === points[1]) || (q === points[1] && p === points[0])) {
+            this.constrained_edge[2] = true;
+        } else if ((q === points[0] && p === points[2]) || (q === points[2] && p === points[0])) {
+            this.constrained_edge[1] = true;
+        } else if ((q === points[1] && p === points[2]) || (q === points[2] && p === points[1])) {
+            this.constrained_edge[0] = true;
         }
     };
 
@@ -823,27 +820,27 @@ if (typeof Namespace === 'function') {
         var nx = node.point.x;
 
         if (px === nx) {
-            // We might have two nodes with same x value for a short time
-            if (node.prev && point.equals(node.prev.point)) {
-                node = node.prev;
-            } else if (node.next && point.equals(node.next.point)) {
-                node = node.next;
-            } else if (point.equals(node.point)) {
-                // do nothing
-                /* jshint noempty:false */
-            } else {
-                throw new Error('poly2tri Invalid AdvancingFront.LocatePoint() call!');
+            // Here we are comparing point references, not values
+            if (point !== node.point) {
+                // We might have two nodes with same x value for a short time
+                if (point === node.prev.point) {
+                    node = node.prev;
+                } else if (point === node.next.point) {
+                    node = node.next;
+                } else {
+                    throw new Error('poly2tri Invalid AdvancingFront.LocatePoint() call');
+                }
             }
         } else if (px < nx) {
             /* jshint boss:true */
             while (node = node.prev) {
-                if (point.equals(node.point)) {
+                if (point === node.point) {
                     break;
                 }
             }
         } else {
             while (node = node.next) {
-                if (point.equals(node.point)) {
+                if (point === node.point) {
                     break;
                 }
             }
@@ -1088,8 +1085,8 @@ if (typeof Namespace === 'function') {
         var triangles = [triangle], t, i;
         /* jshint boss:true */
         while (t = triangles.pop()) {
-            if (!t.IsInterior()) {
-                t.IsInterior(true);
+            if (!t.isInterior()) {
+                t.setInterior(true);
                 this.triangles_.push(t);
                 for (i = 0; i < 3; i++) {
                     if (!t.constrained_edge[i]) {
@@ -1108,7 +1105,7 @@ if (typeof Namespace === 'function') {
      * Triangulate simple polygon with holes.
      * @param   tcx SweepContext object.
      */
-    Sweep.Triangulate = function(tcx) {
+    Sweep.triangulate = function(tcx) {
         tcx.InitTriangulation();
         tcx.CreateAdvancingFront();
         // Sweep points; build mesh
@@ -1123,7 +1120,7 @@ if (typeof Namespace === 'function') {
             var point = tcx.GetPoint(i);
             var node = Sweep.PointEvent(tcx, point);
             for (var j = 0; j < point.edge_list.length; ++j) {
-                Sweep.EdgeEvent(tcx, point.edge_list[j], node);
+                Sweep.edgeEventByEdge(tcx, point.edge_list[j], node);
             }
         }
     };
@@ -1161,70 +1158,62 @@ if (typeof Namespace === 'function') {
         return new_node;
     };
 
-    Sweep.EdgeEvent = function(tcx) {
-        if (arguments.length === 3) {
-            var edge = arguments[1];
-            var node = arguments[2];
+    Sweep.edgeEventByEdge = function(tcx, edge, node) {
+        tcx.edge_event.constrained_edge = edge;
+        tcx.edge_event.right = (edge.p.x > edge.q.x);
 
-            tcx.edge_event.constrained_edge = edge;
-            tcx.edge_event.right = (edge.p.x > edge.q.x);
+        if (Sweep.IsEdgeSideOfTriangle(node.triangle, edge.p, edge.q)) {
+            return;
+        }
 
-            if (Sweep.IsEdgeSideOfTriangle(node.triangle, edge.p, edge.q)) {
-                return;
-            }
+        // For now we will do all needed filling
+        // TODO: integrate with flip process might give some better performance
+        //       but for now this avoid the issue with cases that needs both flips and fills
+        Sweep.FillEdgeEvent(tcx, edge, node);
+        Sweep.edgeEventByPoints(tcx, edge.p, edge.q, node.triangle, edge.q);
+    };
 
-            // For now we will do all needed filling
-            // TODO: integrate with flip process might give some better performance
-            //       but for now this avoid the issue with cases that needs both flips and fills
-            Sweep.FillEdgeEvent(tcx, edge, node);
-            Sweep.EdgeEvent(tcx, edge.p, edge.q, node.triangle, edge.q);
-        } else if (arguments.length === 5) {
-            var ep = arguments[1];
-            var eq = arguments[2];
-            var triangle = arguments[3];
-            var point = arguments[4];
+    Sweep.edgeEventByPoints = function(tcx, ep, eq, triangle, point) {
+        if (Sweep.IsEdgeSideOfTriangle(triangle, ep, eq)) {
+            return;
+        }
 
-            if (Sweep.IsEdgeSideOfTriangle(triangle, ep, eq)) {
-                return;
-            }
+        var p1 = triangle.PointCCW(point);
+        var o1 = orient2d(eq, p1, ep);
+        if (o1 === Orientation.COLLINEAR) {
+            // TODO integrate here changes from C++ version
+            throw new Error('poly2tri EdgeEvent: Collinear not supported! ' + eq + p1 + ep);
+        }
 
-            var p1 = triangle.PointCCW(point);
-            var o1 = orient2d(eq, p1, ep);
-            if (o1 === Orientation.COLLINEAR) {
-                throw new Error('poly2tri EdgeEvent: Collinear not supported! ' + eq + p1 + ep);
-            }
+        var p2 = triangle.PointCW(point);
+        var o2 = orient2d(eq, p2, ep);
+        if (o2 === Orientation.COLLINEAR) {
+            // TODO integrate here changes from C++ version
+            throw new Error('poly2tri EdgeEvent: Collinear not supported! ' + eq + p2 + ep);
+        }
 
-            var p2 = triangle.PointCW(point);
-            var o2 = orient2d(eq, p2, ep);
-            if (o2 === Orientation.COLLINEAR) {
-                throw new Error('poly2tri EdgeEvent: Collinear not supported! ' + eq + p2 + ep);
-            }
-
-            if (o1 === o2) {
-                // Need to decide if we are rotating CW or CCW to get to a triangle
-                // that will cross edge
-                if (o1 === Orientation.CW) {
-                    triangle = triangle.NeighborCCW(point);
-                } else {
-                    triangle = triangle.NeighborCW(point);
-                }
-                Sweep.EdgeEvent(tcx, ep, eq, triangle, point);
+        if (o1 === o2) {
+            // Need to decide if we are rotating CW or CCW to get to a triangle
+            // that will cross edge
+            if (o1 === Orientation.CW) {
+                triangle = triangle.NeighborCCW(point);
             } else {
-                // This triangle crosses constraint so lets flippin start!
-                Sweep.FlipEdgeEvent(tcx, ep, eq, triangle, point);
+                triangle = triangle.NeighborCW(point);
             }
+            Sweep.edgeEventByPoints(tcx, ep, eq, triangle, point);
         } else {
-            throw new TypeError('poly2tri Invalid EdgeEvent() call!');
+            // This triangle crosses constraint so lets flippin start!
+            Sweep.FlipEdgeEvent(tcx, ep, eq, triangle, point);
         }
     };
 
     Sweep.IsEdgeSideOfTriangle = function(triangle, ep, eq) {
         var index = triangle.EdgeIndex(ep, eq);
         if (index !== -1) {
-            triangle.MarkConstrainedEdge(index);
+            triangle.markConstrainedEdgeByIndex(index);
             var t = triangle.GetNeighbor(index);
             if (t) {
-                t.MarkConstrainedEdge(ep, eq);
+                t.markConstrainedEdgeByPoints(ep, eq);
             }
             return true;
         }
@@ -1285,7 +1274,6 @@ if (typeof Namespace === 'function') {
         // Fill right holes
         var node = n.next;
         var angle;
-
         while (node.next) {
             angle = Sweep.HoleAngle(node);
             if (angle > PI_2 || angle < -(PI_2)) {
@@ -1297,7 +1285,6 @@ if (typeof Namespace === 'function') {
 
         // Fill left holes
         node = n.prev;
-
         while (node.prev) {
             angle = Sweep.HoleAngle(node);
             if (angle > PI_2 || angle < -(PI_2)) {
@@ -1779,8 +1766,8 @@ if (typeof Namespace === 'function') {
             // But to be really equivalent, we should use "Point.equals" here.
             if (p === eq && op === ep) {
                 if (eq === tcx.edge_event.constrained_edge.q && ep === tcx.edge_event.constrained_edge.p) {
-                    t.MarkConstrainedEdge(ep, eq);
-                    ot.MarkConstrainedEdge(ep, eq);
+                    t.markConstrainedEdgeByPoints(ep, eq);
+                    ot.markConstrainedEdgeByPoints(ep, eq);
                     Sweep.Legalize(tcx, t);
                     Sweep.Legalize(tcx, ot);
                 } else {
@@ -1795,7 +1782,7 @@ if (typeof Namespace === 'function') {
         } else {
             var newP = Sweep.NextFlipPoint(ep, eq, ot, op);
             Sweep.FlipScanEdgeEvent(tcx, ep, eq, t, ot, newP);
-            Sweep.EdgeEvent(tcx, ep, eq, t, p);
+            Sweep.edgeEventByPoints(tcx, ep, eq, t, p);
         }
     };
 
@@ -1859,13 +1846,13 @@ if (typeof Namespace === 'function') {
 
 // ---------------------------------------------------------Exports (public API)
 
-    poly2tri.Point = Point;
-    poly2tri.Triangle = Triangle;
-    poly2tri.SweepContext = SweepContext;
-    poly2tri.triangulate = Sweep.Triangulate;
+    poly2tri.Point          = Point;
+    poly2tri.Triangle       = Triangle;
+    poly2tri.SweepContext   = SweepContext;
+    poly2tri.triangulate    = Sweep.triangulate;
 
     // Backward compatibility
-    poly2tri.sweep = {Triangulate: Sweep.Triangulate};
+    poly2tri.sweep = {Triangulate: Sweep.triangulate};
 
 }(poly2tri));
 

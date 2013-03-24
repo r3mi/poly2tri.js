@@ -83,9 +83,9 @@ describe("poly2tri", function() {
                 var j, plen = points.length;
                 for (j = 0; j < plen && !(found0 && found1 && found2); j++) {
                     var point = points[j];
-                    found0 = found0 || triangle.GetPoint(0).equals(point);
-                    found1 = found1 || triangle.GetPoint(1).equals(point);
-                    found2 = found2 || triangle.GetPoint(2).equals(point);
+                    found0 = found0 || triangle.getPoint(0).equals(point);
+                    found1 = found1 || triangle.getPoint(1).equals(point);
+                    found2 = found2 || triangle.getPoint(2).equals(point);
                 }
             });
             if (!(found0 && found1 && found2)) {
@@ -108,7 +108,7 @@ describe("poly2tri", function() {
             for (i = 0; i < plen && !failed; i++) {
                 var point = points[i], found = false, j, tlen = triangles.length;
                 for (j = 0; j < tlen && !found; j++) {
-                    found = found || triangles[j].ContainsP(point);
+                    found = found || triangles[j].containsPoint(point);
                 }
                 if (!found) {
                     failed = point;
@@ -176,30 +176,17 @@ describe("poly2tri", function() {
             p3 = new P.Point(5, 6);
             t = new P.Triangle(p1, p2, p3);
         });
-        it("should have a GetPoint() method", function() {
-            expect(t.GetPoint(0)).toBe(p1);
-            expect(t.GetPoint(1)).toBe(p2);
-            expect(t.GetPoint(2)).toBe(p3);
+        it("should have a getPoint() method", function() {
+            expect(t.getPoint(0)).toBe(p1);
+            expect(t.getPoint(1)).toBe(p2);
+            expect(t.getPoint(2)).toBe(p3);
         });
-        it("should have a ContainsP() method", function() {
-            expect(t.ContainsP(p1)).toBeTruthy();
-            expect(t.ContainsP(p2)).toBeTruthy();
-            expect(t.ContainsP(p3)).toBeTruthy();
-            expect(t.ContainsP(new P.Point(1, 2))).toBeTruthy();
-            expect(t.ContainsP(new P.Point(7, 8))).toBeFalsy();
-        });
-        it("should have an Index() method", function() {
-            expect(t.Index(p1)).toBe(0);
-            expect(t.Index(p2)).toBe(1);
-            expect(t.Index(p3)).toBe(2);
-            expect(t.Index(new P.Point(1, 2))).toBe(0);
-            expect(t.Index(new P.Point(7, 8))).toBe(-1);
-        });
-        it("should have a equals() method", function() {
-            expect(t.equals(t)).toBeTruthy();
-            expect(t.equals(new P.Triangle(p1, p2, p3))).toBeTruthy();
-            expect(t.equals(new P.Triangle(p1, p2, new P.Point(5, 6)))).toBeTruthy();
-            expect(t.equals(new P.Triangle(p1, p2, new P.Point()))).toBeFalsy();
+        it("should have a containsPoint() method", function() {
+            expect(t.containsPoint(p1)).toBeTruthy();
+            expect(t.containsPoint(p2)).toBeTruthy();
+            expect(t.containsPoint(p3)).toBeTruthy();
+            expect(t.containsPoint(new P.Point(1, 2))).toBeFalsy(); // compares references, not values
+            expect(t.containsPoint(new P.Point(7, 8))).toBeFalsy();
         });
         it("should have a toString() method", function() {
             expect(t.toString()).toBe("[(1;2)(3;4)(5;6)]");
@@ -288,15 +275,18 @@ describe("poly2tri", function() {
                 expect(swctx.GetBoundingBox().max).toEqualPoint({x: 200, y: 200});
             });
             it("should return the same triangle", function() {
-                expect(t[0].ContainsP(contour[0])).toBeTruthy();
-                expect(t[0].ContainsP(contour[1])).toBeTruthy();
-                expect(t[0].ContainsP(contour[2])).toBeTruthy();
+                expect(t[0].containsPoint(contour[0])).toBeTruthy();
+                expect(t[0].containsPoint(contour[1])).toBeTruthy();
+                expect(t[0].containsPoint(contour[2])).toBeTruthy();
             });
             it("should triangulate (backward compatibility)", function() {
                 var swctx2 = new P.SweepContext(contour, options);
                 P.sweep.Triangulate(swctx2);
                 var t2 = swctx2.GetTriangles();
-                expect(t[0].equals(t2[0])).toBeTruthy();
+                expect(t2.length).toBe(1);
+                expect(t[0].getPoint(0)).toEqualPoint(t2[0].getPoint(0));
+                expect(t[0].getPoint(1)).toEqualPoint(t2[0].getPoint(1));
+                expect(t[0].getPoint(2)).toEqualPoint(t2[0].getPoint(2));
             });
         });
         describe("a square", function() {
@@ -632,9 +622,9 @@ describe("poly2tri", function() {
             });
             it("should keep extra information", function() {
                 t.forEach(function(triangle) {
-                    expect(triangle.GetPoint(0).myfield).toMatch(/f\d+/);
-                    expect(triangle.GetPoint(1).myfield).toMatch(/f\d+/);
-                    expect(triangle.GetPoint(2).myfield).toMatch(/f\d+/);
+                    expect(triangle.getPoint(0).myfield).toMatch(/f\d+/);
+                    expect(triangle.getPoint(1).myfield).toMatch(/f\d+/);
+                    expect(triangle.getPoint(2).myfield).toMatch(/f\d+/);
                 });
             });
         });
