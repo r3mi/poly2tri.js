@@ -84,6 +84,15 @@ All functions and classes are scoped in the `poly2tri` namespace.
 See [`index.html`](index.html) for a complete sample.
 
 
+Advanced Options
+----------------
+
+### poly2tri.noConflict
+Reverts the `poly2tri` global object back to its original value, 
+and returns a reference to this `poly2tri` object.
+
+        var p = poly2tri.noConflict();
+
 
 Displaying the samples
 ----------------------

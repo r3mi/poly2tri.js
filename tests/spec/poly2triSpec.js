@@ -128,15 +128,20 @@ describe("poly2tri", function() {
      *   not all the methods or all sub-classes.
      */
 
-    it("should have poly2tri namespace", function() {
-        expect(poly2tri).toBeDefined();
-    });
-    it("should have js.poly2tri namespace (backward compatibility)", function() {
-        expect(js.poly2tri).toBeDefined();
-        expect(js.poly2tri).toBe(poly2tri);
-    });
+    var P = poly2tri; // Our global shortcut
 
-    var P = poly2tri; // shortcut
+    describe("namespace", function() {
+        it("should be 'poly2tri' by default", function() {
+            expect(poly2tri).toBeDefined();
+            expect(poly2tri.Point).toBeDefined();
+        });
+        it("should have a noConflict() method", function() {
+            var P2 = poly2tri.noConflict();
+            expect(poly2tri).not.toBeDefined();
+            expect(P2).toBeDefined();
+            expect(P2.Point).toBeDefined();
+        });
+    });
 
     describe("Point", function() {
         it("should have a default constructor", function() {
@@ -222,9 +227,9 @@ describe("poly2tri", function() {
 
         // Common options for SweepContext
         var options = { cloneArrays: true };
-        
-        // Helper matchers to ease test writing
+
         beforeEach(function() {
+            // Helper matchers to ease test writing
             this.addMatchers({
                 // Checks that a point equals another
                 toEqualPoint: function(p2) {

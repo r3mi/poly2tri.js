@@ -32,22 +32,37 @@
 /* jshint browser:false */
 /* global Namespace */
 
-// Tests "Namespace.js" support, for backward compatilibilty
-if (typeof Namespace === 'function') {
-    Namespace('poly2tri');
-    // also "js.poly2tri" namespace, for backward compatilibilty
-    Namespace('js.poly2tri');
-    js.poly2tri = poly2tri;
-} else {
-    var poly2tri = poly2tri || {};
-    // also "js.poly2tri" namespace, for backward compatilibilty
-    var js = js || {};
-    js.poly2tri = poly2tri;
-}
 
-(function(poly2tri) {
+/**
+ * Module encapsulation
+ * @param {Object} global a reference to the global object :
+ *                      window in the browser, global on the server
+ */
+(function(global) {
     "use strict";
+    
+// --------------------------------------------------------------poly2tri module
 
+    // Save the previous value of the poly2tri variable, 
+    // so that it can be restored later on, if noConflict is used.
+    var previousPoly2tri = global.poly2tri;
+
+    // The top-level namespace. All public poly2tri classes and functions will
+    // be attached to it. Exported for both the browser and the server (Node.js).
+    var poly2tri;
+    if (typeof exports !== 'undefined') {
+        poly2tri = exports;
+    } else {
+        poly2tri = global.poly2tri = {};
+    }
+
+    // Runs the library in noConflict mode, returning the poly2tri variable 
+    // to its previous owner. Returns a reference to this library object.
+    poly2tri.noConflict = function() {
+        global.poly2tri = previousPoly2tri;
+        return this;
+    };
+  
 // ------------------------------------------------------------------------Point
     /**
      * Construct a point
@@ -1854,10 +1869,16 @@ if (typeof Namespace === 'function') {
     // Backward compatibility
     poly2tri.sweep = {Triangulate: Sweep.triangulate};
 
-}(poly2tri));
+}(this));
 
-// -----------------------------------------------------------------------------
+
+// ----------------------------------------------------Namespace.js (deprecated)
+
+// Tests "Namespace.js" support, for backward compatilibilty
 if (typeof Namespace === 'function') {
-    Namespace.provide('poly2tri');
+    // Put in the "js.poly2tri" namespace
+    Namespace('js.poly2tri');
+    js.poly2tri = poly2tri;
     Namespace.provide('js.poly2tri');
 }
+
