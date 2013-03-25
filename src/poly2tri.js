@@ -29,8 +29,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* jshint browser:false */
-/* global Namespace */
+/* jshint browser:false, forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, 
+   strict:true, undef:true, unused:true, curly:true, immed:true, latedef:true, 
+   newcap:true, trailing:true, maxcomplexity:11, indent:4 
+ */
 
 
 /**
@@ -40,7 +42,7 @@
  */
 (function(global) {
     "use strict";
-    
+
 // --------------------------------------------------------------poly2tri module
 
     // Save the previous value of the poly2tri variable, 
@@ -50,6 +52,7 @@
     // The top-level namespace. All public poly2tri classes and functions will
     // be attached to it. Exported for both the browser and the server (Node.js).
     var poly2tri;
+    /* global exports */
     if (typeof exports !== 'undefined') {
         poly2tri = exports;
     } else {
@@ -62,7 +65,7 @@
         global.poly2tri = previousPoly2tri;
         return this;
     };
-  
+
 // ------------------------------------------------------------------------Point
     /**
      * Construct a point
@@ -1026,7 +1029,7 @@
 
     SweepContext.prototype.InitEdges = function(polyline) {
         var i, len = polyline.length;
-        for (var i = 0; i < len; ++i) {
+        for (i = 0; i < len; ++i) {
             this.edge_list.push(new Edge(polyline[i], polyline[(i + 1) % len]));
         }
     };
@@ -1874,11 +1877,17 @@
 
 // ----------------------------------------------------Namespace.js (deprecated)
 
-// Tests "Namespace.js" support, for backward compatilibilty
-if (typeof Namespace === 'function') {
-    // Put in the "js.poly2tri" namespace
-    Namespace('js.poly2tri');
-    js.poly2tri = poly2tri;
-    Namespace.provide('js.poly2tri');
-}
+(function() { // to scope jshint directives
+    "use strict";
+    /* jshint newcap:false */
+    /* global Namespace, js, poly2tri */
+
+    // Tests "Namespace.js" support, for backward compatilibilty
+    if (typeof Namespace === 'function') {
+        // Put in the "js.poly2tri" namespace
+        Namespace('js.poly2tri');
+        js.poly2tri = poly2tri;
+        Namespace.provide('js.poly2tri');
+    }
+}());
 
