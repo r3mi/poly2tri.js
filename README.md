@@ -122,3 +122,11 @@ Some of the tests load data from the `tests/data` directory, using Ajax.
 If these fail in your environement due to *Access-Control-Allow-Origin*
 (JavaScript will disallow access to the local file://), you will 
 have to run the tests through a local web server.
+
+
+Performance tests
+-----------------
+
+This [jsPerf](http://jsperf.com/poly2tri) compares the performances 
+across several versions of the library.
+
