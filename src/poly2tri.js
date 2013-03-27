@@ -35,6 +35,15 @@
  */
 
 
+/*
+ * Note
+ * ====
+ * the structure of this JavaScript version of poly2tri intentionnaly follows
+ * as closely as possible the structure of the reference C++ version, to make it 
+ * easier to keep the 2 versions in sync.
+ */
+
+
 /**
  * Module encapsulation
  * @param {Object} global a reference to the global object :
@@ -76,8 +85,11 @@
         this.x = +x || 0;
         this.y = +y || 0;
 
+        // All extra fields added to Point are prefixed with _p2t_
+        // to avoid collisions if custom Point class is used.
+        
         // The edges this point constitutes an upper ending point
-        this.edge_list = [];
+        this._p2t_edge_list = null;
     };
 
     /**
@@ -166,7 +178,7 @@
 
     /**
      * Test this Point object with another for equality.
-     * @param   p   Point object.
+     * @param   p   any "Point like" object with {x,y} (duck typing)
      * @return <code>True</code> if <code>this == p</code>, <code>false</code> otherwise.
      */
     Point.prototype.equals = function(p) {
@@ -175,6 +187,18 @@
 
 // -------------------------------------------------------Point (static methods)
 
+    /**
+     * Point pretty printing ex. <i>"(5;42)"</i>)
+     * @param   p   any "Point like" object with {x,y} (duck typing)
+     * @returns {String}
+     */
+    Point.toString = function(p) {
+        // Try a custom toString first, and fallback to Point.prototype.toString if none
+        var s = p.toString();
+        return (s === '[object Object]' ? Point.prototype.toString.call(p) : s);
+    };
+    var p2s = Point.toString; // shortcut
+    
     /**
      * Negate a point component-wise and return the result as a new Point object.
      * @param   p   Point object.
@@ -186,8 +210,7 @@
 
     /**
      * Compare two points component-wise.
-     * @param   a   Point object.
-     * @param   b   Point object.
+     * @param   a,b   any "Point like" objects with {x,y} (duck typing)
      * @return <code>-1</code> if <code>a &lt; b</code>, <code>1</code> if
      *         <code>a &gt; b</code>, <code>0</code> otherwise.
      */
@@ -231,8 +254,7 @@
 
     /**
      * Test two Point objects for equality.
-     * @param   a   Point object.
-     * @param   b   Point object.
+     * @param   a,b   any "Point like" objects with {x,y} (duck typing)
      * @return <code>True</code> if <code>a == b</code>, <code>false</code> otherwise.
      */
     Point.equals = function(a, b) {
@@ -241,8 +263,7 @@
 
     /**
      * Peform the dot product on two vectors.
-     * @param   a   Point object.
-     * @param   b   Point object.
+     * @param   a,b   any "Point like" objects with {x,y} (duck typing)
      * @return The dot product (as a number).
      */
     Point.dot = function(a, b) {
@@ -293,11 +314,14 @@
                 this.q = p1;
                 this.p = p2;
             } else if (p1.x === p2.x) {
-                throw new Error('poly2tri Invalid Edge constructor: repeated points! ' + p1);
+                throw new Error('poly2tri Invalid Edge constructor: repeated points! ' + p2s(p1));
             }
         }
 
-        this.q.edge_list.push(this);
+        if (! this.q._p2t_edge_list) {
+            this.q._p2t_edge_list = [];
+        }
+        this.q._p2t_edge_list.push(this);
     };
 
 // ---------------------------------------------------------------------Triangle
@@ -308,9 +332,7 @@
      * See: J. Shewchuk, "Triangle: Engineering a 2D Quality Mesh Generator and
      * Delaunay Triangulator", "Triangulations in CGAL"
      * 
-     * @param   a  Point object.
-     * @param   b  Point object.
-     * @param   c  Point object.
+     * @param   a,b,c   any "Point like" objects with {x,y} (duck typing)
      */
     var Triangle = function(a, b, c) {
         // Triangle points
@@ -329,7 +351,7 @@
      * For pretty printing ex. <i>"[(5;42)(10;20)(21;30)]"</i>)
      */
     Triangle.prototype.toString = function() {
-        return ("[" + this.points_[0] + this.points_[1] + this.points_[2] + "]");
+        return ("[" + p2s(this.points_[0]) + p2s(this.points_[1]) + p2s(this.points_[2]) + "]");
     };
 
     Triangle.prototype.getPoint = function(index) {
@@ -762,7 +784,7 @@
 // ---------------------------------------------------------------AdvancingFront
     /**
      * Advancing front node
-     * @param {Point} p point
+     * @param {Point} p any "Point like" object with {x,y} (duck typing)
      * @param {Triangle} t triangle (optionnal)
      */
     var Node = function(p, t) {
@@ -902,7 +924,7 @@
      *                  (contour, holes). Points inside arrays are never copied.
      *                  Default is false : keep a reference to the array arguments,
      *                  who will be modified in place.
-     * @param {Array} contour  a simple polyline (array of Points).
+     * @param {Array} contour  array of "Point like" objects with {x,y} (duck typing)
      * @param {Object} options  constructor options
      */
     var SweepContext = function(contour, options) {
@@ -936,7 +958,7 @@
 
     /**
      * Add a hole to the constraints
-     * @param {Array} polyline  array of Points
+     * @param {Array} polyline  array of "Point like" objects with {x,y} (duck typing)
      */
     SweepContext.prototype.AddHole = function(polyline) {
         this.InitEdges(polyline);
@@ -949,7 +971,7 @@
 
     /**
      * Add a Steiner point to the constraints
-     * @param {Point} point     point to add
+     * @param {Point} point     any "Point like" object with {x,y} (duck typing)
      */
     SweepContext.prototype.AddPoint = function(point) {
         this.points_.push(point);
@@ -1137,8 +1159,9 @@
         for (i = 1; i < len; ++i) {
             var point = tcx.GetPoint(i);
             var node = Sweep.PointEvent(tcx, point);
-            for (var j = 0; j < point.edge_list.length; ++j) {
-                Sweep.edgeEventByEdge(tcx, point.edge_list[j], node);
+            var edges = point._p2t_edge_list;
+            for (var j = 0; edges && j < edges.length; ++j) {
+                Sweep.edgeEventByEdge(tcx, edges[j], node);
             }
         }
     };
@@ -1200,14 +1223,14 @@
         var o1 = orient2d(eq, p1, ep);
         if (o1 === Orientation.COLLINEAR) {
             // TODO integrate here changes from C++ version
-            throw new Error('poly2tri EdgeEvent: Collinear not supported! ' + eq + p1 + ep);
+            throw new Error('poly2tri EdgeEvent: Collinear not supported! ' + p2s(eq) + p2s(p1) + p2s(ep));
         }
 
         var p2 = triangle.PointCW(point);
         var o2 = orient2d(eq, p2, ep);
         if (o2 === Orientation.COLLINEAR) {
             // TODO integrate here changes from C++ version
-            throw new Error('poly2tri EdgeEvent: Collinear not supported! ' + eq + p2 + ep);
+            throw new Error('poly2tri EdgeEvent: Collinear not supported! ' + p2s(eq) + p2s(p2) + p2s(ep));
         }
 
         if (o1 === o2) {
