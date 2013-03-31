@@ -144,10 +144,10 @@
             // prepare SweepContext
             var swctx = new poly2tri.SweepContext(contour, {cloneArrays: true});
             for (var idx in holes) {
-                swctx.AddHole(holes[idx]);
+                swctx.addHole(holes[idx]);
             }
             for (var idx in points) {
-                swctx.AddPoint(points[idx]);
+                swctx.addPoint(points[idx]);
             }
 
             // triangulate
@@ -155,10 +155,10 @@
         } catch (e) {
             alert(e);
         }
-        $("#triangles_size").text(swctx.GetTriangles().length);
+        $("#triangles_size").text(swctx.getTriangles().length);
         
         // auto scale / translate
-        bounds = swctx.GetBoundingBox();
+        bounds = swctx.getBoundingBox();
         xscale = ctx.canvas.width / (bounds.max.x - bounds.min.x);
         yscale = ctx.canvas.height / (bounds.max.y - bounds.min.y);
         scale  = Math.min(xscale, yscale);

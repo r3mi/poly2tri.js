@@ -69,17 +69,17 @@ All functions and classes are scoped in the `poly2tri` namespace.
             new poly2tri.Point(200, 250), 
             new poly2tri.Point(250, 250)
         ];  
-        swctx.AddHole(hole);
+        swctx.addHole(hole);
 
 3. Add Steiner points
 
         var point = new poly2tri.Point(150, 150);
-        swctx.AddPoint(point);
+        swctx.addPoint(point);
 
 4. Triangulate
 
         poly2tri.triangulate(swctx);
-        var triangles = swctx.GetTriangles();
+        var triangles = swctx.getTriangles();
 
 See [`index.html`](index.html) for a complete sample.
 
