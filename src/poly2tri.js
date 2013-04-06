@@ -970,7 +970,7 @@
     };
     // Backward compatibility
     SweepContext.prototype.AddHole = SweepContext.prototype.addHole;
-    
+
 
     /**
      * Add a Steiner point to the constraints

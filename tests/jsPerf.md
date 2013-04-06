@@ -23,7 +23,13 @@ Preparation code
 
 ### Preparation code HTML
 
-    <!-- 2013 version with noConflict() -->
+    <!-- latest version -->
+    <script src="http://javascript.poly2tri.googlecode.com/hg/src/poly2tri.js">
+    </script>
+    <script>
+      var vtip = poly2tri.noConflict();
+    </script>
+    <!-- 2013-03-24 first version with noConflict() -->
     <script src="http://javascript.poly2tri.googlecode.com/hg-history/6e00d1153f823f788778bfeaf95d2c32473df087/src/poly2tri.js">
     </script>
     <script>
@@ -92,3 +98,13 @@ v2 (2013-03)
 
 ### Code
     triangulate(v2);
+
+
+Test 3
+------
+
+### Title 
+tip (latest)
+
+### Code
+    triangulate(vtip);

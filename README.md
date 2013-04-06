@@ -162,6 +162,6 @@ have to run the tests through a local web server.
 Performance tests
 -----------------
 
-This [jsPerf](http://jsperf.com/poly2tri) compares the performances 
+This [jsPerf](http://jsperf.com/poly2tri/2) compares the performances 
 across several versions of the library.
 
