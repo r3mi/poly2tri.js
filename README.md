@@ -78,11 +78,15 @@ All functions and classes are scoped in the `poly2tri` namespace.
 
 4. Triangulate
 
-        poly2tri.triangulate(swctx);
+        swctx.triangulate();
         var triangles = swctx.getTriangles();
 
 See [`index.html`](index.html) for a complete sample.
 
+Method calls can be chained:
+    
+        var triangles = swctx.addHole(hole).addPoint(point).triangulate().getTriangles();
+    
 
 Advanced Options
 ----------------
@@ -110,8 +114,8 @@ initial points can be retrieved in the output triangles.
 
         var contour = [{x:100, y:100, id:1}, {x:100, y:300, id:2}, {x:300, y:300, id:3}];
         var swctx = new poly2tri.SweepContext(contour);
-        poly2tri.triangulate(swctx);
-        var triangles = swctx.GetTriangles();
+        swctx.triangulate();
+        var triangles = swctx.getTriangles();
         typeof triangles[0].getPoint(0).id
         // → "number"
 

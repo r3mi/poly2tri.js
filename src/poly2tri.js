@@ -915,7 +915,7 @@
         this.right = false;
     };
 
-// -----------------------------------------------------------------SweepContext
+// ----------------------------------------------------SweepContext (public API)
     /**
      * Constructor for the triangulation context.
      * It accepts a simple polyline, which defines the constrained edges.
@@ -966,6 +966,7 @@
         for (i = 0; i < len; i++) {
             this.points_.push(polyline[i]);
         }
+        return this; // for chaining
     };
     // Backward compatibility
     SweepContext.prototype.AddHole = SweepContext.prototype.addHole;
@@ -977,9 +978,32 @@
      */
     SweepContext.prototype.addPoint = function(point) {
         this.points_.push(point);
+        return this; // for chaining
     };
     // Backward compatibility
     SweepContext.prototype.AddPoint = SweepContext.prototype.addPoint;
+
+
+    /**
+     * Add several Steiner points to the constraints
+     * @param {array<Point>} points     array of "Point like" object with {x,y} 
+     */
+    // Method added in the JavaScript version (was not present in the c++ version)
+    SweepContext.prototype.addPoints = function(points) {
+        this.points_ = this.points_.concat(points);
+        return this; // for chaining
+    };
+
+
+    /**
+     * Triangulate the polygon with holes and Steiner points.
+     */
+    // Shortcut method for Sweep.triangulate(SweepContext).
+    // Method added in the JavaScript version (was not present in the c++ version)
+    SweepContext.prototype.triangulate = function() {
+        Sweep.triangulate(this);
+        return this; // for chaining
+    };
 
 
     /**
@@ -988,10 +1012,23 @@
      * has not been done yet.
      * @returns {Object} object with 'min' and 'max' Point
      */
+    // Method added in the JavaScript version (was not present in the c++ version)
     SweepContext.prototype.getBoundingBox = function() {
         return {min: this.pmin_, max: this.pmax_};
     };
 
+    /**
+     * Get result of triangulation
+     * @returns {array<Triangle>}   array of triangles
+     */
+    SweepContext.prototype.getTriangles = function() {
+        return this.triangles_;
+    };
+    // Backward compatibility
+    SweepContext.prototype.GetTriangles = SweepContext.prototype.getTriangles;
+
+
+// ---------------------------------------------------SweepContext (private API)
 
     SweepContext.prototype.front = function() {
         return this.front_;
@@ -1016,12 +1053,6 @@
     SweepContext.prototype.setTail = function(p1) {
         this.tail_ = p1;
     };
-
-    SweepContext.prototype.getTriangles = function() {
-        return this.triangles_;
-    };
-    // Backward compatibility
-    SweepContext.prototype.GetTriangles = SweepContext.prototype.getTriangles;
 
     SweepContext.prototype.getMap = function() {
         return this.map_;
@@ -1145,10 +1176,16 @@
 
 // ------------------------------------------------------------------------Sweep
 
+    /**
+     * The 'Sweep' object is present in order to keep this JavaScript version 
+     * as close as possible to the reference C++ version, even though almost
+     * all Sweep methods could be declared as members of the SweepContext object.
+     */
     var Sweep = {};
 
+
     /**
-     * Triangulate simple polygon with holes.
+     * Triangulate the polygon with holes and Steiner points.
      * @param   tcx SweepContext object.
      */
     Sweep.triangulate = function(tcx) {
@@ -1896,9 +1933,9 @@
     poly2tri.Point          = Point;
     poly2tri.Triangle       = Triangle;
     poly2tri.SweepContext   = SweepContext;
-    poly2tri.triangulate    = Sweep.triangulate;
 
     // Backward compatibility
+    poly2tri.triangulate    = Sweep.triangulate;
     poly2tri.sweep = {Triangulate: Sweep.triangulate};
 
 }(this));

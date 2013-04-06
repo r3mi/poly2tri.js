@@ -146,12 +146,10 @@
             for (var idx in holes) {
                 swctx.addHole(holes[idx]);
             }
-            for (var idx in points) {
-                swctx.addPoint(points[idx]);
-            }
+            swctx.addPoints(points);
 
             // triangulate
-            poly2tri.triangulate(swctx);
+            swctx.triangulate();
         } catch (e) {
             alert(e);
         }
