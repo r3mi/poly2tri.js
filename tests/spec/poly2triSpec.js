@@ -162,6 +162,11 @@ describe("poly2tri", function() {
             expect(point.x).toBe(3);
             expect(point.y).toBe(4);
         });
+        it("should have a clone() method", function() {
+            var point1 = new p2t.Point(1, 2), point2 = point1.clone();
+            expect(point2.x).toBe(point1.x);
+            expect(point2.y).toBe(point1.y);
+        });
         it("should have a equals() method", function() {
             var point = new p2t.Point(1, 2);
             expect(point.equals(point)).toBeTruthy();

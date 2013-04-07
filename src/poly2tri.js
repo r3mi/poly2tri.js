@@ -88,7 +88,7 @@
         this.points  = points = points || [];
         this.message = message || "Invalid Points!";
         for (var i = 0; i < points.length; i++) {
-            this.message += " " + p2s(points[i]);
+            this.message += " " + Point.toString(points[i]);
         }
     };
     PointError.prototype = new Error();
@@ -117,6 +117,14 @@
      */
     Point.prototype.toString = function() {
         return ("(" + this.x + ";" + this.y + ")");
+    };
+
+    /**
+     * Creates a copy of this Point object.
+     * @returns Point
+     */
+    Point.prototype.clone = function() {
+        return new Point(this.x, this.y);
     };
 
     /**
@@ -205,19 +213,7 @@
         return this.x === p.x && this.y === p.y;
     };
 
-// -------------------------------------------------------Point (static methods)
-
-    /**
-     * Point pretty printing ex. <i>"(5;42)"</i>)
-     * @param   p   any "Point like" object with {x,y} (duck typing)
-     * @returns {String}
-     */
-    Point.toString = function(p) {
-        // Try a custom toString first, and fallback to Point.prototype.toString if none
-        var s = p.toString();
-        return (s === '[object Object]' ? Point.prototype.toString.call(p) : s);
-    };
-    var p2s = Point.toString; // shortcut
+// -----------------------------------------------------Point ("static" methods)
 
     /**
      * Negate a point component-wise and return the result as a new Point object.
@@ -226,20 +222,6 @@
      */
     Point.negate = function(p) {
         return new Point(-p.x, -p.y);
-    };
-
-    /**
-     * Compare two points component-wise.
-     * @param   a,b   any "Point like" objects with {x,y} (duck typing)
-     * @return <code>-1</code> if <code>a &lt; b</code>, <code>1</code> if
-     *         <code>a &gt; b</code>, <code>0</code> otherwise.
-     */
-    Point.cmp = function(a, b) {
-        if (a.y === b.y) {
-            return a.x - b.x;
-        } else {
-            return a.y - b.y;
-        }
     };
 
     /**
@@ -273,24 +255,6 @@
     };
 
     /**
-     * Test two Point objects for equality.
-     * @param   a,b   any "Point like" objects with {x,y} (duck typing)
-     * @return <code>True</code> if <code>a == b</code>, <code>false</code> otherwise.
-     */
-    Point.equals = function(a, b) {
-        return a.x === b.x && a.y === b.y;
-    };
-
-    /**
-     * Peform the dot product on two vectors.
-     * @param   a,b   any "Point like" objects with {x,y} (duck typing)
-     * @return The dot product (as a number).
-     */
-    Point.dot = function(a, b) {
-        return a.x * b.x + a.y * b.y;
-    };
-
-    /**
      * Perform the cross product on either two points (this produces a scalar)
      * or a point and a scalar (this produces a point).
      * This function requires two parameters, either may be a Point object or a
@@ -313,6 +277,59 @@
                 return a.x * b.y - a.y * b.x;
             }
         }
+    };
+
+
+// -----------------------------------------------------------------"Point-Like"
+    /*
+     * The following functions operate on "Point" or any "Point like" object 
+     * with {x,y} (duck typing).
+     */
+
+
+    /**
+     * Point pretty printing ex. <i>"(5;42)"</i>)
+     * @param   p   any "Point like" object with {x,y} 
+     * @returns {String}
+     */
+    Point.toString = function(p) {
+        // Try a custom toString first, and fallback to Point.prototype.toString if none
+        var s = p.toString();
+        return (s === '[object Object]' ? Point.prototype.toString.call(p) : s);
+    };
+
+    /**
+     * Compare two points component-wise.
+     * @param   a,b   any "Point like" objects with {x,y} 
+     * @return <code>&lt; 0</code> if <code>a &lt; b</code>, 
+     *         <code>&gt; 0</code> if <code>a &gt; b</code>, 
+     *         <code>0</code> otherwise.
+     */
+    Point.compare = function(a, b) {
+        if (a.y === b.y) {
+            return a.x - b.x;
+        } else {
+            return a.y - b.y;
+        }
+    };
+    Point.cmp = Point.compare; // backward compatibility
+
+    /**
+     * Test two Point objects for equality.
+     * @param   a,b   any "Point like" objects with {x,y} 
+     * @return <code>True</code> if <code>a == b</code>, <code>false</code> otherwise.
+     */
+    Point.equals = function(a, b) {
+        return a.x === b.x && a.y === b.y;
+    };
+
+    /**
+     * Peform the dot product on two vectors.
+     * @param   a,b   any "Point like" objects with {x,y} 
+     * @return The dot product (as a number).
+     */
+    Point.dot = function(a, b) {
+        return a.x * b.x + a.y * b.y;
     };
 
 
@@ -371,6 +388,7 @@
      * For pretty printing ex. <i>"[(5;42)(10;20)(21;30)]"</i>)
      */
     Triangle.prototype.toString = function() {
+        var p2s = Point.toString;
         return ("[" + p2s(this.points_[0]) + p2s(this.points_[1]) + p2s(this.points_[2]) + "]");
     };
 
@@ -1103,7 +1121,7 @@
         this.tail_ = new Point(xmin - dx, ymin - dy);
 
         // Sort points along y-axis
-        this.points_.sort(Point.cmp);
+        this.points_.sort(Point.compare);
     };
 
     SweepContext.prototype.initEdges = function(polyline) {
