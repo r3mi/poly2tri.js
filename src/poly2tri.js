@@ -75,6 +75,26 @@
         return this;
     };
 
+// -------------------------------------------------------------------PointError
+
+    /**
+     * Custom exception class to indicate invalid Point values
+     * @param {String} message          error message
+     * @param {array<Point>} points     invalid points
+     */
+    // Class added in the JavaScript version (was not present in the c++ version)
+    var PointError = function (message, points) {
+        this.name    = "PointError";
+        this.points  = points = points || [];
+        this.message = message || "Invalid Points!";
+        for (var i = 0; i < points.length; i++) {
+            this.message += " " + p2s(points[i]);
+        }
+    };
+    PointError.prototype = new Error();
+    PointError.prototype.constructor = PointError;
+
+
 // ------------------------------------------------------------------------Point
     /**
      * Construct a point
@@ -314,7 +334,7 @@
                 this.q = p1;
                 this.p = p2;
             } else if (p1.x === p2.x) {
-                throw new Error('poly2tri Invalid Edge constructor: repeated points! ' + p2s(p1));
+                throw new PointError('poly2tri Invalid Edge constructor: repeated points!', [p1]);
             }
         }
 
@@ -1266,14 +1286,14 @@
         var o1 = orient2d(eq, p1, ep);
         if (o1 === Orientation.COLLINEAR) {
             // TODO integrate here changes from C++ version
-            throw new Error('poly2tri EdgeEvent: Collinear not supported! ' + p2s(eq) + p2s(p1) + p2s(ep));
+            throw new PointError('poly2tri EdgeEvent: Collinear not supported!', [eq, p1, ep]);
         }
 
         var p2 = triangle.pointCW(point);
         var o2 = orient2d(eq, p2, ep);
         if (o2 === Orientation.COLLINEAR) {
             // TODO integrate here changes from C++ version
-            throw new Error('poly2tri EdgeEvent: Collinear not supported! ' + p2s(eq) + p2s(p2) + p2s(ep));
+            throw new PointError('poly2tri EdgeEvent: Collinear not supported!', [eq, p2, ep]);
         }
 
         if (o1 === o2) {
@@ -1899,7 +1919,7 @@
             // Left
             return ot.pointCW(op);
         } else {
-            throw new RangeError("poly2tri [Unsupported] nextFlipPoint: opposing point on constrained edge!");
+            throw new PointError("poly2tri [Unsupported] nextFlipPoint: opposing point on constrained edge!", [eq, op, ep]);
         }
     };
 
@@ -1930,6 +1950,7 @@
 
 // ---------------------------------------------------------Exports (public API)
 
+    poly2tri.PointError     = PointError;
     poly2tri.Point          = Point;
     poly2tri.Triangle       = Triangle;
     poly2tri.SweepContext   = SweepContext;

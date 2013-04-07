@@ -59,9 +59,10 @@
     <script type="text/javascript">
     <!--
     var ctx;
-    var TRIANGLE_FILL_STYLE = "#e0c4ef";
-    var TRIANGLE_STROKE_STYLE = "#911ccd";
-    var CONSTRAINTS_STYLE = "rgba(0,0,0,0.6)";
+    var TRIANGLE_FILL_STYLE     = "#e0c4ef";
+    var TRIANGLE_STROKE_STYLE   = "#911ccd";
+    var CONSTRAINT_STYLE        = "rgba(0,0,0,0.6)";
+    var ERROR_STYLE             = "rgba(255,0,0,0.8)";
     
     $(document).ready(function() {
         var $canvas = $('#canvas');
@@ -117,7 +118,10 @@
         var holes = [];
         var points = [];
         var bounds, xscale, yscale, scale, linescale;
- 
+        var error_points;
+        var triangles;
+        var swctx;
+        
         // clear the canvas
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect (0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -142,18 +146,20 @@
         
         try {
             // prepare SweepContext
-            var swctx = new poly2tri.SweepContext(contour, {cloneArrays: true});
-            for (var idx in holes) {
-                swctx.addHole(holes[idx]);
-            }
+            swctx = new poly2tri.SweepContext(contour, {cloneArrays: true});
+            holes.forEach (function (hole) {
+                swctx.addHole(hole);
+            });
             swctx.addPoints(points);
 
             // triangulate
             swctx.triangulate();
         } catch (e) {
             alert(e);
+            error_points = e.points;
         }
-        $("#triangles_size").text(swctx.getTriangles().length);
+        triangles = swctx.getTriangles() || [];
+        $("#triangles_size").text(triangles.length);
         
         // auto scale / translate
         bounds = swctx.getBoundingBox();
@@ -170,8 +176,8 @@
         ctx.strokeStyle = TRIANGLE_STROKE_STYLE;
         ctx.setLineDash(null);
         
-        swctx.GetTriangles().forEach(function(t) {
-            polygonPath([ t.GetPoint(0), t.GetPoint(1), t.GetPoint(2) ]);
+        triangles.forEach(function(t) {
+            polygonPath([ t.getPoint(0), t.getPoint(1), t.getPoint(2) ]);
             ctx.fill();
             ctx.stroke();
         });
@@ -179,8 +185,8 @@
         // draw constraints
         if ($("#draw_constraints").attr('checked')) {
             ctx.lineWidth = 4 * linescale;
-            ctx.strokeStyle = CONSTRAINTS_STYLE;
-            ctx.fillStyle = CONSTRAINTS_STYLE;
+            ctx.strokeStyle = CONSTRAINT_STYLE;
+            ctx.fillStyle = CONSTRAINT_STYLE;
             ctx.setLineDash([10 * linescale, 5 * linescale]);
             
             polygonPath(contour);
@@ -198,6 +204,18 @@
                 ctx.fill();
             });
         }
+    
+        // highlight errors, if any
+        if (error_points) {
+            ctx.lineWidth = 4 * linescale;
+            ctx.fillStyle = ERROR_STYLE;
+            error_points.forEach(function(point) {
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, ctx.lineWidth, 0, 2 * Math.PI, false);
+                ctx.closePath();
+                ctx.fill();
+            });
+        }
     }
 
     // -->

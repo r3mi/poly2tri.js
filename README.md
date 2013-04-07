@@ -92,6 +92,14 @@ Method calls can be chained:
 Advanced Options
 ----------------
 
+### Error handling
+
+The library methods throw an exception for invalid input data,
+such as duplicated or colinear points.
+The exception object will contain a `points` array attribute with the
+faulty data, if available.
+
+
 ### Custom Point class
 
 poly2tri.js supports using custom point class instead of `poly2tri.Point`.

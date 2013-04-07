@@ -745,6 +745,17 @@ describe("poly2tri", function() {
                     swctx.triangulate();
                 }).toThrow("poly2tri Invalid Edge constructor: repeated points! (100;100)");
             });
+            it("should provide faulty points in exception", function() {
+                var exception;
+                try {
+                    var swctx = new p2t.SweepContext(contour, options);
+                    swctx.triangulate();
+                } catch (e) {
+                    exception = e;
+                }
+                expect(exception.points.length).toBe(1);
+                expect(exception.points[0]).toEqualPoint({x:100, y:100});
+            });
         });
         describe("a flat polygon", function() {
             // not reset between tests
@@ -753,7 +764,20 @@ describe("poly2tri", function() {
                 expect(function() {
                     var swctx = new p2t.SweepContext(contour, options);
                     swctx.triangulate();
-                }).toThrow("poly2tri EdgeEvent: Collinear not supported! (300;100)(200;100)(100;100)");
+                }).toThrow("poly2tri EdgeEvent: Collinear not supported! (300;100) (200;100) (100;100)");
+            });
+            it("should provide faulty points in exception", function() {
+                var exception;
+                try {
+                    var swctx = new p2t.SweepContext(contour, options);
+                    swctx.triangulate();
+                } catch (e) {
+                    exception = e;
+                }
+                expect(exception.points.length).toBe(3);
+                expect(exception.points[0].y).toBe(100);
+                expect(exception.points[1].y).toBe(100);
+                expect(exception.points[2].y).toBe(100);
             });
         });
         describe("a polygon with crossing paths", function() {
