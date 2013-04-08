@@ -32,6 +32,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/* jshint browser:true, forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, 
+   strict:true, undef:true, unused:true, curly:true, immed:true, latedef:true, 
+   newcap:true, trailing:true, maxcomplexity:5, indent:4 
+ */
+/* global poly2tri, MersenneTwister, $, jasmine, describe, it, xit, expect, beforeEach */
+
 describe("poly2tri", function() {
 
     "use strict";
@@ -79,6 +85,7 @@ describe("poly2tri", function() {
         var i, tlen = triangles.length, failed = null;
         for (i = 0; i < tlen && !failed; i++) {
             var triangle = triangles[i], found0 = false, found1 = false, found2 = false;
+            /* jshint loopfunc:true */
             pointslists.forEach(function(points) {
                 var j, plen = points.length;
                 for (j = 0; j < plen && !(found0 && found1 && found2); j++) {
@@ -92,7 +99,7 @@ describe("poly2tri", function() {
             if (!(found0 && found1 && found2)) {
                 failed = triangle;
             }
-        };
+        }
         return failed;
     }
 
@@ -114,7 +121,7 @@ describe("poly2tri", function() {
                 if (!found) {
                     failed = point;
                 }
-            };
+            }
         });
         return failed;
     }
@@ -224,7 +231,7 @@ describe("poly2tri", function() {
         });
         it("should reject null contour in constructor", function() {
             expect(function() {
-                var swctx = new p2t.SweepContext(null);
+                void(new p2t.SweepContext(null));
             }).toThrow();
         });
         it("should have getPoint", function() {
@@ -789,7 +796,7 @@ describe("poly2tri", function() {
             // not reset between tests
             var contour, t;
             // same as polygon in "data/custom.dat"
-            var contour = makePoints([0, 130, -270, 0, 130, -40, 10, -60, -10, -20, 100, 30, 40, -40]);
+            contour = makePoints([0, 130, -270, 0, 130, -40, 10, -60, -10, -20, 100, 30, 40, -40]);
             it("should triangulate", function() {
                 var swctx = new p2t.SweepContext(contour, options);
                 swctx.triangulate();
@@ -810,67 +817,72 @@ describe("poly2tri", function() {
                 /*
                  * Data files copied from poly2tri c++ version 
                  */
-                "2.dat",
-                "bird.dat",
-                //"custom.dat", // invalid: polygon with crossing paths 
-                "debug.dat",
-                "diamond.dat",
-                "dude.dat",
-                "funny.dat",
-                "kzer-za.dat",
-                "nazca_heron.dat",
-                "nazca_monkey.dat",
-                //"sketchup.dat", // invalid: lot of repeated points 
-                "star.dat",
-                "strange.dat",
-                "tank.dat",
-                "test.dat",
-                "debug2.dat", // 10000 points
+                { name: "2.dat" },
+                { name: "bird.dat" },
+                //{ name: "custom.dat", error: "invalid: polygon with crossing paths" }, 
+                { name: "debug.dat" },
+                { name: "diamond.dat" },
+                { name: "dude.dat" },
+                { name: "funny.dat" },
+                { name: "kzer-za.dat" },
+                { name: "nazca_heron.dat" },
+                { name: "nazca_monkey.dat" },
+                { name: "sketchup.dat", error: "repeated points" },
+                { name: "star.dat" },
+                { name: "strange.dat" },
+                { name: "tank.dat" },
+                { name: "test.dat" },
+                { name: "debug2.dat" }, // 10000 points
                 /*
                  * Data files extracted from poly2tri issues
                  */
-                "issue49.dat",
-                "issue58.dat",
+                { name: "issue49.dat" },
+                { name: "issue58.dat" },
                 /*
                  * Data files extracted from poly2tri issue 34
                  * https://code.google.com/p/poly2tri/issues/detail?id=34
                  */
                 /* XXX TODO currently fails => see issue 34
-                 "issue34/stackoverflow.dat", // RangeError: Maximum call stack size exceeded
-                 "issue34/stackoverflow_uncommented.dat", // RangeError: Maximum call stack size exceeded
-                 "issue34/assertion.dat", // NextFlipPoint: opposing point on constrained edge!
-                 "issue34/overflow2.dat", // RangeError: Maximum call stack size exceeded
-                 "issue34/dump.dat", // RangeError: Maximum call stack size exceeded
+                 { name: "issue34/stackoverflow.dat" }, // RangeError: Maximum call stack size exceeded
+                 { name: "issue34/stackoverflow_uncommented.dat" }, // RangeError: Maximum call stack size exceeded
+                 { name: "issue34/assertion.dat" }, // NextFlipPoint: opposing point on constrained edge!
+                 { name: "issue34/overflow2.dat" }, // RangeError: Maximum call stack size exceeded
+                 { name: "issue34/dump.dat" }, // RangeError: Maximum call stack size exceeded
                  */
-                "issue34/dump_.dat",
-                "issue34/dump157.dat",
-                "issue34/dump438.dat",
-                "issue34/dump495.dat",
-                "issue34/dump542.dat",
-                "issue34/dump591.dat",
-                "issue34/dump594.dat",
-                "issue34/dump621.dat",
-                "issue34/dump627.dat",
-                "issue34/dump640.dat",
-                "issue34/dump675.dat",
-                "issue34/dump690.dat",
-                "issue34/dump720.dat",
-                "issue34/dump737.dat",
-                "issue34/dump805.dat",
-                "issue34/dump857.dat",
-                "issue34/dump862.dat",
-                "issue34/dump910.dat",
-                "issue34/dump1208.dat"
+                { name: "issue34/dump_.dat" },
+                { name: "issue34/dump157.dat" },
+                { name: "issue34/dump438.dat" },
+                { name: "issue34/dump495.dat" },
+                { name: "issue34/dump542.dat" },
+                { name: "issue34/dump591.dat" },
+                { name: "issue34/dump594.dat" },
+                { name: "issue34/dump621.dat" },
+                { name: "issue34/dump627.dat" },
+                { name: "issue34/dump640.dat" },
+                { name: "issue34/dump675.dat" },
+                { name: "issue34/dump690.dat" },
+                { name: "issue34/dump720.dat" },
+                { name: "issue34/dump737.dat" },
+                { name: "issue34/dump805.dat" },
+                { name: "issue34/dump857.dat" },
+                { name: "issue34/dump862.dat" },
+                { name: "issue34/dump910.dat" },
+                { name: "issue34/dump1208.dat" },
+                /*
+                 * Data files extracted from poly2tri forum
+                 */
+                { name: "map_invalid.dat", error: "weak polygon with touching edges" },
+                { name: "map_fixed.dat" }
             ];
-            files.forEach(function(filename) {
-                describe('"' + filename + '"', function() {
+            files.forEach(function(file) {
+                describe('"' + file.name + '"', function() {
                     // not reset between tests : loaded once only
                     var data, contour, t, swctx;
                     it("should load (if fails for local files Access-Control-Allow-Origin => use web server)", function() {
                         var success = jasmine.createSpy('success');
                         $.ajax({
                             async: false, // synchronous to simplify and avoid using waitsFor/runs below
-                            url: "data/" + filename,
+                            url: "data/" + file.name,
                             success: success
                         });
                         expect(success).toHaveBeenCalled();
@@ -885,25 +897,34 @@ describe("poly2tri", function() {
                         expect(contour.length).toBeGreaterThan(1);
                         contour = makePoints(contour);
                     });
-                    it("should triangulate", function() {
-                        swctx = new p2t.SweepContext(contour, options);
-                        swctx.triangulate();
-                        t = swctx.getTriangles();
-                        expect(t).toBeTruthy();
-                    });
-                    it("should return enough triangles", function() {
-                        expect(t.length).toBeGreaterThan(contour.length / 3);
-                    });
-                    it("should have a bounding box", function() {
-                        expect(swctx.getBoundingBox().min).toEqual(jasmine.any(p2t.Point));
-                        expect(swctx.getBoundingBox().max).toEqual(jasmine.any(p2t.Point));
-                    });
-                    it("should be in the contour", function() {
-                        expect(t).toBeInPoints(contour);
-                    });
-                    it("should contain the contour", function() {
-                        expect(t).toContainPoints(contour);
-                    });
+                    if (file.error) {
+                        it("should fail to triangulate", function() {
+                            expect(function() {
+                                swctx = new p2t.SweepContext(contour, options);
+                                swctx.triangulate();
+                            }).toThrow();
+                        });
+                    } else {
+                        it("should triangulate", function() {
+                            swctx = new p2t.SweepContext(contour, options);
+                            swctx.triangulate();
+                            t = swctx.getTriangles();
+                            expect(t).toBeTruthy();
+                        });
+                        it("should return enough triangles", function() {
+                            expect(t.length).toBeGreaterThan(contour.length / 3);
+                        });
+                        it("should have a bounding box", function() {
+                            expect(swctx.getBoundingBox().min).toEqual(jasmine.any(p2t.Point));
+                            expect(swctx.getBoundingBox().max).toEqual(jasmine.any(p2t.Point));
+                        });
+                        it("should be in the contour", function() {
+                            expect(t).toBeInPoints(contour);
+                        });
+                        it("should contain the contour", function() {
+                            expect(t).toContainPoints(contour);
+                        });
+                    }
                 });
             }, this);
         });
