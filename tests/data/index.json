@@ -1,0 +1,72 @@
+[
+    {
+        "title": "Data copied from poly2tri c++ testbed",
+        "source": "https://code.google.com/p/poly2tri/source/browse/#hg%2Ftestbed%2Fdata",
+        "dateupdated": "2013-03-15",
+        "files": [
+            {"name": "2.dat"},
+            {"name": "bird.dat"},
+            {"xxxname": "custom.dat", "throws": "invalid: polygon with crossing paths"},
+            {"name": "debug.dat"},
+            {"name": "diamond.dat"},
+            {"name": "dude.dat"},
+            {"name": "funny.dat"},
+            {"name": "kzer-za.dat"},
+            {"name": "nazca_heron.dat"},
+            {"name": "nazca_monkey.dat"},
+            {"name": "sketchup.dat", "throws": "repeated points"},
+            {"name": "star.dat"},
+            {"name": "strange.dat"},
+            {"name": "tank.dat"},
+            {"name": "test.dat"},
+            {"name": "debug2.dat", "content": "10000 points"}
+        ]},
+    {
+        "title": "Data extracted from poly2tri issues",
+        "source": "https://code.google.com/p/poly2tri/issues/list?can=1",
+        "dateupdated": "2013-03-19",
+        "files": [
+            {"name": "issue49.dat"},
+            {"name": "issue58.dat"}
+        ]},
+    {
+        "title": "Data extracted from poly2tri issue #34",
+        "source": "https://code.google.com/p/poly2tri/issues/detail?id=34",
+        "dateupdated": "2013-03-19",
+        "files": [
+            {"name": "issue34/stackoverflow.dat", "throws": "RangeError: Maximum call stack size exceeded"},
+            {"name": "issue34/stackoverflow_uncommented.dat", "throws": "RangeError: Maximum call stack size exceeded"},
+            {"name": "issue34/assertion.dat", "throws": "NextFlipPoint: opposing point on constrained edge!"},
+            {"name": "issue34/overflow2.dat", "throws": "RangeError: Maximum call stack size exceeded"},
+            {"name": "issue34/dump.dat", "throws": "RangeError: Maximum call stack size exceeded"},
+            {"name": "issue34/dump_.dat"},
+            {"name": "issue34/dump157.dat"},
+            {"name": "issue34/dump438.dat"},
+            {"name": "issue34/dump495.dat"},
+            {"name": "issue34/dump542.dat"},
+            {"name": "issue34/dump591.dat"},
+            {"name": "issue34/dump594.dat"},
+            {"name": "issue34/dump621.dat"},
+            {"name": "issue34/dump627.dat"},
+            {"name": "issue34/dump640.dat"},
+            {"name": "issue34/dump675.dat"},
+            {"name": "issue34/dump690.dat"},
+            {"name": "issue34/dump720.dat"},
+            {"name": "issue34/dump737.dat"},
+            {"name": "issue34/dump805.dat"},
+            {"name": "issue34/dump857.dat"},
+            {"name": "issue34/dump862.dat"},
+            {"name": "issue34/dump910.dat"},
+            {"name": "issue34/dump1208.dat"}
+
+        ]},
+    {
+        "title": "Data extracted from poly2tri forum",
+        "source": "https://groups.google.com/forum/?fromgroups=#!topic/poly2tri/H1OzouuOZ_s",
+        "dateupdated": "2013-04-08",
+        "files": [
+            {"name": "map_invalid.dat", "throws": "weak polygon with touching edges"},
+            {"name": "map_fixed.dat"}
+        ]
+    }
+]
