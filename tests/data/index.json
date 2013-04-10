@@ -4,22 +4,22 @@
         "source": "https://code.google.com/p/poly2tri/source/browse/#hg%2Ftestbed%2Fdata",
         "dateupdated": "2013-03-15",
         "files": [
-            {"name": "2.dat"},
-            {"name": "bird.dat"},
+            {"name": "2.dat", "content": "a '2'", "triangles": 58},
+            {"name": "bird.dat", "content": "a bird", "triangles": 273},
             {"xxxname": "custom.dat", "throws": "invalid: polygon with crossing paths"},
             {"name": "debug.dat"},
-            {"name": "diamond.dat"},
-            {"name": "dude.dat"},
-            {"name": "funny.dat"},
+            {"name": "diamond.dat", "content": "a diamond", "triangles": 8},
+            {"name": "dude.dat", "content": "default dude shape", "triangles": 92},
+            {"name": "funny.dat", "triangles": 98},
             {"name": "kzer-za.dat"},
             {"name": "nazca_heron.dat"},
             {"name": "nazca_monkey.dat"},
             {"name": "sketchup.dat", "throws": "repeated points"},
-            {"name": "star.dat"},
-            {"name": "strange.dat"},
-            {"name": "tank.dat"},
+            {"name": "star.dat", "content": "a star", "triangles": 8},
+            {"name": "strange.dat", "triangles": 14},
+            {"name": "tank.dat", "content": "a tank", "triangles": 53},
             {"name": "test.dat"},
-            {"name": "debug2.dat", "content": "10000 points"}
+            {"name": "debug2.dat", "content": "10000 vertices", "triangles": 9998}
         ]},
     {
         "title": "Data extracted from poly2tri issues",
@@ -66,7 +66,7 @@
         "dateupdated": "2013-04-08",
         "files": [
             {"name": "map_invalid.dat", "throws": "weak polygon with touching edges"},
-            {"name": "map_fixed.dat"}
+            {"name": "map_fixed.dat", "content": "a map", "triangles": 121}
         ]
     }
 ]

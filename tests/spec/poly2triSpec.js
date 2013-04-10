@@ -873,9 +873,15 @@ describe("poly2tri", function() {
                                     t = swctx.getTriangles();
                                     expect(t).toBeTruthy();
                                 });
-                                it("should return enough triangles", function() {
-                                    expect(t.length).toBeGreaterThan(contour.length / 3);
-                                });
+                                if (file.triangles) {
+                                    it("should return " + file.triangles + " triangles", function() {
+                                        expect(t.length).toBe(file.triangles);
+                                    });
+                                } else {
+                                    it("should return enough triangles", function() {
+                                        expect(t.length).toBeGreaterThan(contour.length / 3);
+                                    });
+                                }
                                 it("should have a bounding box", function() {
                                     expect(swctx.getBoundingBox().min).toEqual(jasmine.any(p2t.Point));
                                     expect(swctx.getBoundingBox().max).toEqual(jasmine.any(p2t.Point));
