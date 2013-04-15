@@ -42,6 +42,7 @@ describe("poly2tri", function() {
 
     "use strict";
 
+// ------------------------------------------------------------------------utils
     /*
      * Utilities
      * =========
@@ -126,15 +127,38 @@ describe("poly2tri", function() {
         return failed;
     }
 
-
-
-    /*
-     * Tests
-     * =====
-     *   TODO we test only part of the "public API" of poly2tri for the time being
-     *   (methods used in the "triangulate" tests),
-     *   not all the methods or all sub-classes.
+    /**
+     * Read an external data file.
+     * Done synchroneously, to simplify and avoid using jasmine's waitsFor/runs
+     * @param {String} filename
+     * @param {String} dataType     see jQuery.Ajax dataType (default: Intelligent Guess)
+     * @returns {String}    file content, undefined if problem
      */
+    function readFileSync(filename, dataType) {
+        var data;
+        $.ajax({
+            async: false,
+            url: filename,
+            dataType: dataType,
+            success: function(d) { data = d; }
+        });
+        return data;
+    }
+
+    /**
+     * Parse points coordinates : pairs of x y, with any separator between coordinates
+     * @param {String} data
+     * @returns {Array<Point>}  points 
+     */
+    function parsePoints(data) {
+        var points = data.split(/[^-eE\.\d]+/).filter(function(val) {
+            return val;
+        }).map(parseFloat);
+        return makePoints(points);
+    }
+
+
+// --------------------------------------------------------------------namespace
 
     var p2t = poly2tri; // Our global shortcut
 
@@ -150,6 +174,16 @@ describe("poly2tri", function() {
             expect(pp.Point).toBeDefined();
         });
     });
+
+
+// -----------------------------------------------------------------------Shapes
+    /*
+     * Tests
+     * =====
+     *   TODO we test only part of the "public API" of poly2tri for the time being
+     *   (methods used in the "triangulate" tests),
+     *   not all the methods or all sub-classes.
+     */
 
     describe("Point", function() {
         it("should have a default constructor", function() {
@@ -223,6 +257,8 @@ describe("poly2tri", function() {
         });
     });
 
+// -----------------------------------------------------------------SweepContext
+
     describe("SweepContext", function() {
         it("should have a constructor", function() {
             var contour = [new p2t.Point(1, 2), new p2t.Point(3, 4)];
@@ -264,44 +300,45 @@ describe("poly2tri", function() {
         });
     });
 
-    describe("triangulate", function() {
+// ------------------------------------------------------------------Triangulate
 
+    beforeEach(function() {
+        // Helper matchers to ease test writing
+        this.addMatchers({
+            // Checks that a point equals another
+            toEqualPoint: function(p2) {
+                return p2t.Point.equals(this.actual, p2);
+            },
+            // Checks that all the triangles vertices are in the list of points
+            toBeInPoints: function(pointslists) {
+                var triangles = this.actual, failed;
+                failed = testTrianglesToBeInPoints(triangles, pointslists);
+                // Customize message for easier debugging
+                // (because of isNot, message might be printed event if !failed)
+                this.message = function() {
+                    var str = "Expected Triangle" + (failed ? (" " + failed) : ("s ") + triangles);
+                    return str + (this.isNot ? " not" : "") + " to be in points " + pointslists;
+                };
+                return !failed;
+            },
+            // Checks that all the points are in at least one triangle
+            toContainPoints: function(pointslists) {
+                var triangles = this.actual, failed;
+                failed = testTrianglesToContainPoints(triangles, pointslists);
+                // Customize message for easier debugging
+                // (because of isNot, message might be printed event if !failed)
+                this.message = function() {
+                    var str = "Expected Point" + (failed ? (" " + failed) : ("s ") + pointslists);
+                    return str + (this.isNot ? " not" : "") + " to be in triangles " + triangles;
+                };
+                return !failed;
+            }
+        });
+    });
+
+    describe("Triangulate", function() {
         // Common options for SweepContext
         var options = {cloneArrays: true};
-
-        beforeEach(function() {
-            // Helper matchers to ease test writing
-            this.addMatchers({
-                // Checks that a point equals another
-                toEqualPoint: function(p2) {
-                    return p2t.Point.equals(this.actual, p2);
-                },
-                // Checks that all the triangles vertices are in the list of points
-                toBeInPoints: function() {
-                    var triangles = this.actual, pointslists = Array.prototype.slice.call(arguments), failed;
-                    failed = testTrianglesToBeInPoints(triangles, pointslists);
-                    // Customize message for easier debugging
-                    // (because of isNot, message might be printed event if !failed)
-                    this.message = function() {
-                        var str = "Expected Triangle" + (failed ? (" " + failed) : ("s ") + triangles);
-                        return str + (this.isNot ? " not" : "") + " to be in points " + pointslists;
-                    };
-                    return !failed;
-                },
-                // Checks that all the points are in at least one triangle
-                toContainPoints: function() {
-                    var triangles = this.actual, pointslists = Array.prototype.slice.call(arguments), failed;
-                    failed = testTrianglesToContainPoints(triangles, pointslists);
-                    // Customize message for easier debugging
-                    // (because of isNot, message might be printed event if !failed)
-                    this.message = function() {
-                        var str = "Expected Point" + (failed ? (" " + failed) : ("s ") + pointslists);
-                        return str + (this.isNot ? " not" : "") + " to be in triangles " + triangles;
-                    };
-                    return !failed;
-                }
-            });
-        });
 
         describe("a triangle", function() {
             // not reset between tests
@@ -353,10 +390,10 @@ describe("poly2tri", function() {
                 expect(swctx.getBoundingBox().max).toEqualPoint({x: 2, y: 1});
             });
             it("should be in the contour", function() {
-                expect(t).toBeInPoints(contour);
+                expect(t).toBeInPoints([contour]);
             });
             it("should contain the contour", function() {
-                expect(t).toContainPoints(contour);
+                expect(t).toContainPoints([contour]);
             });
         });
         describe("a rectangle", function() {
@@ -373,10 +410,10 @@ describe("poly2tri", function() {
                 expect(t.length).toBe(2);
             });
             it("should be in the contour", function() {
-                expect(t).toBeInPoints(contour);
+                expect(t).toBeInPoints([contour]);
             });
             it("should contain the contour", function() {
-                expect(t).toContainPoints(contour);
+                expect(t).toContainPoints([contour]);
             });
         });
         describe("a rectangle containing 1 Steiner point", function() {
@@ -395,10 +432,10 @@ describe("poly2tri", function() {
                 expect(t.length).toBe(4);
             });
             it("should be in the contour and point", function() {
-                expect(t).toBeInPoints(contour, points);
+                expect(t).toBeInPoints([contour, points]);
             });
             it("should contain the contour and point", function() {
-                expect(t).toContainPoints(contour, points);
+                expect(t).toContainPoints([contour, points]);
             });
         });
         describe("a rectangle not cloned", function() {
@@ -436,10 +473,10 @@ describe("poly2tri", function() {
                 expect(swctx.getBoundingBox().max).toEqualPoint({x: 400, y: 400});
             });
             it("should be in the contour", function() {
-                expect(t).toBeInPoints(contour);
+                expect(t).toBeInPoints([contour]);
             });
             it("should contain the contour", function() {
-                expect(t).toContainPoints(contour);
+                expect(t).toContainPoints([contour]);
             });
         });
         describe("an octogon containing 1 rectangle hole", function() {
@@ -458,10 +495,10 @@ describe("poly2tri", function() {
                 expect(t.length).toBe(12);
             });
             it("should be in the contour and hole", function() {
-                expect(t).toBeInPoints(contour, hole);
+                expect(t).toBeInPoints([contour, hole]);
             });
             it("should contain the contour and hole", function() {
-                expect(t).toContainPoints(contour, hole);
+                expect(t).toContainPoints([contour, hole]);
             });
         });
         describe("a polygon containing 1 hole", function() {
@@ -485,33 +522,10 @@ describe("poly2tri", function() {
                 expect(swctx.getBoundingBox().max).toEqualPoint({x: 282, y: 243});
             });
             it("should be in the contour and hole", function() {
-                expect(t).toBeInPoints(contour, hole);
+                expect(t).toBeInPoints([contour, hole]);
             });
             it("should contain the contour and hole", function() {
-                expect(t).toContainPoints(contour, hole);
-            });
-        });
-        describe("a polygon containing 1 hole", function() {
-            // not reset between tests
-            var contour, hole, t;
-            // same as issue #53
-            contour = makePoints([256, 288, 339, 123, 174, 41, 8, 222]);
-            hole = makePoints([116, 233, 107, 233, 99, 233, 95, 233, 88, 221, 124, 233]);
-            it("should triangulate", function() {
-                var swctx = new p2t.SweepContext(contour, options);
-                swctx.addHole(hole);
-                swctx.triangulate();
-                t = swctx.getTriangles();
-                expect(t).toBeTruthy();
-            });
-            it("should return 10 triangles", function() {
-                expect(t.length).toBe(10);
-            });
-            it("should be in the contour and hole", function() {
-                expect(t).toBeInPoints(contour, hole);
-            });
-            it("should contain the contour and hole", function() {
-                expect(t).toContainPoints(contour, hole);
+                expect(t).toContainPoints([contour, hole]);
             });
         });
         describe("a polygon containing 1 hole and 2 Steiner points", function() {
@@ -533,10 +547,10 @@ describe("poly2tri", function() {
                     expect(t.length).toBe(11);
                 });
                 it("should be in the contour and hole and points", function() {
-                    expect(t).toBeInPoints(contour, hole, points);
+                    expect(t).toBeInPoints([contour, hole, points]);
                 });
                 it("should contain the contour and hole and points", function() {
-                    expect(t).toContainPoints(contour, hole, points);
+                    expect(t).toContainPoints([contour, hole, points]);
                 });
             });
             describe("chained methods", function() {
@@ -549,14 +563,13 @@ describe("poly2tri", function() {
                     expect(t.length).toBe(11);
                 });
                 it("should be in the contour and hole and points", function() {
-                    expect(t).toBeInPoints(contour, hole, points);
+                    expect(t).toBeInPoints([contour, hole, points]);
                 });
                 it("should contain the contour and hole and points", function() {
-                    expect(t).toContainPoints(contour, hole, points);
+                    expect(t).toContainPoints([contour, hole, points]);
                 });
             });
         });
-
         describe("a polygon with 1 hole close to edge", function() {
             // not reset between tests
             var contour, hole, t;
@@ -574,63 +587,11 @@ describe("poly2tri", function() {
                 expect(t.length).toBe(8);
             });
             it("should be in the contour and hole", function() {
-                expect(t).toBeInPoints(contour, hole);
+                expect(t).toBeInPoints([contour, hole]);
             });
             // FAILS ! Hole is not really valid, see issue #13
             it("should FAIL to contain the contour and hole", function() {
-                expect(t).not.toContainPoints(contour, hole);
-            });
-        });
-        describe("a complex polygon with 2 holes", function() {
-            // not reset between tests
-            var contour, hole1, hole2, t;
-            // same as default polygon in index.html
-            contour = makePoints([280.35714, 648.79075, 286.78571, 662.8979, 263.28607, 661.17871, 262.31092, 671.41548, 250.53571, 677.00504, 250.53571, 683.43361, 256.42857, 685.21933, 297.14286, 669.50504, 289.28571, 649.50504, 285, 631.6479, 285, 608.79075, 292.85714, 585.21932, 306.42857, 563.79075, 323.57143, 548.79075, 339.28571, 545.21932, 357.85714, 547.36218, 375, 550.21932, 391.42857, 568.07647, 404.28571, 588.79075, 413.57143, 612.36218, 417.14286, 628.07647, 438.57143, 619.1479, 438.03572, 618.96932, 437.5, 609.50504, 426.96429, 609.86218, 424.64286, 615.57647, 419.82143, 615.04075, 420.35714, 605.04075, 428.39286, 598.43361, 437.85714, 599.68361, 443.57143, 613.79075, 450.71429, 610.21933, 431.42857, 575.21932, 405.71429, 550.21932, 372.85714, 534.50504, 349.28571, 531.6479, 346.42857, 521.6479, 346.42857, 511.6479, 350.71429, 496.6479, 367.85714, 476.6479, 377.14286, 460.93361, 385.71429, 445.21932, 388.57143, 404.50504, 360, 352.36218, 337.14286, 325.93361, 330.71429, 334.50504, 347.14286, 354.50504, 337.85714, 370.21932, 333.57143, 359.50504, 319.28571, 353.07647, 312.85714, 366.6479, 350.71429, 387.36218, 368.57143, 408.07647, 375.71429, 431.6479, 372.14286, 454.50504, 366.42857, 462.36218, 352.85714, 462.36218, 336.42857, 456.6479, 332.85714, 438.79075, 338.57143, 423.79075, 338.57143, 411.6479, 327.85714, 405.93361, 320.71429, 407.36218, 315.71429, 423.07647, 314.28571, 440.21932, 325, 447.71932, 324.82143, 460.93361, 317.85714, 470.57647, 304.28571, 483.79075, 287.14286, 491.29075, 263.03571, 498.61218, 251.60714, 503.07647, 251.25, 533.61218, 260.71429, 533.61218, 272.85714, 528.43361, 286.07143, 518.61218, 297.32143, 508.25504, 297.85714, 507.36218, 298.39286, 506.46932, 307.14286, 496.6479, 312.67857, 491.6479, 317.32143, 503.07647, 322.5, 514.1479, 325.53571, 521.11218, 327.14286, 525.75504, 326.96429, 535.04075, 311.78571, 540.04075, 291.07143, 552.71932, 274.82143, 568.43361, 259.10714, 592.8979, 254.28571, 604.50504, 251.07143, 621.11218, 250.53571, 649.1479, 268.1955, 654.36208]);
-            hole1 = makePoints([325, 437, 320, 423, 329, 413, 332, 423]);
-            hole2 = makePoints([320.72342, 480, 338.90617, 465.96863, 347.99754, 480.61584, 329.8148, 510.41534, 339.91632, 480.11077, 334.86556, 478.09046]);
-            it("should triangulate", function() {
-                var swctx = new p2t.SweepContext(contour, options);
-                swctx.addHole(hole1);
-                swctx.addHole(hole2);
-                swctx.triangulate();
-                t = swctx.getTriangles();
-                expect(t).toBeTruthy();
-            });
-            it("should return 106 triangles", function() {
-                expect(t.length).toBe(106);
-            });
-            it("should be in the contour and holes", function() {
-                expect(t).toBeInPoints(contour, hole1, hole2);
-            });
-            it("should contain the contour and holes", function() {
-                expect(t).toContainPoints(contour, hole1, hole2);
-            });
-        });
-        describe("a complex polygon with 2 holes and points", function() {
-            // not reset between tests
-            var contour, hole1, hole2, points, t;
-            // same as issue #39
-            contour = makePoints([-311, 774, -216, 418, -48, 343, 23, 318, 44, 284, 59, 262, 84, 242, 92, 161, 131, 134, 140, 77, 134, 30, 118, 6, 115, -32, 67, -85, 213, -85, 211, -53, 198, -13, 182, 63, 165, 120, 194, 137, 238, 111, 265, 5, 243, -87, 502, -93, 446, 772]);
-            hole1 = makePoints([-276, 747, 421, 745, 473, -65, 276, -61, 291, 2, 291, 8, 262, 123, 256, 131, 201, 163, 186, 163, 155, 145, 150, 152, 118, 175, 110, 250, 105, 259, 78, 281, 66, 299, 43, 335, 36, 341, -37, 367, -37, 368, -193, 438]);
-            hole2 = makePoints([161, 32, 172, -19, 171, -20, 184, -58, 127, -58, 138, -46, 141, -38, 144, -2, 157, 17, 160, 23]);
-            points = makePoints([148, 127, 161, 70, 157, 82, 152, 98, 160, 35, 115, -58, 160, 65, 149, 117, -205, 428, -44, 356, 29, 330, 32, 326, 55, 292, 69, 271, 94, 251, 96, 245, 104, 169, 141, 143, 143, 138, 153, 78, 153, 75, 146, 26, 131, 2, 127, -35, 126, -39, 97, -72, 199, -72, 198, -57, 184, -16, 169, 59, 150, 120, 153, 129, 190, 150, 197, 150, 247, 121, 250, 116, 278, 6, 278, 3, 260, -74, 488, -80, 434, 759, -294, 761]);
-            it("should triangulate", function() {
-                var swctx = new p2t.SweepContext(contour, options);
-                swctx.addHole(hole1);
-                swctx.addHole(hole2);
-                swctx.addPoints(points);
-                swctx.triangulate();
-                t = swctx.getTriangles();
-                expect(t).toBeTruthy();
-            });
-            it("should return 143 triangles", function() {
-                expect(t.length).toBe(143);
-            });
-            it("should be in the contour and holes and points", function() {
-                expect(t).toBeInPoints(contour, hole1, hole2, points);
-            });
-            it("should contain the contour and holes and points", function() {
-                expect(t).toContainPoints(contour, hole1, hole2, points);
+                expect(t).not.toContainPoints([contour, hole]);
             });
         });
         describe("a polygon with 2 holes and points using custom Point class", function() {
@@ -662,10 +623,10 @@ describe("poly2tri", function() {
                 expect(t.length).toBe(143);
             });
             it("should be in the contour and holes and points", function() {
-                expect(t).toBeInPoints(contour, hole1, hole2, points);
+                expect(t).toBeInPoints([contour, hole1, hole2, points]);
             });
             it("should contain the contour and holes and points", function() {
-                expect(t).toContainPoints(contour, hole1, hole2, points);
+                expect(t).toContainPoints([contour, hole1, hole2, points]);
             });
         });
         describe("a quadrilateral containing 1000 Steiner points", function() {
@@ -691,10 +652,10 @@ describe("poly2tri", function() {
                 expect(t.length).toBe(2002);
             });
             it("should be in the contour and points", function() {
-                expect(t).toBeInPoints(contour, points);
+                expect(t).toBeInPoints([contour, points]);
             });
             it("should contain the contour and points", function() {
-                expect(t).toContainPoints(contour, points);
+                expect(t).toContainPoints([contour, points]);
             });
         });
         describe("a polygon with 1000 vertices", function() {
@@ -716,10 +677,10 @@ describe("poly2tri", function() {
                 expect(t.length).toBe(998);
             });
             it("should be in the contour", function() {
-                expect(t).toBeInPoints(contour);
+                expect(t).toBeInPoints([contour]);
             });
             it("should contain the contour", function() {
-                expect(t).toContainPoints(contour);
+                expect(t).toContainPoints([contour]);
             });
         });
         describe("a polygon containing extra information in points", function() {
@@ -806,97 +767,106 @@ describe("poly2tri", function() {
             // One of the 2 tests below will fail.
             // In this particular case, it is the second one.
             xit("should be in the contour", function() {
-                expect(t).toBeInPoints(contour);
+                expect(t).toBeInPoints([contour]);
             });
             it("should fail to contain the contour", function() {
-                expect(t).not.toContainPoints(contour);
+                expect(t).not.toContainPoints([contour]);
             });
         });
-        /*
-         * Automated tests based on external data files.
-         * These are loaded with Ajax. This might fails for local files (file://)
-         * because of Access-Control-Allow-Origin, depending on browser. 
-         * If it happens, please run the tests through a local web server.
-         */
-        describe("data files", function() {
-            var index = null;
-            $.ajax({
-                async: false, // synchronous to simplify and avoid using waitsFor/runs below
-                dataType: "json",
-                url: "data/index.json",
-                success: function(data) {
-                    index = data;
-                }
-            });
-            it("index should load (if fails for local files Access-Control-Allow-Origin => use web server)", function() {
-                expect(index).toEqual(jasmine.any(Array));
-                expect(index.length).toBeGreaterThan(0);
-            });
-            index.forEach(function(group) {
-                describe('' + group.title, function() {
-                    group.files.filter(function(file) {
-                        return file.name;
-                    }).forEach(function(file) {
-                        describe('"' + file.name + '"', function() {
-                            // not reset between tests : loaded once only
-                            var data, contour, t, swctx;
-                            it("should load", function() {
-                                var success = jasmine.createSpy('success');
-                                $.ajax({
-                                    async: false, // synchronous to simplify and avoid using waitsFor/runs below
-                                    url: "data/" + file.name,
-                                    success: success
+    });
+
+// -------------------------------------------------------------------data files
+    /*
+     * Automated tests based on external data files.
+     * These are loaded with Ajax. This might fails for local files (file://)
+     * because of Access-Control-Allow-Origin, depending on browser. 
+     * If it happens, please run the tests through a local web server.
+     */
+    describe("Data files", function() {
+        // Common options for SweepContext
+        var options = {cloneArrays: true};
+
+        var index = readFileSync("data/index.json", "json");
+        it("index should load (if fails for local files Access-Control-Allow-Origin => use web server)", function() {
+            expect(index).toEqual(jasmine.any(Array));
+            expect(index.length).toBeGreaterThan(0);
+        });
+        index.forEach(function(group) {
+            describe('' + group.title, function() {
+                group.files.filter(function(file) {
+                    return file.name;
+                }).forEach(function(file) {
+                    describe('"' + file.name + '"', function() {
+                        // not reset between tests : loaded once only
+                        var contour, holes = [], points = [], t, swctx;
+                        it("should load and parse contour", function() {
+                            var data = readFileSync("data/" + file.name);
+                            contour = parsePoints(data);
+                            expect(contour.length).toBeGreaterThan(1);
+                        });
+                        if (file.holes) {
+                            it("should load and parse holes " + file.holes, function() {
+                                var data = readFileSync("data/" + file.holes);
+                                // at least one blank line between each hole
+                                data.split(/\n\s*\n/).forEach(function(val) {
+                                    var hole = parsePoints(val);
+                                    if (hole.length > 0) {
+                                        holes.push(hole);
+                                    }
                                 });
-                                expect(success).toHaveBeenCalled();
-                                data = success.mostRecentCall.args[0];
-                                expect(data).toBeTruthy();
+                                expect(holes.length).toBeGreaterThan(0);
                             });
-                            it("should parse", function() {
-                                contour = data.split(/[^-eE\.\d]+/).filter(function(val) {
-                                    return val;
-                                }).map(parseFloat);
-                                expect(contour).toBeTruthy();
-                                expect(contour.length).toBeGreaterThan(1);
-                                contour = makePoints(contour);
+                        }
+                        if (file.steiner) {
+                            it("should load and parse Steiner points " + file.steiner, function() {
+                                var data = readFileSync("data/" + file.steiner);
+                                points = parsePoints(data);
+                                expect(points.length).toBeGreaterThan(0);
                             });
-                            if (file.throws) {
-                                it("should fail to triangulate", function() {
-                                    expect(function() {
-                                        swctx = new p2t.SweepContext(contour, options);
-                                        swctx.triangulate();
-                                    }).toThrow();
+                        }
+                        if (file.throws) {
+                            it("should fail to triangulate", function() {
+                                expect(function() {
+                                    swctx = new p2t.SweepContext(contour, options);
+                                    holes.forEach(function(hole) {
+                                        swctx.addHole(hole);
+                                    });
+                                    swctx.addPoints(points).triangulate();
+                                }).toThrow();
+                            });
+                        } else {
+                            it("should triangulate", function() {
+                                swctx = new p2t.SweepContext(contour, options);
+                                holes.forEach(function(hole) {
+                                    swctx.addHole(hole);
+                                });
+                                swctx.addPoints(points).triangulate();
+                                t = swctx.getTriangles();
+                                expect(t).toBeTruthy();
+                            });
+                            if (file.triangles) {
+                                it("should return " + file.triangles + " triangles", function() {
+                                    expect(t.length).toBe(file.triangles);
                                 });
                             } else {
-                                it("should triangulate", function() {
-                                    swctx = new p2t.SweepContext(contour, options);
-                                    swctx.triangulate();
-                                    t = swctx.getTriangles();
-                                    expect(t).toBeTruthy();
-                                });
-                                if (file.triangles) {
-                                    it("should return " + file.triangles + " triangles", function() {
-                                        expect(t.length).toBe(file.triangles);
-                                    });
-                                } else {
-                                    it("should return enough triangles", function() {
-                                        expect(t.length).toBeGreaterThan(contour.length / 3);
-                                    });
-                                }
-                                it("should have a bounding box", function() {
-                                    expect(swctx.getBoundingBox().min).toEqual(jasmine.any(p2t.Point));
-                                    expect(swctx.getBoundingBox().max).toEqual(jasmine.any(p2t.Point));
-                                });
-                                it("should be in the contour", function() {
-                                    expect(t).toBeInPoints(contour);
-                                });
-                                it("should contain the contour", function() {
-                                    expect(t).toContainPoints(contour);
+                                it("should return enough triangles", function() {
+                                    expect(t.length).toBeGreaterThan(contour.length / 3);
                                 });
                             }
-                        });
-                    }, this);
-                });
-            }, this);
-        });
+                            it("should have a bounding box", function() {
+                                expect(swctx.getBoundingBox().min).toEqual(jasmine.any(p2t.Point));
+                                expect(swctx.getBoundingBox().max).toEqual(jasmine.any(p2t.Point));
+                            });
+                            it("should be in the constraints", function() {
+                                expect(t).toBeInPoints([contour, points].concat(holes));
+                            });
+                            it("should contain the constraints", function() {
+                                expect(t).toContainPoints([contour, points].concat(holes));
+                            });
+                        }
+                    });
+                }, this);
+            });
+        }, this);
     });
 });

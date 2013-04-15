@@ -9,7 +9,11 @@
             {"xxxname": "custom.dat", "throws": "invalid: polygon with crossing paths"},
             {"name": "debug.dat"},
             {"name": "diamond.dat", "content": "a diamond", "triangles": 8},
-            {"name": "dude.dat", "content": "default dude shape", "triangles": 92},
+            {"name": "dude.dat", "content": "dude shape", "triangles": 92},
+            {
+                "name": "dude.dat", "holes": "dude_holes.dat",
+                "content": "dude with 2 holes", "triangles": 106
+            },
             {"name": "funny.dat", "triangles": 98},
             {"name": "kzer-za.dat"},
             {"name": "nazca_heron.dat"},
@@ -26,7 +30,12 @@
         "source": "https://code.google.com/p/poly2tri/issues/list?can=1",
         "dateupdated": "2013-03-19",
         "files": [
+            {
+                "name": "issue39.dat", "holes": "issue39_holes.dat", "steiner": "issue39_steiner.dat",
+                "content": "brokepolygon", "triangles": 143
+            },
             {"name": "issue49.dat"},
+            {"name": "issue53.dat", "holes": "issue53_hole.dat", "triangles": 10},
             {"name": "issue58.dat"}
         ]},
     {
