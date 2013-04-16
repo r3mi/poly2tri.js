@@ -149,7 +149,9 @@ Use any separator between points, e.g.
         (300;100)
 is valid data to describe 4 points.
 
-You can get additional sample files from the `tests/data` directory.
+Some interesting samples can be interactively loaded 
+using the "Load preset data" option menu.
+You can get additional files from the `tests/data` directory.
 
 You need a modern browser to draw the results, supporting the HTML5 `<canvas>`.
 

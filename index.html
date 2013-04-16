@@ -62,6 +62,12 @@
     <div id="control">
         <form>
             <div class="wrapper">
+                <label for="preset">Load preset data:</label>
+                <select id="preset"></select>
+                <input id="btnTriangulate" type="button" value="Triangulate!">
+                <br><span class="info">(<span id="triangles_size">0</span> triangles computed)</span>
+            </div>
+            <div class="wrapper">
                 <label for="poly_contour">Contour of the polygon (any separator between coordinates):</label>
                 <textarea id="poly_contour" rows="7" cols="50"></textarea>
                 <span class="info">(<span id="contour_size">0</span> points parsed)</span>
@@ -79,11 +85,6 @@
             <div class="wrapper">
                 <input id="draw_constraints" type="checkbox" value="drawConstraints" checked="checked">
                 <label for="draw_constraints">Draw constraints</label> 
-            </div>
-            <div class="wrapper">
-                <input id="btnTriangulate" type="button" value="Triangulate!">
-                <input id="btnClear" type="button" value="Clear all constraints">
-                <br><span class="info">(<span id="triangles_size">0</span> triangles computed)</span>
             </div>
             <div class="wrapper">
                 <a href="tests/SpecRunner.html">Link to automated tests</a>

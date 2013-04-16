@@ -4,24 +4,24 @@
         "source": "https://code.google.com/p/poly2tri/source/browse/#hg%2Ftestbed%2Fdata",
         "dateupdated": "2013-03-15",
         "files": [
-            {"name": "2.dat", "content": "a '2'", "triangles": 58},
-            {"name": "bird.dat", "content": "a bird", "triangles": 273},
+            {"name": "2.dat", "content": "2", "triangles": 58},
+            {"name": "bird.dat", "content": "Bird", "triangles": 273},
             {"xxxname": "custom.dat", "throws": "invalid: polygon with crossing paths"},
-            {"name": "debug.dat"},
-            {"name": "diamond.dat", "content": "a diamond", "triangles": 8},
-            {"name": "dude.dat", "content": "dude shape", "triangles": 92},
+            {"name": "debug.dat", "content": "Butterfly-like polygon"},
+            {"name": "diamond.dat", "content": "Diamond", "triangles": 8},
+            {"name": "dude.dat", "content": "Dude shape", "triangles": 92},
             {
                 "name": "dude.dat", "holes": "dude_holes.dat",
-                "content": "dude with 2 holes", "triangles": 106
+                "content": "Dude with 2 holes", "triangles": 106
             },
-            {"name": "funny.dat", "triangles": 98},
-            {"name": "kzer-za.dat"},
-            {"name": "nazca_heron.dat"},
-            {"name": "nazca_monkey.dat"},
+            {"name": "funny.dat", "content": "Funny polygon", "triangles": 98},
+            {"name": "kzer-za.dat", "content": "Kzer-Za Dreadnought"},
+            {"name": "nazca_heron.dat", "content": "Nazca heron"},
+            {"name": "nazca_monkey.dat", "content": "Nazca monkey"},
             {"name": "sketchup.dat", "throws": "repeated points"},
-            {"name": "star.dat", "content": "a star", "triangles": 8},
+            {"name": "star.dat", "content": "Star", "triangles": 8},
             {"name": "strange.dat", "triangles": 14},
-            {"name": "tank.dat", "content": "a tank", "triangles": 53},
+            {"name": "tank.dat", "content": "Tank", "triangles": 53},
             {"name": "test.dat"},
             {"name": "debug2.dat", "content": "10000 vertices", "triangles": 9998}
         ]},
@@ -32,7 +32,7 @@
         "files": [
             {
                 "name": "issue39.dat", "holes": "issue39_holes.dat", "steiner": "issue39_steiner.dat",
-                "content": "brokepolygon", "triangles": 143
+                "content": "Brokepolygon with points", "triangles": 143
             },
             {"name": "issue49.dat"},
             {"name": "issue53.dat", "holes": "issue53_hole.dat", "triangles": 10},
@@ -62,11 +62,11 @@
             {"name": "issue34/dump690.dat"},
             {"name": "issue34/dump720.dat"},
             {"name": "issue34/dump737.dat"},
-            {"name": "issue34/dump805.dat"},
+            {"name": "issue34/dump805.dat", "content": "Long polygon", "triangles": 446},
             {"name": "issue34/dump857.dat"},
             {"name": "issue34/dump862.dat"},
             {"name": "issue34/dump910.dat"},
-            {"name": "issue34/dump1208.dat"}
+            {"name": "issue34/dump1208.dat", "content": "Big round polygon", "triangles": 380}
 
         ]},
     {
@@ -75,7 +75,7 @@
         "dateupdated": "2013-04-08",
         "files": [
             {"name": "map_invalid.dat", "throws": "weak polygon with touching edges"},
-            {"name": "map_fixed.dat", "content": "a map", "triangles": 121}
+            {"name": "map_fixed.dat", "content": "Map", "triangles": 121}
         ]
     }
 ]
