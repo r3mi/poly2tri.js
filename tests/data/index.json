@@ -7,7 +7,7 @@
             {"name": "2.dat", "content": "2", "triangles": 58},
             {"name": "bird.dat", "content": "Bird", "triangles": 273},
             {"xxxname": "custom.dat", "throws": "invalid: polygon with crossing paths"},
-            {"name": "debug.dat", "content": "Butterfly-like polygon"},
+            {"name": "debug.dat", "content": "Butterfly-like polygon", "triangles": 198},
             {"name": "diamond.dat", "content": "Diamond", "triangles": 8},
             {"name": "dude.dat", "content": "Dude shape", "triangles": 92},
             {
@@ -15,16 +15,17 @@
                 "content": "Dude with 2 holes", "triangles": 106
             },
             {"name": "funny.dat", "content": "Funny polygon", "triangles": 98},
-            {"name": "kzer-za.dat", "content": "Kzer-Za Dreadnought"},
-            {"name": "nazca_heron.dat", "content": "Nazca heron"},
-            {"name": "nazca_monkey.dat", "content": "Nazca monkey"},
+            {"name": "kzer-za.dat", "content": "Kzer-Za Dreadnought", "triangles": 206},
+            {"name": "nazca_heron.dat", "content": "Nazca heron", "triangles": 1034},
+            {"name": "nazca_monkey.dat", "content": "Nazca monkey", "triangles": 1202},
             {"name": "sketchup.dat", "throws": "repeated points"},
             {"name": "star.dat", "content": "Star", "triangles": 8},
             {"name": "strange.dat", "triangles": 14},
             {"name": "tank.dat", "content": "Tank", "triangles": 53},
-            {"name": "test.dat"},
+            {"name": "test.dat", "triangles": 4},
             {"name": "debug2.dat", "content": "10000 vertices", "triangles": 9998}
-        ]},
+        ]
+    },
     {
         "title": "Data extracted from poly2tri issues",
         "source": "https://code.google.com/p/poly2tri/issues/list?can=1",
@@ -37,7 +38,8 @@
             {"name": "issue49.dat"},
             {"name": "issue53.dat", "holes": "issue53_hole.dat", "triangles": 10},
             {"name": "issue58.dat"}
-        ]},
+        ]
+    },
     {
         "title": "Data extracted from poly2tri issue #34",
         "source": "https://code.google.com/p/poly2tri/issues/detail?id=34",
@@ -48,7 +50,7 @@
             {"name": "issue34/assertion.dat", "throws": "NextFlipPoint: opposing point on constrained edge!"},
             {"name": "issue34/overflow2.dat", "throws": "RangeError: Maximum call stack size exceeded"},
             {"name": "issue34/dump.dat", "throws": "RangeError: Maximum call stack size exceeded"},
-            {"name": "issue34/dump_.dat"},
+            {"name": "issue34/dump_.dat", "triangles": 354},
             {"name": "issue34/dump157.dat"},
             {"name": "issue34/dump438.dat"},
             {"name": "issue34/dump495.dat"},
@@ -68,14 +70,31 @@
             {"name": "issue34/dump910.dat"},
             {"name": "issue34/dump1208.dat", "content": "Big round polygon", "triangles": 380}
 
-        ]},
+        ]
+    },
     {
         "title": "Data extracted from poly2tri forum",
         "source": "https://groups.google.com/forum/?fromgroups=#!topic/poly2tri/H1OzouuOZ_s",
         "dateupdated": "2013-04-08",
         "files": [
             {"name": "map_invalid.dat", "throws": "weak polygon with touching edges"},
-            {"name": "map_fixed.dat", "content": "Map", "triangles": 121}
+            {"name": "map_fixed.dat", "content": "Map indoor", "triangles": 121}
+        ]
+    },
+    {
+        "title": "France borders",
+        "source": "http://commons.wikimedia.org/wiki/File:Blank_France_map,_no_Departments.svg",
+        "dateupdated": "2013-04-19",
+        "files": [
+            {"name": "France.dat", "content": "France", "triangles": 768}
+        ]
+    },
+    {
+        "title": "Berkeley CS 274 tests",
+        "source": "http://www.cs.berkeley.edu/~jrs/274s03/proj.html",
+        "dateupdated": "2013-04-19",
+        "files": [
+            {"name": "spiral.dat", "content": "Spiral", "triangles": 13}
         ]
     }
 ]

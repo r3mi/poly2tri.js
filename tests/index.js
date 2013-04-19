@@ -208,15 +208,22 @@ $(document).ready(function() {
         url: "tests/data/index.json",
         dataType: "json",
         success: function(data) {
+            var options = [];
             data.forEach(function(group) {
                 group.files.filter(function(file) {
                     return file.name && file.content;
                 }).forEach(function(file) {
-                    $("#preset").append($('<option>', {
+                    options.push($('<option>', {
                         value: file.name,
                         text: (file.content || file.name)
                     }).data("file", file));
                 });
+            });
+            // Sort before adding
+            options.sort(function(a,b) {
+                return $(a).text().localeCompare($(b).text());
+            }).forEach(function(option) {
+                $("#preset").append(option);
             });
             // Load some default data
             $("#preset option[value='dude.dat']").attr("selected", "selected");
