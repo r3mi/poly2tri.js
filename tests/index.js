@@ -48,6 +48,7 @@ var ERROR_STYLE = "rgba(255,0,0,0.8)";
 function clearData() {
     $(".info").css('visibility', 'hidden');
     $("textarea").val("");
+    $("#attribution").empty();
 }
 
 function parsePoints(str) {
@@ -216,11 +217,14 @@ $(document).ready(function() {
                     options.push($('<option>', {
                         value: file.name,
                         text: (file.content || file.name)
-                    }).data("file", file));
+                    }).data("file", file).data("attrib", {
+                        title: group.title,
+                        source: group.source
+                    }));
                 });
             });
             // Sort before adding
-            options.sort(function(a,b) {
+            options.sort(function(a, b) {
                 return $(a).text().localeCompare($(b).text());
             }).forEach(function(option) {
                 $("#preset").append(option);
@@ -232,6 +236,7 @@ $(document).ready(function() {
     });
     $("#preset").change(function() {
         var file = $("#preset option:selected").data("file") || {};
+        var attrib = $("#preset option:selected").data("attrib") || {};
         function load(filename, selector) {
             if (filename) {
                 $.ajax({
@@ -243,6 +248,9 @@ $(document).ready(function() {
             }
         }
         clearData();
+        if (attrib.title) {
+            $("#attribution").html("(source: <a href='" + attrib.source + "'>" + attrib.title + "</a>)");
+        }
         load(file.name, "#poly_contour");
         load(file.holes, "#poly_holes");
         load(file.steiner, "#poly_points");
