@@ -139,7 +139,7 @@ function triangulate(ctx) {
     ctx.lineWidth = linescale;
     ctx.fillStyle = TRIANGLE_FILL_STYLE;
     ctx.strokeStyle = TRIANGLE_STROKE_STYLE;
-    ctx.setLineDash(null);
+    ctx.setLineDash([]);
 
     triangles.forEach(function(t) {
         polygonPath(ctx, [t.getPoint(0), t.getPoint(1), t.getPoint(2)]);
