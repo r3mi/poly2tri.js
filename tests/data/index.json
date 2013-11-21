@@ -29,7 +29,7 @@
     {
         "title": "Data extracted from poly2tri issues",
         "source": "https://code.google.com/p/poly2tri/issues/list?can=1",
-        "dateupdated": "2013-03-19",
+        "dateupdated": "2013-11-21",
         "files": [
             {
                 "name": "issue39.dat", "holes": "issue39_holes.dat", "steiner": "issue39_steiner.dat",
@@ -37,7 +37,9 @@
             },
             {"name": "issue49.dat"},
             {"name": "issue53.dat", "holes": "issue53_hole.dat", "triangles": 10},
-            {"name": "issue58.dat"}
+            {"name": "issue58.dat"},
+            {"name": "issue79.dat"},
+            {"name": "issue79_1.dat"}
         ]
     },
     {
