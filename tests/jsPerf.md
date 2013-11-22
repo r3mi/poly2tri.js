@@ -2,7 +2,7 @@ jsPerf
 ======
 
 content of the jsPerf test at
-[jsperf.com/poly2tri](http://jsperf.com/poly2tri) 
+[jsperf.com/poly2tri](http://jsperf.com/poly2tri/2) 
 
 
 Test case details
