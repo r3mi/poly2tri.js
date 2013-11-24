@@ -29,10 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* jshint browser:false, forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, 
-   strict:true, undef:true, unused:true, curly:true, immed:true, latedef:true, 
-   newcap:true, trailing:true, maxcomplexity:11, indent:4 
- */
+/* jshint maxcomplexity:11 */
 
 
 /*
@@ -83,9 +80,9 @@
      * @param {array<Point>} points     invalid points
      */
     // Class added in the JavaScript version (was not present in the c++ version)
-    var PointError = function (message, points) {
-        this.name    = "PointError";
-        this.points  = points = points || [];
+    var PointError = function(message, points) {
+        this.name = "PointError";
+        this.points = points = points || [];
         this.message = message || "Invalid Points!";
         for (var i = 0; i < points.length; i++) {
             this.message += " " + Point.toString(points[i]);
@@ -355,7 +352,7 @@
             }
         }
 
-        if (! this.q._p2t_edge_list) {
+        if (!this.q._p2t_edge_list) {
             this.q._p2t_edge_list = [];
         }
         this.q._p2t_edge_list.push(this);
@@ -1171,7 +1168,7 @@
 
     SweepContext.prototype.mapTriangleToNodes = function(t) {
         for (var i = 0; i < 3; ++i) {
-            if (! t.getNeighbor(i)) {
+            if (!t.getNeighbor(i)) {
                 var n = this.front_.locatePoint(t.pointCW(t.getPoint(i)));
                 if (n) {
                     n.triangle = t;
@@ -1968,13 +1965,13 @@
 
 // ---------------------------------------------------------Exports (public API)
 
-    poly2tri.PointError     = PointError;
-    poly2tri.Point          = Point;
-    poly2tri.Triangle       = Triangle;
-    poly2tri.SweepContext   = SweepContext;
+    poly2tri.PointError = PointError;
+    poly2tri.Point = Point;
+    poly2tri.Triangle = Triangle;
+    poly2tri.SweepContext = SweepContext;
 
     // Backward compatibility
-    poly2tri.triangulate    = Sweep.triangulate;
+    poly2tri.triangulate = Sweep.triangulate;
     poly2tri.sweep = {Triangulate: Sweep.triangulate};
 
 }(this));

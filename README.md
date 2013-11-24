@@ -1,4 +1,3 @@
-
 poly2tri.js
 ===========
 
@@ -45,11 +44,29 @@ If you have  an issue not covered by the above, include your data-set with the p
 _The only easy day was yesterday; have a nice day. Mason Green_
 
 
-Library usage
--------------
+Install
+-------
 
-The library `src/poly2tri.js` can be included directly : 
-there is no mandatory dependency.
+This module works on both Node.js and browsers.
+
+For Node.js:
+
+```sh
+npm install poly2tri
+```
+```JavaScript
+var poly2tri = require('poly2tri');
+```
+
+For browsers:
+
+The file `src/poly2tri.js` can be included directly.
+It is standalone and has no mandatory dependency.
+
+
+Usage
+-----
+
 All functions and classes are scoped in the `poly2tri` namespace.
 
 1. Initialize CDT with a simple polyline 
@@ -156,22 +173,33 @@ You can get additional files from the `tests/data` directory.
 You need a modern browser to draw the results, supporting the HTML5 `<canvas>`.
 
 
+Development
+-----------
 
-Running the automated tests
----------------------------
+Install the dependent packages by running:
+```sh
+npm install
+```
 
-To run the automated tests (built using the [jasmine](http://pivotal.github.com/jasmine/) JavaScript test framework), 
-simply load `tests/SpecRunner.html`.
-
-Some of the tests load data from the `tests/data` directory, using Ajax.
-If these fail in your environement due to *Access-Control-Allow-Origin*
-(JavaScript will disallow access to the local file://), you will 
-have to run the tests through a local web server.
+The automated tests are built using [jasmine](http://pivotal.github.com/jasmine/),
+both for browser and for Node.js testing.
+Run the headless tests (JSHint, Node.js and PhantomJS) with:
+```sh
+npm test
+```
+Run all the browser tests (PhantomJS, Firefox and Chrome) with:
+```sh
+npm run-script testbrowsers
+```
+Check JSHint with:
+```sh
+npm run-script jshint
+```
 
 
 Performance tests
 -----------------
 
 This [jsPerf](http://jsperf.com/poly2tri/2) compares the performances 
-across several versions of the library.
+across several versions of the module.
 
