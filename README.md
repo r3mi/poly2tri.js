@@ -45,11 +45,29 @@ If you have  an issue not covered by the above, include your data-set with the p
 _The only easy day was yesterday; have a nice day. Mason Green_
 
 
-Library usage
--------------
+Install
+-------
 
-The library `src/poly2tri.js` can be included directly : 
-there is no mandatory dependency.
+This module works on both Node.js and browsers.
+
+For Node.js:
+
+```sh
+npm install poly2tri
+```
+```JavaScript
+var poly2tri = require('poly2tri');
+```
+
+For browsers:
+
+The file `src/poly2tri.js` can be included directly.
+It is standalone and has no mandatory dependency.
+
+
+Usage
+-----
+
 All functions and classes are scoped in the `poly2tri` namespace.
 
 1. Initialize CDT with a simple polyline 
@@ -173,5 +191,5 @@ Performance tests
 -----------------
 
 This [jsPerf](http://jsperf.com/poly2tri/2) compares the performances 
-across several versions of the library.
+across several versions of the module.
 

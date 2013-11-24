@@ -38,9 +38,63 @@
  */
 /* global poly2tri, MersenneTwister, $, jasmine, describe, it, xit, expect, beforeEach */
 
+"use strict";
+
+
+// -------------------------------------------------------------Node vs. Browser 
+var global = this;
+if (typeof window === 'undefined') {
+    var poly2tri = require('../../src/poly2tri');
+    var MersenneTwister = require('mersennetwister');
+    describe("poly2tri.node", function() {
+        it("should require 'poly2tri'", function() {
+            expect(poly2tri).toBeDefined();
+            expect(global.poly2tri).not.toBeDefined();
+        });
+    });
+    var fs = require('fs');
+    var readFileSync = function(filename, dataType) {
+        var data = fs.readFileSync("tests/data/" + filename, 'utf8');
+        return (dataType === 'json') ? JSON.parse(data) : data;
+    };
+} else {
+    describe("poly2tri.browser", function() {
+        it("should be 'poly2tri' by default", function() {
+            expect(poly2tri).toBeDefined();
+        });
+        it("should have a noConflict() method", function() {
+            var pp = poly2tri.noConflict();
+            expect(poly2tri).not.toBeDefined();
+            expect(pp).toBeDefined();
+            poly2tri = pp;
+        });
+    });
+    /**
+     * Read an external data file.
+     * Done synchroneously, to simplify and avoid using jasmine's waitsFor/runs
+     * @param {String} filename
+     * @param {String} dataType     see jQuery.Ajax dataType (default: Intelligent Guess)
+     * @returns {String}    file content, undefined if problem
+     */
+    var readFileSync = function(filename, dataType) {
+        var data;
+        $.ajax({
+            async: false,
+            url: "data/" + filename,
+            dataType: dataType,
+            success: function(d) {
+                data = d;
+            }
+        });
+        return data;
+    };
+}
+
+
+
 describe("poly2tri", function() {
 
-    "use strict";
+    var p2t = poly2tri; // Our global shortcut
 
 // ------------------------------------------------------------------------utils
     /*
@@ -127,23 +181,6 @@ describe("poly2tri", function() {
         return failed;
     }
 
-    /**
-     * Read an external data file.
-     * Done synchroneously, to simplify and avoid using jasmine's waitsFor/runs
-     * @param {String} filename
-     * @param {String} dataType     see jQuery.Ajax dataType (default: Intelligent Guess)
-     * @returns {String}    file content, undefined if problem
-     */
-    function readFileSync(filename, dataType) {
-        var data;
-        $.ajax({
-            async: false,
-            url: filename,
-            dataType: dataType,
-            success: function(d) { data = d; }
-        });
-        return data;
-    }
 
     /**
      * Parse points coordinates : pairs of x y, with any separator between coordinates
@@ -158,24 +195,6 @@ describe("poly2tri", function() {
     }
 
 
-// --------------------------------------------------------------------namespace
-
-    var p2t = poly2tri; // Our global shortcut
-
-    describe("namespace", function() {
-        it("should be 'poly2tri' by default", function() {
-            expect(poly2tri).toBeDefined();
-            expect(poly2tri.Point).toBeDefined();
-        });
-        it("should have a noConflict() method", function() {
-            var pp = poly2tri.noConflict();
-            expect(poly2tri).not.toBeDefined();
-            expect(pp).toBeDefined();
-            expect(pp.Point).toBeDefined();
-        });
-    });
-
-
 // -----------------------------------------------------------------------Shapes
     /*
      * Tests
@@ -187,6 +206,7 @@ describe("poly2tri", function() {
 
     describe("Point", function() {
         it("should have a default constructor", function() {
+            expect(p2t.Point).toBeDefined();
             var point = new p2t.Point();
             expect(point).toEqual(jasmine.any(p2t.Point));
             expect(point.x).toBe(0);
@@ -228,7 +248,10 @@ describe("poly2tri", function() {
         it("should have a toString() static function", function() {
             expect(p2t.Point.toString(new p2t.Point(1, 2))).toBe("(1;2)");
             expect(p2t.Point.toString({x: 3, y: 4})).toBe("(3;4)");
-            expect(p2t.Point.toString({z:7, toString: function() { return "56"; }})).toBe("56");
+            expect(p2t.Point.toString({z: 7, toString: function() {
+                    return "56";
+                }
+            })).toBe("56");
         });
     });
 
@@ -638,7 +661,7 @@ describe("poly2tri", function() {
             contour = makePoints([-1, -1, 1.5, -1, 2, 2, -1, 2]);
             points = [];
             for (i = 0; i < max * 2; i++) {
-                points.push(m.random());
+                points.push(m.rnd());
             }
             points = makePoints(points);
             it("should triangulate", function() {
@@ -664,7 +687,7 @@ describe("poly2tri", function() {
             // pseudo-random generator with known seed, so that test is repeatable
             var m = new MersenneTwister(3756);
             contour = randomPolygon(function() {
-                return m.random();
+                return m.rnd();
             }, max);
             contour = makePoints(contour);
             it("should triangulate", function() {
@@ -689,7 +712,7 @@ describe("poly2tri", function() {
             // pseudo-random generator with known seed, so that test is repeatable
             var m = new MersenneTwister(235336);
             contour = randomPolygon(function() {
-                return m.random();
+                return m.rnd();
             }, max);
             contour = makePoints(contour);
             contour.forEach(function(point, index) {
@@ -786,7 +809,7 @@ describe("poly2tri", function() {
         // Common options for SweepContext
         var options = {cloneArrays: true};
 
-        var index = readFileSync("data/index.json", "json");
+        var index = readFileSync("index.json", "json");
         it("index should load (if fails for local files Access-Control-Allow-Origin => use web server)", function() {
             expect(index).toEqual(jasmine.any(Array));
             expect(index.length).toBeGreaterThan(0);
@@ -800,13 +823,13 @@ describe("poly2tri", function() {
                         // not reset between tests : loaded once only
                         var contour, holes = [], points = [], t, swctx;
                         it("should load and parse contour", function() {
-                            var data = readFileSync("data/" + file.name);
+                            var data = readFileSync(file.name);
                             contour = parsePoints(data);
                             expect(contour.length).toBeGreaterThan(1);
                         });
                         if (file.holes) {
                             it("should load and parse holes " + file.holes, function() {
-                                var data = readFileSync("data/" + file.holes);
+                                var data = readFileSync(file.holes);
                                 // at least one blank line between each hole
                                 data.split(/\n\s*\n/).forEach(function(val) {
                                     var hole = parsePoints(val);
@@ -819,7 +842,7 @@ describe("poly2tri", function() {
                         }
                         if (file.steiner) {
                             it("should load and parse Steiner points " + file.steiner, function() {
-                                var data = readFileSync("data/" + file.steiner);
+                                var data = readFileSync(file.steiner);
                                 points = parsePoints(data);
                                 expect(points.length).toBeGreaterThan(0);
                             });
