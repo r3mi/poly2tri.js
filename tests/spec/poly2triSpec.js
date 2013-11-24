@@ -80,7 +80,7 @@ if (typeof window === 'undefined') {
         var data;
         $.ajax({
             async: false,
-            url: "data/" + filename,
+            url: "base/tests/data/" + filename,
             dataType: dataType,
             success: function(d) {
                 data = d;

@@ -1,4 +1,3 @@
-
 poly2tri.js
 ===========
 
@@ -174,17 +173,24 @@ You can get additional files from the `tests/data` directory.
 You need a modern browser to draw the results, supporting the HTML5 `<canvas>`.
 
 
+Development
+-----------
 
-Running the automated tests
----------------------------
+Install the dependent packages by running:
+```sh
+npm install
+```
 
-To run the automated tests (built using the [jasmine](http://pivotal.github.com/jasmine/) JavaScript test framework), 
-simply load `tests/SpecRunner.html`.
-
-Some of the tests load data from the `tests/data` directory, using Ajax.
-If these fail in your environement due to *Access-Control-Allow-Origin*
-(JavaScript will disallow access to the local file://), you will 
-have to run the tests through a local web server.
+The automated tests are built using [jasmine](http://pivotal.github.com/jasmine/),
+both for browser and for Node.js testing.
+Run the headless tests (Node.js and PhantomJS) with
+```sh
+npm test
+```
+Run all the browser tests (PhantomJS, Firefox and Chrom) with
+```sh
+npm run-script browser
+```
 
 
 Performance tests
