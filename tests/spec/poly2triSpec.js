@@ -32,18 +32,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* jshint browser:true, forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, 
- strict:true, undef:true, unused:true, curly:true, immed:true, latedef:true, 
- newcap:true, trailing:true, maxcomplexity:5, indent:4 
- */
-/* global poly2tri, MersenneTwister, $, jasmine, describe, it, xit, expect, beforeEach */
+/* jshint globalstrict:true */
+/* global jasmine, describe, it, xit, expect, beforeEach */
 
 "use strict";
 
 
 // -------------------------------------------------------------Node vs. Browser 
-var global = this;
 if (typeof window === 'undefined') {
+    /* jshint node:true */
     var poly2tri = require('../../src/poly2tri');
     var MersenneTwister = require('mersennetwister');
     describe("poly2tri.node", function() {
@@ -58,6 +55,7 @@ if (typeof window === 'undefined') {
         return (dataType === 'json') ? JSON.parse(data) : data;
     };
 } else {
+    /* global poly2tri:true, MersenneTwister */
     describe("poly2tri.browser", function() {
         it("should be 'poly2tri' by default", function() {
             expect(poly2tri).toBeDefined();
@@ -77,6 +75,7 @@ if (typeof window === 'undefined') {
      * @returns {String}    file content, undefined if problem
      */
     var readFileSync = function(filename, dataType) {
+        /* global $ */
         var data;
         $.ajax({
             async: false,

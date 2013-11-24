@@ -6,6 +6,8 @@
  * New configuration file syntax : Karma >= 0.10
  */
 
+/* jshint node:true */
+
 module.exports = function(config) {
     'use strict';
 

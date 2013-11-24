@@ -183,13 +183,17 @@ npm install
 
 The automated tests are built using [jasmine](http://pivotal.github.com/jasmine/),
 both for browser and for Node.js testing.
-Run the headless tests (Node.js and PhantomJS) with
+Run the headless tests (JSHint, Node.js and PhantomJS) with:
 ```sh
 npm test
 ```
-Run all the browser tests (PhantomJS, Firefox and Chrom) with
+Run all the browser tests (PhantomJS, Firefox and Chrome) with:
 ```sh
-npm run-script browser
+npm run-script testbrowsers
+```
+Check JSHint with:
+```sh
+npm run-script jshint
 ```
 
 

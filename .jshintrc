@@ -1,0 +1,17 @@
+{
+  "forin": true,
+  "noarg": true,
+  "noempty": true,
+  "eqeqeq": true,
+  "bitwise": true,
+  "strict": true,
+  "undef": true,
+  "unused": true,
+  "curly": true,
+  "immed": true,
+  "latedef": true,
+  "newcap": true,
+  "trailing": true,
+  "maxcomplexity": 5,
+  "indent": 4
+}

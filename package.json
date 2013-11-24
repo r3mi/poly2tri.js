@@ -11,8 +11,11 @@
         "test": "tests"
     },
     "scripts": {
-        "test": "./node_modules/.bin/jasmine-node --captureExceptions ./tests/spec && ./node_modules/.bin/karma start tests/karma.conf.js --single-run --browsers PhantomJS",
-        "browser": "./node_modules/.bin/karma start tests/karma.conf.js --single-run"
+        "test": "npm run-script jshint && npm run-script testnode && npm run-script testbrowser",
+        "testnode": "jasmine-node --captureExceptions ./tests/spec",
+        "testbrowser": "karma start tests/karma.conf.js --single-run --browsers PhantomJS",
+        "testbrowsers": "karma start tests/karma.conf.js --single-run",
+        "jshint": "jshint src/*.js tests/*.js tests/spec/*.js"
     },
     "keywords": [
         "2D",
@@ -38,6 +41,7 @@
         "karma-jasmine": "~0.1.3",
         "karma-phantomjs-launcher": "~0.1.0",
         "karma-chrome-launcher": "~0.1.0",
-        "karma-firefox-launcher": "~0.1.0"
+        "karma-firefox-launcher": "~0.1.0",
+        "jshint": "~2.3.0"
     }
 }

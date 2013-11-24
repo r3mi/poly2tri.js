@@ -29,10 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* jshint browser:false, forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, 
- strict:true, undef:true, unused:true, curly:true, immed:true, latedef:true, 
- newcap:true, trailing:true, maxcomplexity:11, indent:4 
- */
+/* jshint maxcomplexity:11 */
 
 
 /*
