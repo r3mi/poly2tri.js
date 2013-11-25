@@ -568,6 +568,18 @@
         }
     };
 
+    // Additional check from Java version (see issue #88)
+    Triangle.prototype.getConstrainedEdgeAcross = function(p) {
+        // Here we are comparing point references, not values
+        if (p === this.points_[0]) {
+            return this.constrained_edge[0];
+        } else if (p === this.points_[1]) {
+            return this.constrained_edge[1];
+        } else {
+            return this.constrained_edge[2];
+        }
+    };
+
     Triangle.prototype.setConstrainedEdgeCW = function(p, ce) {
         // Here we are comparing point references, not values
         if (p === this.points_[0]) {
@@ -1871,6 +1883,13 @@
             throw new Error('poly2tri [BUG:FIXME] FLIP failed due to missing triangle!');
         }
         var op = ot.oppositePoint(t, p);
+
+        // Additional check from Java version (see issue #88)
+        if (t.getConstrainedEdgeAcross(p)) {
+            var index = t.index(p);
+            throw new PointError("poly2tri Intersecting Constraints",
+                    [p, op, t.getPoint((index + 1) % 3), t.getPoint((index + 2) % 3)]);
+        }
 
         if (inScanArea(p, t.pointCCW(p), t.pointCW(p), op)) {
             // Lets rotate shared edge one vertex CW

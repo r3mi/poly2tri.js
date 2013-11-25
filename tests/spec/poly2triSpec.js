@@ -33,7 +33,7 @@
  */
 
 /* jshint globalstrict:true */
-/* global jasmine, describe, it, xit, expect, beforeEach */
+/* global jasmine, describe, it, expect, beforeEach */
 
 "use strict";
 
@@ -592,30 +592,6 @@ describe("poly2tri", function() {
                 });
             });
         });
-        describe("a polygon with 1 hole close to edge", function() {
-            // not reset between tests
-            var contour, hole, t;
-            // same as issue #13
-            contour = makePoints([2.10229524019, -0.760509508136, 2.15571376911, -0.752653842118, 2.00173917352, 0.294373407871, 1.9483206446, 0.286517741853]);
-            hole = makePoints([1.9968142935, 0.0247609293562, 2.02104796235, 0.0283247041864, 2.08803526014, -0.495188920808, 2.06380159129, -0.498752695638]);
-            it("should triangulate", function() {
-                var swctx = new p2t.SweepContext(contour, options);
-                swctx.addHole(hole);
-                swctx.triangulate();
-                t = swctx.getTriangles();
-                expect(t).toBeTruthy();
-            });
-            it("should return 8 triangles", function() {
-                expect(t.length).toBe(8);
-            });
-            it("should be in the contour and hole", function() {
-                expect(t).toBeInPoints([contour, hole]);
-            });
-            // FAILS ! Hole is not really valid, see issue #13
-            it("should FAIL to contain the contour and hole", function() {
-                expect(t).not.toContainPoints([contour, hole]);
-            });
-        });
         describe("a polygon with 2 holes and points using custom Point class", function() {
             // not reset between tests
             var contour, hole1, hole2, points, t;
@@ -773,26 +749,6 @@ describe("poly2tri", function() {
                 expect(exception.points[0].y).toBe(100);
                 expect(exception.points[1].y).toBe(100);
                 expect(exception.points[2].y).toBe(100);
-            });
-        });
-        describe("a polygon with crossing paths", function() {
-            // not reset between tests
-            var contour, t;
-            // same as polygon in "data/custom.dat"
-            contour = makePoints([0, 130, -270, 0, 130, -40, 10, -60, -10, -20, 100, 30, 40, -40]);
-            it("should triangulate", function() {
-                var swctx = new p2t.SweepContext(contour, options);
-                swctx.triangulate();
-                t = swctx.getTriangles();
-                expect(t).toBeTruthy();
-            });
-            // One of the 2 tests below will fail.
-            // In this particular case, it is the second one.
-            xit("should be in the contour", function() {
-                expect(t).toBeInPoints([contour]);
-            });
-            it("should fail to contain the contour", function() {
-                expect(t).not.toContainPoints([contour]);
             });
         });
     });

@@ -6,7 +6,7 @@
         "files": [
             {"name": "2.dat", "content": "2", "triangles": 58},
             {"name": "bird.dat", "content": "Bird", "triangles": 273},
-            {"xxxname": "custom.dat", "throws": "invalid: polygon with crossing paths"},
+            {"name": "custom.dat", "throws": "intersecting constraints: polygon with crossing paths"},
             {"name": "debug.dat", "content": "Butterfly-like polygon", "triangles": 198},
             {"name": "diamond.dat", "content": "Diamond", "triangles": 8},
             {"name": "dude.dat", "content": "Dude shape", "triangles": 92},
@@ -29,8 +29,12 @@
     {
         "title": "Data extracted from poly2tri issues",
         "source": "https://code.google.com/p/poly2tri/issues/list?can=1",
-        "dateupdated": "2013-11-21",
+        "dateupdated": "2013-11-25",
         "files": [
+            {
+                "name": "issue13.dat", "holes": "issue13_hole.dat",
+                "throws": "intersecting constraints: polygon with 1 hole close to edge"
+            },
             {
                 "name": "issue39.dat", "holes": "issue39_holes.dat", "steiner": "issue39_steiner.dat",
                 "content": "Brokepolygon with points", "triangles": 143
@@ -39,7 +43,8 @@
             {"name": "issue53.dat", "holes": "issue53_hole.dat", "triangles": 10},
             {"name": "issue58.dat"},
             {"name": "issue79.dat"},
-            {"name": "issue79_1.dat"}
+            {"name": "issue79_1.dat"},
+            {"name": "issue88.dat", "holes": "issue88_hole.dat", "throws": "intersecting constraints"}
         ]
     },
     {
@@ -97,7 +102,7 @@
         "dateupdated": "2013-11-25",
         "files": [
             {
-                "name": "road_on_grid.dat", "xxxcontent": "road hole on regular grid [XXX BAD]", 
+                "name": "road_on_grid.dat", "xxxcontent": "road hole on regular grid [XXX BAD]",
                 "holes": "road_on_grid_hole.dat", "steiner": "road_on_grid_steiner.dat"
             }
         ]
