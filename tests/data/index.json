@@ -75,12 +75,20 @@
         ]
     },
     {
-        "title": "Data extracted from poly2tri forum",
+        "title": "Data extracted from poly2tri forum 'Library hangs'",
         "source": "https://groups.google.com/forum/?fromgroups=#!topic/poly2tri/H1OzouuOZ_s",
         "dateupdated": "2013-04-08",
         "files": [
             {"name": "map_invalid.dat", "throws": "weak polygon with touching edges"},
             {"name": "map_fixed.dat", "content": "Map indoor", "triangles": 121}
+        ]
+    },
+    {
+        "title": "Data extracted from poly2tri forum 'Allow touching holes within the polygon'",
+        "source": "https://groups.google.com/forum/#!topic/poly2tri/Lep0ajMp_T8",
+        "dateupdated": "2013-11-25",
+        "files": [
+            {"name": "forum_2013-08-01.dat", "holes": "forum_2013-08-01_hole.dat", "triangles": 129}
         ]
     },
     {
