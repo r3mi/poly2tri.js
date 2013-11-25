@@ -92,6 +92,17 @@
         ]
     },
     {
+        "title": "Data extracted from poly2tri forum 'Strange results'",
+        "source": "https://groups.google.com/forum/#!topic/poly2tri/5cgj8241Qwo",
+        "dateupdated": "2013-11-25",
+        "files": [
+            {
+                "name": "road_on_grid.dat", "xxxcontent": "road hole on regular grid [XXX BAD]", 
+                "holes": "road_on_grid_hole.dat", "steiner": "road_on_grid_steiner.dat"
+            }
+        ]
+    },
+    {
         "title": "France borders",
         "source": "http://commons.wikimedia.org/wiki/File:Blank_France_map,_no_Departments.svg",
         "dateupdated": "2013-04-19",
