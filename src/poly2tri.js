@@ -1995,20 +1995,3 @@
 
 }(this));
 
-
-// ----------------------------------------------------Namespace.js (deprecated)
-
-(function() { // to scope jshint directives
-    "use strict";
-    /* jshint newcap:false */
-    /* global Namespace, js, poly2tri */
-
-    // Tests "Namespace.js" support, for backward compatilibilty
-    if (typeof Namespace === 'function') {
-        // Put in the "js.poly2tri" namespace
-        Namespace('js.poly2tri');
-        js.poly2tri = poly2tri;
-        Namespace.provide('js.poly2tri');
-    }
-}());
-
