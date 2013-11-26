@@ -393,6 +393,15 @@ describe("poly2tri", function() {
                 expect(t[0].getPoint(1)).toEqualPoint(t2[0].getPoint(1));
                 expect(t[0].getPoint(2)).toEqualPoint(t2[0].getPoint(2));
             });
+            it("should triangulate (backward compatibility)", function() {
+                var swctx2 = new p2t.SweepContext(contour, options);
+                p2t.triangulate(swctx2);
+                var t2 = swctx2.getTriangles();
+                expect(t2.length).toBe(1);
+                expect(t[0].getPoint(0)).toEqualPoint(t2[0].getPoint(0));
+                expect(t[0].getPoint(1)).toEqualPoint(t2[0].getPoint(1));
+                expect(t[0].getPoint(2)).toEqualPoint(t2[0].getPoint(2));
+            });
         });
         describe("a square", function() {
             // not reset between tests
