@@ -34,6 +34,18 @@
 "use strict";
 
 /*
+ * for Browser + <script> : 
+ * return the poly2tri global variable to its previous value. 
+ * (this feature is not automatically provided by browserify).
+ */
+var previousPoly2tri = global.poly2tri;
+exports.noConflict = function() {
+    global.poly2tri = previousPoly2tri;
+    return exports;
+};
+
+
+/*
  * Note
  * ====
  * the structure of this JavaScript version of poly2tri intentionnaly follows

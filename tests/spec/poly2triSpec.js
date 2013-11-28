@@ -36,31 +36,30 @@
 
 "use strict";
 
+// ---------------------------------------------------------------Module loading
 
-var poly2tri = require('../../dist/poly2tri');
-var MersenneTwister = require('mersennetwister');
+global.poly2tri = "previous";
+var p2t = require('../../dist/poly2tri');
+global.poly2tri = p2t;
 
-describe("poly2tri.node", function() {
+describe("poly2tri module", function() {
     it("should require 'poly2tri'", function() {
-        expect(poly2tri).toBeDefined();
-        expect(global.poly2tri).not.toBeDefined();
+        expect(p2t).toBeDefined();
+        expect(p2t.triangulate).toBeDefined();
+    });
+    it("should have a noConflict() method", function() {
+        var pp = global.poly2tri.noConflict();
+        expect(pp).toBe(p2t);
+        if (process.browser) {
+            expect(global.poly2tri).toBe("previous");
+        }
     });
 });
+
 
 // -------------------------------------------------------------Node vs. Browser 
 
 if (process.browser) {
-    describe("poly2tri.browser", function() {
-        it("should be 'poly2tri' by default", function() {
-            expect(poly2tri).toBeDefined();
-        });
-        it("should have a noConflict() method", function() {
-            var pp = poly2tri.noConflict();
-            expect(poly2tri).not.toBeDefined();
-            expect(pp).toBeDefined();
-            poly2tri = pp;
-        });
-    });
     /**
      * Read an external data file.
      * Done synchroneously, to simplify and avoid using jasmine's waitsFor/runs
@@ -93,13 +92,12 @@ if (process.browser) {
 
 describe("poly2tri", function() {
 
-    var p2t = poly2tri; // Our global shortcut
-
 // ------------------------------------------------------------------------utils
     /*
      * Utilities
      * =========
      */
+    var MersenneTwister = require('mersennetwister');
 
     // Creates list of Point from list of coordinates [ x1, y1, x2, y2 ...]
     function makePoints(a) {
