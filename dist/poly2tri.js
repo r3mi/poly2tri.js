@@ -1,3 +1,4 @@
+!function(e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):"undefined"!=typeof window?window.poly2tri=e():"undefined"!=typeof global?global.poly2tri=e():"undefined"!=typeof self&&(self.poly2tri=e())}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -29,7 +30,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* jshint maxcomplexity:11 */
+/* jshint node:true, maxcomplexity:11 */
 
 "use strict";
 
@@ -1965,3 +1966,8 @@ exports.SweepContext = SweepContext;
 // Backward compatibility
 exports.triangulate = Sweep.triangulate;
 exports.sweep = {Triangulate: Sweep.triangulate};
+
+},{}]},{},[1])
+(1)
+});
+;

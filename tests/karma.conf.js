@@ -6,21 +6,23 @@
  * New configuration file syntax : Karma >= 0.10
  */
 
-/* jshint node:true */
-
 module.exports = function(config) {
     'use strict';
 
     config.set({
         basePath: '../',
-        frameworks: ['jasmine'],
+        frameworks: ['jasmine', 'browserify'],
         files: [
-            'src/*.js',
-            'node_modules/mersennetwister/src/MersenneTwister.js',
             'lib/js/jquery.js', // for Ajax loading 
             'tests/spec/*.js',
             {pattern: 'tests/data/**/*', included: false}
         ],
+        preprocessors: {
+            'tests/spec/*.js': ['browserify']
+        },
+        browserify: {
+            //watch: true
+        },
         browsers: ['Chrome', 'Firefox', 'PhantomJS']
     });
 };

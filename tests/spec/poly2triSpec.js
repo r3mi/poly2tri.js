@@ -32,30 +32,24 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* jshint globalstrict:true */
 /* global jasmine, describe, it, expect, beforeEach */
 
 "use strict";
 
 
-// -------------------------------------------------------------Node vs. Browser 
-if (typeof window === 'undefined') {
-    /* jshint node:true */
-    var poly2tri = require('../../src/poly2tri');
-    var MersenneTwister = require('mersennetwister');
-    describe("poly2tri.node", function() {
-        it("should require 'poly2tri'", function() {
-            expect(poly2tri).toBeDefined();
-            expect(global.poly2tri).not.toBeDefined();
-        });
+var poly2tri = require('../../dist/poly2tri');
+var MersenneTwister = require('mersennetwister');
+
+describe("poly2tri.node", function() {
+    it("should require 'poly2tri'", function() {
+        expect(poly2tri).toBeDefined();
+        expect(global.poly2tri).not.toBeDefined();
     });
-    var fs = require('fs');
-    var readFileSync = function(filename, dataType) {
-        var data = fs.readFileSync("tests/data/" + filename, 'utf8');
-        return (dataType === 'json') ? JSON.parse(data) : data;
-    };
-} else {
-    /* global poly2tri:true, MersenneTwister */
+});
+
+// -------------------------------------------------------------Node vs. Browser 
+
+if (process.browser) {
     describe("poly2tri.browser", function() {
         it("should be 'poly2tri' by default", function() {
             expect(poly2tri).toBeDefined();
@@ -75,8 +69,8 @@ if (typeof window === 'undefined') {
      * @returns {String}    file content, undefined if problem
      */
     var readFileSync = function(filename, dataType) {
-        /* global $ */
         var data;
+        /* global $ */
         $.ajax({
             async: false,
             url: "base/tests/data/" + filename,
@@ -86,6 +80,12 @@ if (typeof window === 'undefined') {
             }
         });
         return data;
+    };
+} else {
+    var fs = require('fs');
+    var readFileSync = function(filename, dataType) {
+        var data = fs.readFileSync("tests/data/" + filename, 'utf8');
+        return (dataType === 'json') ? JSON.parse(data) : data;
     };
 }
 

@@ -50,12 +50,8 @@ Install
 This module works on both Node.js and browsers.
 
 For Node.js:
-
 ```sh
 npm install poly2tri
-```
-```JavaScript
-var poly2tri = require('poly2tri');
 ```
 
 For browsers:
@@ -67,9 +63,24 @@ It is standalone and has no mandatory dependency.
 Usage
 -----
 
-All functions and classes are scoped in the `poly2tri` namespace.
+1. Get a reference to the library.
+   The module is in UMD format (universal module definition), compatible
+   with the various module systems.
+   
+    - CommonJS:
 
-1. Initialize CDT with a simple polyline 
+            var poly2tri = require('poly2tri');
+
+    - RequireJS:
+   
+            require('poly2tri', function (poly2tri) {
+                ...
+            });
+    
+    - If you’re not using a module system at all, you can access the package
+      as a global variable `poly2tri` (or `window.poly2tri` in a browser).
+
+2. Initialize CDT with a simple polyline 
    (this defines the constrained edges)
 
         var contour = [
@@ -80,7 +91,7 @@ All functions and classes are scoped in the `poly2tri` namespace.
         ];
         var swctx = new poly2tri.SweepContext(contour);
                
-2.  Add holes if necessary (also simple polylines)
+3. Add holes if necessary (also simple polylines)
 
         var hole = [
             new poly2tri.Point(200, 200), 
@@ -89,12 +100,12 @@ All functions and classes are scoped in the `poly2tri` namespace.
         ];  
         swctx.addHole(hole);
 
-3. Add Steiner points
+4. Add Steiner points
 
         var point = new poly2tri.Point(150, 150);
         swctx.addPoint(point);
 
-4. Triangulate
+5. Triangulate
 
         swctx.triangulate();
         var triangles = swctx.getTriangles();
@@ -189,11 +200,11 @@ npm test
 ```
 Run all the browser tests (PhantomJS, Firefox and Chrome) with:
 ```sh
-npm run-script testbrowsers
+npm run testbrowsers
 ```
 Check JSHint with:
 ```sh
-npm run-script jshint
+npm run jshint
 ```
 
 

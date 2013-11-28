@@ -1,4 +1,5 @@
 {
+  "node": true,
   "forin": true,
   "noarg": true,
   "noempty": true,
