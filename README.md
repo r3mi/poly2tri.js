@@ -200,7 +200,7 @@ npm test
 ```
 Run all the browser tests (PhantomJS, Firefox and Chrome) with:
 ```sh
-npm run testbrowsers
+npm run test.browsers
 ```
 Check JSHint with:
 ```sh

@@ -11,10 +11,10 @@
         "test": "tests"
     },
     "scripts": {
-        "test": "npm run build && npm run testnode && npm run testbrowser",
-        "testnode": "jasmine-node --captureExceptions ./tests/spec",
-        "testbrowser": "karma start tests/karma.conf.js --single-run --browsers PhantomJS",
-        "testbrowsers": "karma start tests/karma.conf.js --single-run",
+        "test": "npm run build && npm run test.node && npm run test.phantom",
+        "test.node": "jasmine-node --captureExceptions ./tests/spec",
+        "test.phantom": "karma start tests/karma.conf.js --single-run --browsers PhantomJS",
+        "test.browsers": "karma start tests/karma.conf.js --single-run",
         "jshint": "jshint src/*.js tests/*.js tests/spec/*.js",
         "build": "npm run jshint && mkdir -p dist && browserify src/*.js --standalone poly2tri -o dist/poly2tri.js"
     },
