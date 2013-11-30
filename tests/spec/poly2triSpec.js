@@ -72,7 +72,7 @@ if (process.browser) {
         /* global $ */
         $.ajax({
             async: false,
-            url: "base/tests/data/" + filename,
+            url: "base/tests/data/" + filename, // Karma serves files from '/base'
             dataType: dataType,
             success: function(d) {
                 data = d;
