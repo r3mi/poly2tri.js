@@ -40,7 +40,10 @@ Since there are no input validation of the data given for triangulation you need
  
 **Make sure you understand the preceding notice before posting an [issue].**
 If you have  an issue not covered by the above, include your data-set with the problem.
- 
+
+You can test your dataset using the 
+[online JavaScript version](http://javascript.poly2tri.googlecode.com/hg/index.html).
+
 _The only easy day was yesterday; have a nice day. Mason Green_
 
 
@@ -89,7 +92,7 @@ All functions and classes are scoped in the `poly2tri` namespace.
         ];  
         swctx.addHole(hole);
 
-3. Add Steiner points
+3. Add Steiner points if necessary
 
         var point = new poly2tri.Point(150, 150);
         swctx.addPoint(point);
