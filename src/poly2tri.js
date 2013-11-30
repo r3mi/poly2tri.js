@@ -48,7 +48,7 @@ exports.noConflict = function() {
 /*
  * Note
  * ====
- * the structure of this JavaScript version of poly2tri intentionnaly follows
+ * the structure of this JavaScript version of poly2tri intentionally follows
  * as closely as possible the structure of the reference C++ version, to make it 
  * easier to keep the 2 versions in sync.
  */
