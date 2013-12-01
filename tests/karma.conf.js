@@ -21,8 +21,10 @@ module.exports = function(config) {
             'tests/spec/*.js': ['browserify']
         },
         browserify: {
-            //watch: true
+            // work around --standalone bug, see https://github.com/substack/node-browserify/issues/525
+            noParse: ['dist/poly2tri.js']
         },
+        //logLevel: "LOG_DEBUG",
         browsers: ['Chrome', 'Firefox', 'PhantomJS']
     });
 };

@@ -11,12 +11,13 @@
         "test": "tests"
     },
     "scripts": {
+        "prepublish": "npm run build",
         "test": "npm run build && npm run test.node && npm run test.phantom",
         "test.node": "jasmine-node --captureExceptions ./tests/spec",
         "test.phantom": "karma start tests/karma.conf.js --single-run --browsers PhantomJS",
         "test.browsers": "karma start tests/karma.conf.js --single-run",
         "jshint": "jshint src/*.js tests/*.js tests/spec/*.js",
-        "build": "npm run jshint && mkdir -p dist && browserify src/*.js --standalone poly2tri -o dist/poly2tri.js"
+        "build": "npm run jshint && mkdir -p dist && browserify src/poly2tri.js --standalone poly2tri -o dist/poly2tri.js"
     },
     "keywords": [
         "2D",
@@ -44,7 +45,7 @@
         "karma-chrome-launcher": "~0.1.0",
         "karma-firefox-launcher": "~0.1.0",
         "jshint": "~2.3.0",
-        "browserify": "~2.35.4",
-        "karma-browserify": "0.0.5"
+        "browserify": "~2.36.0",
+        "karma-browserify": "~0.0.6"
     }
 }
