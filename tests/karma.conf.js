@@ -6,21 +6,25 @@
  * New configuration file syntax : Karma >= 0.10
  */
 
-/* jshint node:true */
-
 module.exports = function(config) {
     'use strict';
 
     config.set({
         basePath: '../',
-        frameworks: ['jasmine'],
+        frameworks: ['jasmine', 'browserify'],
         files: [
-            'src/*.js',
-            'node_modules/mersennetwister/src/MersenneTwister.js',
             'lib/js/jquery.js', // for Ajax loading 
             'tests/spec/*.js',
             {pattern: 'tests/data/**/*', included: false}
         ],
+        preprocessors: {
+            'tests/spec/*.js': ['browserify']
+        },
+        browserify: {
+            // work around --standalone bug, see https://github.com/substack/node-browserify/issues/525
+            noParse: ['dist/poly2tri.js']
+        },
+        //logLevel: "LOG_DEBUG",
         browsers: ['Chrome', 'Firefox', 'PhantomJS']
     });
 };

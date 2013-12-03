@@ -2,7 +2,7 @@
     "name": "poly2tri",
     "version": "1.2.7",
     "description": "A 2D constrained Delaunay triangulation library",
-    "main": "src/poly2tri.js",
+    "main": "dist/poly2tri.js",
     "repository": {
         "type": "mercurial",
         "url": "https://code.google.com/p/poly2tri/"
@@ -11,11 +11,13 @@
         "test": "tests"
     },
     "scripts": {
-        "test": "npm run-script jshint && npm run-script testnode && npm run-script testbrowser",
-        "testnode": "jasmine-node --captureExceptions ./tests/spec",
-        "testbrowser": "karma start tests/karma.conf.js --single-run --browsers PhantomJS",
-        "testbrowsers": "karma start tests/karma.conf.js --single-run",
-        "jshint": "jshint src/*.js tests/*.js tests/spec/*.js"
+        "prepublish": "npm run build",
+        "test": "npm run build && npm run test.node && npm run test.phantom",
+        "test.node": "jasmine-node --captureExceptions ./tests/spec",
+        "test.phantom": "karma start tests/karma.conf.js --single-run --browsers PhantomJS",
+        "test.browsers": "karma start tests/karma.conf.js --single-run",
+        "jshint": "jshint src/*.js tests/*.js tests/spec/*.js",
+        "build": "npm run jshint && mkdir -p dist && browserify src/poly2tri.js --standalone poly2tri -o dist/poly2tri.js"
     },
     "keywords": [
         "2D",
@@ -46,6 +48,8 @@
         "karma-phantomjs-launcher": "~0.1.0",
         "karma-chrome-launcher": "~0.1.0",
         "karma-firefox-launcher": "~0.1.0",
-        "jshint": "~2.3.0"
+        "jshint": "~2.3.0",
+        "browserify": "~2.36.0",
+        "karma-browserify": "~0.0.6"
     }
 }

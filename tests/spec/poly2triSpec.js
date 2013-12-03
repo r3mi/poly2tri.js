@@ -32,41 +32,34 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* jshint globalstrict:true */
 /* global jasmine, describe, it, expect, beforeEach */
 
 "use strict";
 
+// ---------------------------------------------------------------Module loading
+
+global.poly2tri = "previous";
+var p2t = require('../../dist/poly2tri');
+global.poly2tri = p2t;
+
+describe("poly2tri module", function() {
+    it("should require 'poly2tri'", function() {
+        expect(p2t).toBeDefined();
+        expect(p2t.triangulate).toBeDefined();
+    });
+    it("should have a noConflict() method", function() {
+        var pp = global.poly2tri.noConflict();
+        expect(pp).toBe(p2t);
+        if (process.browser) {
+            expect(global.poly2tri).toBe("previous");
+        }
+    });
+});
+
 
 // -------------------------------------------------------------Node vs. Browser 
-if (typeof window === 'undefined') {
-    /* jshint node:true */
-    var poly2tri = require('../../src/poly2tri');
-    var MersenneTwister = require('mersennetwister');
-    describe("poly2tri.node", function() {
-        it("should require 'poly2tri'", function() {
-            expect(poly2tri).toBeDefined();
-            expect(global.poly2tri).not.toBeDefined();
-        });
-    });
-    var fs = require('fs');
-    var readFileSync = function(filename, dataType) {
-        var data = fs.readFileSync("tests/data/" + filename, 'utf8');
-        return (dataType === 'json') ? JSON.parse(data) : data;
-    };
-} else {
-    /* global poly2tri:true, MersenneTwister */
-    describe("poly2tri.browser", function() {
-        it("should be 'poly2tri' by default", function() {
-            expect(poly2tri).toBeDefined();
-        });
-        it("should have a noConflict() method", function() {
-            var pp = poly2tri.noConflict();
-            expect(poly2tri).not.toBeDefined();
-            expect(pp).toBeDefined();
-            poly2tri = pp;
-        });
-    });
+
+if (process.browser) {
     /**
      * Read an external data file.
      * Done synchroneously, to simplify and avoid using jasmine's waitsFor/runs
@@ -75,11 +68,11 @@ if (typeof window === 'undefined') {
      * @returns {String}    file content, undefined if problem
      */
     var readFileSync = function(filename, dataType) {
-        /* global $ */
         var data;
+        /* global $ */
         $.ajax({
             async: false,
-            url: "base/tests/data/" + filename,
+            url: "base/tests/data/" + filename, // Karma serves files from '/base'
             dataType: dataType,
             success: function(d) {
                 data = d;
@@ -87,19 +80,24 @@ if (typeof window === 'undefined') {
         });
         return data;
     };
+} else {
+    var fs = require('fs');
+    var readFileSync = function(filename, dataType) {
+        var data = fs.readFileSync("tests/data/" + filename, 'utf8');
+        return (dataType === 'json') ? JSON.parse(data) : data;
+    };
 }
 
 
 
 describe("poly2tri", function() {
 
-    var p2t = poly2tri; // Our global shortcut
-
 // ------------------------------------------------------------------------utils
     /*
      * Utilities
      * =========
      */
+    var MersenneTwister = require('mersennetwister');
 
     // Creates list of Point from list of coordinates [ x1, y1, x2, y2 ...]
     function makePoints(a) {
@@ -387,6 +385,15 @@ describe("poly2tri", function() {
             it("should triangulate (backward compatibility)", function() {
                 var swctx2 = new p2t.SweepContext(contour, options);
                 p2t.sweep.Triangulate(swctx2);
+                var t2 = swctx2.getTriangles();
+                expect(t2.length).toBe(1);
+                expect(t[0].getPoint(0)).toEqualPoint(t2[0].getPoint(0));
+                expect(t[0].getPoint(1)).toEqualPoint(t2[0].getPoint(1));
+                expect(t[0].getPoint(2)).toEqualPoint(t2[0].getPoint(2));
+            });
+            it("should triangulate (backward compatibility)", function() {
+                var swctx2 = new p2t.SweepContext(contour, options);
+                p2t.triangulate(swctx2);
                 var t2 = swctx2.getTriangles();
                 expect(t2.length).toBe(1);
                 expect(t[0].getPoint(0)).toEqualPoint(t2[0].getPoint(0));
