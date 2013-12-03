@@ -21,7 +21,11 @@
         "2D",
         "constrained",
         "Delaunay",
-        "triangulation"
+        "triangulation",
+        "geometry",
+        "polygon",
+        "point",
+        "triangle"
     ],
     "homepage": "http://code.google.com/p/poly2tri/",
     "author": "Rémi Turboult <r3mi@users.sf.net>",
