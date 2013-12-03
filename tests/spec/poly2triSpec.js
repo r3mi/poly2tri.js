@@ -39,7 +39,7 @@
 // ---------------------------------------------------------------Module loading
 
 global.poly2tri = "previous";
-var p2t = require('../../dist/poly2tri');
+var p2t = (process.browser ? require('../../dist/poly2tri') : require('../../src/poly2tri'));
 global.poly2tri = p2t;
 
 describe("poly2tri module", function() {

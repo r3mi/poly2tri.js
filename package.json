@@ -2,7 +2,7 @@
     "name": "poly2tri",
     "version": "1.2.7",
     "description": "A 2D constrained Delaunay triangulation library",
-    "main": "dist/poly2tri.js",
+    "main": "src/poly2tri.js",
     "repository": {
         "type": "mercurial",
         "url": "https://code.google.com/p/poly2tri/"
