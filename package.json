@@ -27,7 +27,9 @@
         "geometry",
         "polygon",
         "point",
-        "triangle"
+        "triangle",
+        "tessellation",
+        "Steiner"
     ],
     "homepage": "http://code.google.com/p/poly2tri/",
     "author": "Rémi Turboult <r3mi@users.sf.net>",
