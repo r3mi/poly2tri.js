@@ -74,8 +74,9 @@ Usage
 -----
 
 1. Get a reference to the library.
-   The module is in UMD format (universal module definition), compatible
-   with the various module systems.
+   Thanks to [browserify](http://browserify.org/), the module is in 
+   [UMD](https://github.com/umdjs/umd) format (Universal Module Definition), 
+   compatible with the various module systems:
    
     - CommonJS:
 
