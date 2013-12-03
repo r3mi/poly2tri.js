@@ -27,7 +27,8 @@ the revised BSD License (3-clause BSD), see [license].
 Before using
 ------------
 
-Since there are no input validation of the data given for triangulation you need to think about this. Poly2Tri does not support repeated points within _epsilon_.
+Since there are no input validation of the data given for triangulation you need to think about this. 
+poly2tri does not support repeated points within _epsilon_.
 
 * If you have a cyclic function that generates random points make sure you
   don't  add the same coordinate twice,
@@ -40,6 +41,10 @@ Since there are no input validation of the data given for triangulation you need
  
 **Make sure you understand the preceding notice before posting an [issue].**
 If you have  an issue not covered by the above, include your data-set with the problem.
+
+If you want to triangulate complex or weak polygons, you will need to prepare 
+your data with a polygon clipping library like 
+[Javascript Clipper](http://sourceforge.net/projects/jsclipper).
 
 You can test your dataset using the 
 [online JavaScript version](http://javascript.poly2tri.googlecode.com/hg/index.html).
