@@ -63,8 +63,10 @@ npm install poly2tri
 ```
 
 For browsers:
-
-The file `src/poly2tri.js` can be included directly.
+```sh
+wget http://javascript.poly2tri.googlecode.com/hg-history/1.2.7/dist/poly2tri.js
+```
+The file `dist/poly2tri.js` can be included directly.
 It is standalone and has no mandatory dependency.
 
 
