@@ -1,0 +1,5 @@
+/nbproject/
+/temp/
+*.log
+*.orig
+/node_modules/
