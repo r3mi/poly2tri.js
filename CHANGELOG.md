@@ -1,4 +1,5 @@
 
+- add Bower package
 - use Browserify to generate a UMD (universal module definition) bundle, 
   compatible with the various module systems.
 - remove deprecated Namespace.js support

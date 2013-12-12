@@ -1,6 +1,7 @@
 poly2tri.js
 ===========
 
+[![Bower version](https://badge.fury.io/bo/poly2tri.png)](http://badge.fury.io/bo/poly2tri)
 [![NPM version](https://badge.fury.io/js/poly2tri.png)](http://badge.fury.io/js/poly2tri)
 
 **Based on the paper "Sweep-line algorithm for constrained Delaunay triangulation" by V. Domiter and and B. Zalik**
