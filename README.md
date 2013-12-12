@@ -6,8 +6,12 @@ poly2tri.js
     Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
     http://code.google.com/p/poly2tri/
 
+    poly2tri.js (JavaScript port) (c) 2009-2013, Poly2Tri Contributors
+    https://github.com/r3mi/poly2tri.js
+
 [poly2tri]: http://code.google.com/p/poly2tri/
-[poly2tri.js]:https://code.google.com/p/poly2tri/source/checkout?repo=javascript
+[poly2tri.js]: https://github.com/r3mi/poly2tri.js
+[demo]: http://r3mi.github.io/poly2tri.js
 [forum]: https://groups.google.com/forum/?fromgroups#!forum/poly2tri
 [issue]: https://code.google.com/p/poly2tri/issues/list
 [license]: LICENSE.txt
@@ -46,10 +50,10 @@ If you want to triangulate complex or weak polygons, you will need to prepare
 your data with a polygon clipping library like 
 [Javascript Clipper](http://sourceforge.net/projects/jsclipper).
 
-You can test your dataset using the 
-[online JavaScript version](http://javascript.poly2tri.googlecode.com/hg/index.html).
+You can test your dataset using the online JavaScript [demo].
 
-_The only easy day was yesterday; have a nice day. Mason Green_
+> The only easy day was yesterday; have a nice day. 
+> -- <cite>Mason Green</cite>
 
 
 Install
@@ -64,7 +68,7 @@ npm install poly2tri
 
 For browsers:
 ```sh
-wget http://javascript.poly2tri.googlecode.com/hg-history/1.2.7/dist/poly2tri.js
+wget https://github.com/r3mi/poly2tri.js/tree/1.2.7/dist/poly2tri.js
 ```
 The file `dist/poly2tri.js` can be included directly.
 It is standalone and has no mandatory dependency.

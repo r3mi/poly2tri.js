@@ -1,6 +1,9 @@
 /*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
+ * 
+ * poly2tri.js (JavaScript port) (c) 2009-2013, Poly2Tri Contributors
+ * https://github.com/r3mi/poly2tri.js
  *
  * Unit tests for poly2tri.js
  * Rémi Turboult, 03/2013

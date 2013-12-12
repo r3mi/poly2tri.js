@@ -4,8 +4,8 @@
     "description": "A 2D constrained Delaunay triangulation library",
     "main": "src/poly2tri.js",
     "repository": {
-        "type": "mercurial",
-        "url": "https://code.google.com/p/poly2tri/"
+        "type": "git",
+        "url": "https://github.com/r3mi/poly2tri.js.git"
     },
     "directories": {
         "test": "tests"

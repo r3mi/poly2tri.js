@@ -2,7 +2,10 @@
 /*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
- *
+ * 
+ * poly2tri.js (JavaScript port) (c) 2009-2013, Poly2Tri Contributors
+ * https://github.com/r3mi/poly2tri.js
+ * 
  * All rights reserved.
  * 
  * Distributed under the 3-clause BSD License, see LICENSE.txt
@@ -268,6 +271,9 @@ module.exports = Point;
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
+ * 
+ * poly2tri.js (JavaScript port) (c) 2009-2013, Poly2Tri Contributors
+ * https://github.com/r3mi/poly2tri.js
  *
  * All rights reserved.
  *
@@ -1616,6 +1622,9 @@ exports.sweep = {Triangulate: Sweep.triangulate};
 /*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
+ * 
+ * poly2tri.js (JavaScript port) (c) 2009-2013, Poly2Tri Contributors
+ * https://github.com/r3mi/poly2tri.js
  *
  * All rights reserved.
  * 

@@ -15,7 +15,7 @@ poly2tri.js Triangulation
 ### Description
 Tests the performance of the [poly2tri.js] triangulation library across versions.
 
-[poly2tri.js]:https://code.google.com/p/poly2tri/source/checkout?repo=javascript
+[poly2tri.js]: https://github.com/r3mi/poly2tri.js
 
  
 Preparation code
