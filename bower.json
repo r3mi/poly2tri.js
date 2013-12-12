@@ -1,0 +1,34 @@
+{
+    "name": "poly2tri",
+    "version": "1.2.7",
+    "homepage": "http://code.google.com/p/poly2tri/",
+    "authors": [
+        "Poly2Tri Contributors",
+        "Mason Green <mason.green@gmail.com>",
+        "Thomas Åhlén <thahlen@gmail.com>",
+        "Laszlo Kustra <kl223hun@gmail.com>",
+        "Rémi Turboult <r3mi@users.sf.net>"
+    ],
+    "description": "A 2D constrained Delaunay triangulation library",
+    "main": "dist/poly2tri.js",
+    "keywords": [
+        "2D",
+        "constrained",
+        "Delaunay",
+        "triangulation",
+        "geometry",
+        "polygon",
+        "point",
+        "triangle",
+        "tessellation",
+        "Steiner"
+    ],
+    "license": "BSD-3-Clause",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ]
+}

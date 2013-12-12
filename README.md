@@ -64,11 +64,17 @@ Install
 This module works on both Node.js and browsers.
 
 For Node.js:
+
 [![NPM](https://nodei.co/npm/poly2tri.png?compact=true)](https://nodei.co/npm/poly2tri/)
 
-For browsers:
+For browsers, using Bower:
 ```sh
-wget https://github.com/r3mi/poly2tri.js/tree/1.2.7/dist/poly2tri.js
+bower install --save poly2tri
+```
+
+For browsers, manually:
+```sh
+wget http://r3mi.github.io/poly2tri.js/dist/poly2tri.js
 ```
 The file `dist/poly2tri.js` can be included directly.
 It is standalone and has no mandatory dependency.
