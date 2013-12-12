@@ -1,6 +1,8 @@
 poly2tri.js
 ===========
 
+[![NPM version](https://badge.fury.io/js/poly2tri.png)](http://badge.fury.io/js/poly2tri)
+
 **Based on the paper "Sweep-line algorithm for constrained Delaunay triangulation" by V. Domiter and and B. Zalik**
 
     Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
@@ -62,9 +64,7 @@ Install
 This module works on both Node.js and browsers.
 
 For Node.js:
-```sh
-npm install poly2tri
-```
+[![NPM](https://nodei.co/npm/poly2tri.png?compact=true)](https://nodei.co/npm/poly2tri/)
 
 For browsers:
 ```sh
@@ -183,7 +183,7 @@ and returns a reference to this `poly2tri` object.
 Displaying the samples
 ----------------------
 
-Use [`index.html`](index.html) to display the result of a triangulation.
+Use `index.html` (also available online as a [demo]) to display the result of a triangulation.
 Polygon contour, holes, and Steiner points can be added.
 Use any separator between points, e.g.
 
