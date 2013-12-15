@@ -1,9 +1,12 @@
 
-- add Bower package
+<a name="1.3.0"></a>
+# 1.3.0 (2013-12-15)
+
 - use Browserify to generate a UMD (universal module definition) bundle, 
   compatible with the various module systems.
-- remove deprecated Namespace.js support
+- add Bower package
 - move repository from Google Code to GitHub
+- remove deprecated Namespace.js support
 
 <a name="1.2.7"></a>
 # 1.2.7 (2013-11-25)
