@@ -1,10 +1,11 @@
-
 <a name="1.3.0"></a>
 # 1.3.0 (2013-12-15)
 
-- use Browserify to generate a UMD (universal module definition) bundle, 
-  compatible with the various module systems.
-- add Bower package
+- [Browserify](http://browserify.org/) is used to generate a UMD (universal module definition) 
+  bundle, compatible with the various module systems. 
+- the released code for browsers is now in the `dist/` directory 
+  (the `src/` directory contains the source code for Node.js).
+- add a Bower package
 - move repository from Google Code to GitHub
 - remove deprecated Namespace.js support
 
