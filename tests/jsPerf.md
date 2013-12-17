@@ -2,7 +2,7 @@ jsPerf
 ======
 
 content of the jsPerf test at
-[jsperf.com/poly2tri](http://jsperf.com/poly2tri/2) 
+[jsperf.com/poly2tri](http://jsperf.com/poly2tri/3) 
 
 
 Test case details
@@ -17,29 +17,35 @@ Tests the performance of the [poly2tri.js] triangulation library across versions
 
 [poly2tri.js]: https://github.com/r3mi/poly2tri.js
 
- 
+
 Preparation code
 ================
 
 ### Preparation code HTML
 
     <!-- latest version -->
-    <script src="http://javascript.poly2tri.googlecode.com/hg/src/poly2tri.js">
+    <script src="http://r3mi.github.io/poly2tri.js/dist/poly2tri.js">
     </script>
     <script>
-      var vtip = poly2tri.noConflict();
+      var v_tip = poly2tri.noConflict();
     </script>
-    <!-- 2013-03-24 first version with noConflict() -->
-    <script src="http://javascript.poly2tri.googlecode.com/hg-history/6e00d1153f823f788778bfeaf95d2c32473df087/src/poly2tri.js">
-    </script>
-    <script>
-      var v2 = poly2tri.noConflict();
-    </script>
-    <!-- 2012 version + patches for Steiner points & namespace -->
-    <script src="http://javascript.poly2tri.googlecode.com/hg-history/7fa071eb400ee5037fe4c9e722f8854f9dce3b34/src/js/poly2tri.js">
+    <!-- v1.2.7 -->
+    <script src="http://javascript.poly2tri.googlecode.com/hg-history/1.2.7/src/poly2tri.js">
     </script>
     <script>
-      var v1 = js.poly2tri;
+      var v1_2_7 = poly2tri.noConflict();
+    </script>
+    <!-- v1.2.0 first version with noConflict() -->
+    <script src="http://javascript.poly2tri.googlecode.com/hg-history/1.2.0/src/poly2tri.js">
+    </script>
+    <script>
+      var v1_2_0 = poly2tri.noConflict();
+    </script>
+    <!-- v1.1.1 2012 version + patches for Steiner points & namespace -->
+    <script src="http://javascript.poly2tri.googlecode.com/hg-history/1.1.1/src/js/poly2tri.js">
+    </script>
+    <script>
+      var v1_1_1 = js.poly2tri;
     </script>
     <script>
       function makePoints(Point, a) {
@@ -84,27 +90,37 @@ Test 1
 ------
 
 ### Title 
-v1 (2012 + patch)
+v1.1.1
 
 ### Code 
-    triangulate(v1);
+    triangulate(v1_1_1);
 
 
 Test 2
 ------
 
 ### Title 
-v2 (2013-03)
+v1.2.0
 
 ### Code
-    triangulate(v2);
+    triangulate(v1_2_0);
 
 
 Test 3
 ------
 
 ### Title 
+v1.2.7
+
+### Code
+    triangulate(v1_2_7);
+
+
+Test 4
+------
+
+### Title 
 tip (latest)
 
 ### Code
-    triangulate(vtip);
+    triangulate(v_tip);

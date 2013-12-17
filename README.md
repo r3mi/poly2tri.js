@@ -18,6 +18,7 @@ poly2tri.js
 [forum]: https://groups.google.com/forum/?fromgroups#!forum/poly2tri
 [issue]: https://code.google.com/p/poly2tri/issues/list
 [license]: LICENSE.txt
+[jsPerf]: http://jsperf.com/poly2tri/3
 
 
 This document describes the JavaScript version of [poly2tri]. 
@@ -233,6 +234,5 @@ npm run jshint
 Performance tests
 -----------------
 
-This [jsPerf](http://jsperf.com/poly2tri/2) compares the performances 
-across several versions of the module.
+This [jsPerf] compares the performances across several versions of the module.
 
