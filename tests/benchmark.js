@@ -45,7 +45,7 @@ var suite = new Benchmark.Suite();
 
 /*
  * Load various poly2tri versions
- */ 
+ */
 
 // 1st version with Steiner points (and optionnal Namespace.js).
 // (use "load" to work around missing Node.js support)
