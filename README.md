@@ -236,3 +236,7 @@ Performance tests
 
 This [jsPerf] compares the performances across several versions of the module.
 
+You can also run
+```sh
+npm run bench
+```

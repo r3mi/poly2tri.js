@@ -120,7 +120,7 @@ Test 4
 ------
 
 ### Title 
-tip (latest)
+vtip (latest)
 
 ### Code
     triangulate(v_tip);
