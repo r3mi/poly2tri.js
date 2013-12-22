@@ -81,6 +81,76 @@ function makeKineticPoints(points) {
     });
 }
 
+function drawTriangles(stage, triangles) {
+    var layer = new Kinetic.Layer({name: "triangles"});
+    var linescale = 1 / stage.getScaleX();
+    triangles.forEach(function(t) {
+        var triangle = new Kinetic.Polygon({
+            points: makeKineticPoints(t.getPoints()),
+            fill: TRIANGLE_FILL_COLOR,
+            stroke: TRIANGLE_STROKE_COLOR,
+            strokeWidth: 1 * linescale
+        });
+        layer.add(triangle);
+    });
+    stage.add(layer);
+}
+
+function drawConstraints(stage, contour, holes, points) {
+    var layer = new Kinetic.Layer({name: "constraints"});
+    var linescale = 1 / stage.getScaleX();
+
+    var dashArray = CONSTRAINT_DASH_ARRAY.map(function(dash) {
+        return dash * linescale;
+    });
+    var polygon = new Kinetic.Polygon({
+        points: makeKineticPoints(contour),
+        stroke: CONSTRAINT_COLOR,
+        strokeWidth: 4 * linescale,
+        dashArrayEnabled: true,
+        dashArray: dashArray
+    });
+    layer.add(polygon);
+
+    holes.forEach(function(hole) {
+        var polygon = new Kinetic.Polygon({
+            points: makeKineticPoints(hole),
+            stroke: CONSTRAINT_COLOR,
+            strokeWidth: 4 * linescale,
+            dashArrayEnabled: true,
+            dashArray: dashArray
+        });
+        layer.add(polygon);
+    });
+
+    points.forEach(function(point) {
+        var circle = new Kinetic.Circle({
+            x: point.x,
+            y: point.y,
+            fill: CONSTRAINT_COLOR,
+            radius: 4 * linescale
+        });
+        layer.add(circle);
+    });
+
+    stage.add(layer);
+}
+
+function drawErrors(stage, error_points) {
+    var layer = new Kinetic.Layer({name: "errors"});
+    var linescale = 1 / stage.getScaleX();
+    error_points.forEach(function(point) {
+        var circle = new Kinetic.Circle({
+            x: point.x,
+            y: point.y,
+            fill: ERROR_COLOR,
+            radius: 4 * linescale
+        });
+        layer.add(circle);
+    });
+    stage.add(layer);
+}
+
 function triangulate(stage) {
     // clear the canvas
     stage.destroyChildren();
@@ -133,75 +203,16 @@ function triangulate(stage) {
     var scale = Math.min(xscale, yscale);
     stage.setOffset(bounds.min.x - CANVAS_MARGIN / scale, bounds.min.y - CANVAS_MARGIN / scale);
     stage.setScale(scale);
-    var linescale = 1 / scale;
 
     var base = new Kinetic.Layer({name: "base"});
     stage.add(base);
 
     // draw result
-    triangles.forEach(function(t) {
-        var triangle = new Kinetic.Polygon({
-            points: makeKineticPoints(t.getPoints()),
-            fill: TRIANGLE_FILL_COLOR,
-            stroke: TRIANGLE_STROKE_COLOR,
-            strokeWidth: 1 * linescale
-        });
-        base.add(triangle);
-    });
-
-    // draw constraints, in a separate layer
-    var constraints = new Kinetic.Layer({name: "constraints"});
-    stage.add(constraints);
-
-    var dashArray = CONSTRAINT_DASH_ARRAY.map(function(dash) {
-        return dash * linescale;
-    });
-    var polygon = new Kinetic.Polygon({
-        points: makeKineticPoints(contour),
-        stroke: CONSTRAINT_COLOR,
-        strokeWidth: 4 * linescale,
-        dashArrayEnabled: true,
-        dashArray: dashArray
-    });
-    constraints.add(polygon);
-
-    holes.forEach(function(hole) {
-        var polygon = new Kinetic.Polygon({
-            points: makeKineticPoints(hole),
-            stroke: CONSTRAINT_COLOR,
-            strokeWidth: 4 * linescale,
-            dashArrayEnabled: true,
-            dashArray: dashArray
-        });
-        constraints.add(polygon);
-    });
-
-    points.forEach(function(point) {
-        var circle = new Kinetic.Circle({
-            x: point.x,
-            y: point.y,
-            fill: CONSTRAINT_COLOR,
-            radius: 4 * linescale
-        });
-        constraints.add(circle);
-    });
-
-    // highlight errors, if any
+    drawTriangles(stage, triangles);
+    drawConstraints(stage, contour, holes, points);
     if (error_points) {
-        // top layer
-        var top = new Kinetic.Layer({name: "top"});
-        stage.add(top);
-        error_points.forEach(function(point) {
-            var circle = new Kinetic.Circle({
-                x: point.x,
-                y: point.y,
-                fill: ERROR_COLOR,
-                radius: 4 * linescale
-            });
-            top.add(circle);
-        });
+        drawErrors(stage, error_points);
     }
-
     stage.draw();
     setVisibleLayers(stage);
 }
