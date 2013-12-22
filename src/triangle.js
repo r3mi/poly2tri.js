@@ -63,6 +63,11 @@ Triangle.prototype.getPoint = function(index) {
 // for backward compatibility
 Triangle.prototype.GetPoint = Triangle.prototype.getPoint;
 
+// Method added in the JavaScript version (was not present in the c++ version)
+Triangle.prototype.getPoints = function() {
+    return this.points_;
+};
+
 Triangle.prototype.getNeighbor = function(index) {
     return this.neighbors_[index];
 };

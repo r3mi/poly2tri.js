@@ -143,7 +143,7 @@ function triangulate(ctx) {
     ctx.setLineDash([]);
 
     triangles.forEach(function(t) {
-        polygonPath(ctx, [t.getPoint(0), t.getPoint(1), t.getPoint(2)]);
+        polygonPath(ctx, t.getPoints());
         ctx.fill();
         ctx.stroke();
     });

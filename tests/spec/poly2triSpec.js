@@ -268,6 +268,9 @@ describe("poly2tri", function() {
             expect(t.getPoint(1)).toBe(p2);
             expect(t.getPoint(2)).toBe(p3);
         });
+        it("should have a getPoints() method", function() {
+            expect(t.getPoints()).toEqual([p1, p2, p3]);
+        });
         it("should have a containsPoint() method", function() {
             expect(t.containsPoint(p1)).toBeTruthy();
             expect(t.containsPoint(p2)).toBeTruthy();
