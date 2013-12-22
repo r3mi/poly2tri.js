@@ -149,7 +149,7 @@ function triangulate(ctx) {
     });
 
     // draw constraints
-    if ($("#draw_constraints").attr('checked')) {
+    if ($("#draw_constraints").is(':checked')) {
         ctx.lineWidth = 4 * linescale;
         ctx.strokeStyle = CONSTRAINT_STYLE;
         ctx.fillStyle = CONSTRAINT_STYLE;
