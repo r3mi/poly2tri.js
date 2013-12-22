@@ -55,6 +55,7 @@
         "browserify": "~2.36.0",
         "karma-browserify": "~0.0.6",
         "benchmark": "~1.0.0",
-        "load": "~1.0.0"
+        "load": "~1.0.0",
+        "xhr": "~1.3.1"
     }
 }

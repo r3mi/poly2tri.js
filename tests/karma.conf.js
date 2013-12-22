@@ -13,7 +13,6 @@ module.exports = function(config) {
         basePath: '../',
         frameworks: ['jasmine', 'browserify'],
         files: [
-            'lib/js/jquery.js', // for Ajax loading 
             'tests/spec/*.js',
             {pattern: 'tests/data/**/*', included: false}
         ],

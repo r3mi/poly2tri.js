@@ -62,6 +62,7 @@ describe("poly2tri module", function() {
 
 // -------------------------------------------------------------Node vs. Browser 
 
+var readFileSync;
 if (process.browser) {
     /**
      * Read an external data file.
@@ -70,22 +71,22 @@ if (process.browser) {
      * @param {String} dataType     see jQuery.Ajax dataType (default: Intelligent Guess)
      * @returns {String}    file content, undefined if problem
      */
-    var readFileSync = function(filename, dataType) {
+    var xhr = require('xhr');
+    readFileSync = function(filename, dataType) {
         var data;
-        /* global $ */
-        $.ajax({
-            async: false,
-            url: "base/tests/data/" + filename, // Karma serves files from '/base'
-            dataType: dataType,
-            success: function(d) {
-                data = d;
+        xhr({
+            sync: true,
+            uri: "base/tests/data/" + filename // Karma serves files from '/base'
+        }, function(err, resp, body) {
+            if (!err) {
+                data = body;
             }
         });
-        return data;
+        return (dataType === 'json') ? JSON.parse(data) : data;
     };
 } else {
     var fs = require('fs');
-    var readFileSync = function(filename, dataType) {
+    readFileSync = function(filename, dataType) {
         var data = fs.readFileSync("tests/data/" + filename, 'utf8');
         return (dataType === 'json') ? JSON.parse(data) : data;
     };
