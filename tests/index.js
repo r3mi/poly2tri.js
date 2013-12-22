@@ -33,22 +33,31 @@
  */
 
 /* jshint browser:true, jquery:true, globalstrict:true */
-/* global poly2tri */
+/* global poly2tri, Kinetic */
 
 
 "use strict";
 
-// Colors
-var TRIANGLE_FILL_STYLE = "#e0c4ef";
-var TRIANGLE_STROKE_STYLE = "#911ccd";
-var CONSTRAINT_STYLE = "rgba(0,0,0,0.6)";
-var ERROR_STYLE = "rgba(255,0,0,0.8)";
+// Styles
+var TRIANGLE_FILL_COLOR = "#e0c4ef";
+var TRIANGLE_STROKE_COLOR = "#911ccd";
+var CONSTRAINT_COLOR = "rgba(0,0,0,0.6)";
+var CONSTRAINT_DASH_ARRAY = [10, 5];
+var ERROR_COLOR = "rgba(255,0,0,0.8)";
+var CANVAS_MARGIN = 5;
 
 
 function clearData() {
     $(".info").css('visibility', 'hidden');
     $("textarea").val("");
     $("#attribution").empty();
+}
+
+function setVisibleLayers(stage) {
+    var visible = $("#draw_constraints").is(':checked');
+    stage.find('.constraints').each(function(layer) {
+        layer.setVisible(visible);
+    });
 }
 
 function parsePoints(str) {
@@ -64,39 +73,27 @@ function parsePoints(str) {
     return points;
 }
 
-function polygonPath(ctx, points) {
-    ctx.beginPath();
-    points.forEach(function(point, index) {
-        if (index === 0) {
-            ctx.moveTo(point.x, point.y);
-        } else {
-            ctx.lineTo(point.x, point.y);
-        }
+// XXX why is it needed ? normally KineticJS should accept our {x,y} objects,
+// but it doesn't work in practice.
+function makeKineticPoints(points) {
+    return points.map(function(point) {
+        return [point.x, point.y];
     });
-    ctx.closePath();
 }
 
-function triangulate(ctx) {
-    //
-    var contour = [];
-    var holes = [];
-    var points = [];
-    var bounds, xscale, yscale, scale, linescale;
-    var error_points;
-    var triangles;
-    var swctx;
-    var MARGIN = 5;
-
+function triangulate(stage) {
     // clear the canvas
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    stage.destroyChildren();
+    // reset drag
+    stage.setAbsolutePosition(0, 0);
     $(".info").css('visibility', 'visible');
 
     // parse contour
-    contour = parsePoints($("textarea#poly_contour").val());
+    var contour = parsePoints($("textarea#poly_contour").val());
     $("#contour_size").text(contour.length);
 
     // parse holes
+    var holes = [];
     $("textarea#poly_holes").val().split(/\n\s*\n/).forEach(function(val) {
         var hole = parsePoints(val);
         if (hole.length > 0) {
@@ -106,9 +103,12 @@ function triangulate(ctx) {
     $("#holes_size").text(holes.length);
 
     // parse points
-    points = parsePoints($("textarea#poly_points").val());
+    var points = parsePoints($("textarea#poly_points").val());
     $("#points_size").text(points.length);
 
+    // perform triangulation
+    var swctx;
+    var error_points;
     try {
         // prepare SweepContext
         swctx = new poly2tri.SweepContext(contour, {cloneArrays: true});
@@ -123,81 +123,108 @@ function triangulate(ctx) {
         window.alert(e);
         error_points = e.points;
     }
-    triangles = swctx.getTriangles() || [];
+    var triangles = swctx.getTriangles() || [];
     $("#triangles_size").text(triangles.length);
 
     // auto scale / translate
-    bounds = swctx.getBoundingBox();
-    xscale = (ctx.canvas.width - 2 * MARGIN) / (bounds.max.x - bounds.min.x);
-    yscale = (ctx.canvas.height - 2 * MARGIN) / (bounds.max.y - bounds.min.y);
-    scale = Math.min(xscale, yscale);
-    ctx.translate(MARGIN, MARGIN);
-    ctx.scale(scale, scale);
-    ctx.translate(-bounds.min.x, -bounds.min.y);
-    linescale = 1 / scale;
+    var bounds = swctx.getBoundingBox();
+    var xscale = (stage.getWidth() - 2 * CANVAS_MARGIN) / (bounds.max.x - bounds.min.x);
+    var yscale = (stage.getHeight() - 2 * CANVAS_MARGIN) / (bounds.max.y - bounds.min.y);
+    var scale = Math.min(xscale, yscale);
+    stage.setOffset(bounds.min.x - CANVAS_MARGIN / scale, bounds.min.y - CANVAS_MARGIN / scale);
+    stage.setScale(scale);
+    var linescale = 1 / scale;
+
+    var base = new Kinetic.Layer({name: "base"});
+    stage.add(base);
 
     // draw result
-    ctx.lineWidth = linescale;
-    ctx.fillStyle = TRIANGLE_FILL_STYLE;
-    ctx.strokeStyle = TRIANGLE_STROKE_STYLE;
-    ctx.setLineDash([]);
-
     triangles.forEach(function(t) {
-        polygonPath(ctx, t.getPoints());
-        ctx.fill();
-        ctx.stroke();
+        var triangle = new Kinetic.Polygon({
+            points: makeKineticPoints(t.getPoints()),
+            fill: TRIANGLE_FILL_COLOR,
+            stroke: TRIANGLE_STROKE_COLOR,
+            strokeWidth: 1 * linescale
+        });
+        base.add(triangle);
     });
 
-    // draw constraints
-    if ($("#draw_constraints").is(':checked')) {
-        ctx.lineWidth = 4 * linescale;
-        ctx.strokeStyle = CONSTRAINT_STYLE;
-        ctx.fillStyle = CONSTRAINT_STYLE;
-        ctx.setLineDash([10 * linescale, 5 * linescale]);
+    // draw constraints, in a separate layer
+    var constraints = new Kinetic.Layer({name: "constraints"});
+    stage.add(constraints);
 
-        polygonPath(ctx, contour);
-        ctx.stroke();
+    var dashArray = CONSTRAINT_DASH_ARRAY.map(function(dash) {
+        return dash * linescale;
+    });
+    var polygon = new Kinetic.Polygon({
+        points: makeKineticPoints(contour),
+        stroke: CONSTRAINT_COLOR,
+        strokeWidth: 4 * linescale,
+        dashArrayEnabled: true,
+        dashArray: dashArray
+    });
+    constraints.add(polygon);
 
-        holes.forEach(function(hole) {
-            polygonPath(ctx, hole);
-            ctx.stroke();
+    holes.forEach(function(hole) {
+        var polygon = new Kinetic.Polygon({
+            points: makeKineticPoints(hole),
+            stroke: CONSTRAINT_COLOR,
+            strokeWidth: 4 * linescale,
+            dashArrayEnabled: true,
+            dashArray: dashArray
         });
+        constraints.add(polygon);
+    });
 
-        points.forEach(function(point) {
-            ctx.beginPath();
-            ctx.arc(point.x, point.y, ctx.lineWidth, 0, 2 * Math.PI, false);
-            ctx.closePath();
-            ctx.fill();
+    points.forEach(function(point) {
+        var circle = new Kinetic.Circle({
+            x: point.x,
+            y: point.y,
+            fill: CONSTRAINT_COLOR,
+            radius: 4 * linescale
         });
-    }
+        constraints.add(circle);
+    });
 
     // highlight errors, if any
     if (error_points) {
-        ctx.lineWidth = 4 * linescale;
-        ctx.fillStyle = ERROR_STYLE;
+        // top layer
+        var top = new Kinetic.Layer({name: "top"});
+        stage.add(top);
         error_points.forEach(function(point) {
-            ctx.beginPath();
-            ctx.arc(point.x, point.y, ctx.lineWidth, 0, 2 * Math.PI, false);
-            ctx.closePath();
-            ctx.fill();
+            var circle = new Kinetic.Circle({
+                x: point.x,
+                y: point.y,
+                fill: ERROR_COLOR,
+                radius: 4 * linescale
+            });
+            top.add(circle);
         });
     }
+
+    stage.draw();
+    setVisibleLayers(stage);
 }
 
 $(document).ready(function() {
-    var $canvas = $('#canvas');
-    var ctx = $canvas[0].getContext('2d');
-    ctx.canvas.width = $canvas.width();
-    ctx.canvas.height = $canvas.height();
+    var $content = $('#content');
+    var stage = new Kinetic.Stage({
+        container: $content[0],
+        width: $content.width(),
+        height: $content.height(),
+        draggable: true
+    });
 
-    if (typeof ctx.setLineDash === "undefined") {
-        ctx.setLineDash = function(a) {
-            ctx.mozDash = a;
-        };
-    }
+    $(window).resize(function() {
+        stage.setSize($content.width(), $content.height());
+    });
+
+    $("#draw_constraints").change(function() {
+        setVisibleLayers(stage);
+    });
 
     $("#btnTriangulate").click(function() {
-        triangulate(ctx);
+        triangulate(stage);
     });
     clearData();
 
