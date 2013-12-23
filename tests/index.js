@@ -81,15 +81,29 @@ function makeKineticPoints(points) {
     });
 }
 
+// Helper to override Kinetic.Shape.draw in order to have fixed width strokes 
+// or radius, independently of scale 
+// (strokeScaleEnabled = false doesn't give the expected result)
+function provideFixedLineWidth(shape, setLineWidth) {
+    var originalDrawFunc = shape.getDrawFunc();
+    shape.setDrawFunc(function() {
+        var linescale = 1 / this.getStage().getScaleX();
+        setLineWidth.call(this, linescale);
+        originalDrawFunc.apply(this, arguments);
+    });
+}
+
+
 function drawTriangles(stage, triangles) {
     var layer = new Kinetic.Layer({name: "triangles"});
-    var linescale = 1 / stage.getScaleX();
     triangles.forEach(function(t) {
         var triangle = new Kinetic.Polygon({
             points: makeKineticPoints(t.getPoints()),
             fill: TRIANGLE_FILL_COLOR,
-            stroke: TRIANGLE_STROKE_COLOR,
-            strokeWidth: 1 * linescale
+            stroke: TRIANGLE_STROKE_COLOR
+        });
+        provideFixedLineWidth(triangle, function(linescale) {
+            this.setStrokeWidth(1 * linescale);
         });
         layer.add(triangle);
     });
@@ -98,17 +112,18 @@ function drawTriangles(stage, triangles) {
 
 function drawConstraints(stage, contour, holes, points) {
     var layer = new Kinetic.Layer({name: "constraints"});
-    var linescale = 1 / stage.getScaleX();
 
-    var dashArray = CONSTRAINT_DASH_ARRAY.map(function(dash) {
-        return dash * linescale;
-    });
     var polygon = new Kinetic.Polygon({
         points: makeKineticPoints(contour),
         stroke: CONSTRAINT_COLOR,
-        strokeWidth: 4 * linescale,
-        dashArrayEnabled: true,
-        dashArray: dashArray
+        dashArrayEnabled: true
+    });
+    provideFixedLineWidth(polygon, function(linescale) {
+        this.setStrokeWidth(4 * linescale);
+        var dashArray = CONSTRAINT_DASH_ARRAY.map(function(dash) {
+            return dash * linescale;
+        });
+        this.setDashArray(dashArray);
     });
     layer.add(polygon);
 
@@ -116,9 +131,14 @@ function drawConstraints(stage, contour, holes, points) {
         var polygon = new Kinetic.Polygon({
             points: makeKineticPoints(hole),
             stroke: CONSTRAINT_COLOR,
-            strokeWidth: 4 * linescale,
-            dashArrayEnabled: true,
-            dashArray: dashArray
+            dashArrayEnabled: true
+        });
+        provideFixedLineWidth(polygon, function(linescale) {
+            this.setStrokeWidth(4 * linescale);
+            var dashArray = CONSTRAINT_DASH_ARRAY.map(function(dash) {
+                return dash * linescale;
+            });
+            this.setDashArray(dashArray);
         });
         layer.add(polygon);
     });
@@ -127,8 +147,10 @@ function drawConstraints(stage, contour, holes, points) {
         var circle = new Kinetic.Circle({
             x: point.x,
             y: point.y,
-            fill: CONSTRAINT_COLOR,
-            radius: 4 * linescale
+            fill: CONSTRAINT_COLOR
+        });
+        provideFixedLineWidth(circle, function(linescale) {
+            this.setRadius(4 * linescale);
         });
         layer.add(circle);
     });
@@ -138,13 +160,14 @@ function drawConstraints(stage, contour, holes, points) {
 
 function drawErrors(stage, error_points) {
     var layer = new Kinetic.Layer({name: "errors"});
-    var linescale = 1 / stage.getScaleX();
     error_points.forEach(function(point) {
         var circle = new Kinetic.Circle({
             x: point.x,
             y: point.y,
-            fill: ERROR_COLOR,
-            radius: 4 * linescale
+            fill: ERROR_COLOR
+        });
+        provideFixedLineWidth(circle, function(linescale) {
+            this.setRadius(4 * linescale);
         });
         layer.add(circle);
     });

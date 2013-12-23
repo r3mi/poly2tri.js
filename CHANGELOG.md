@@ -1,3 +1,6 @@
+- add Pan and Zoom capability to the [demo](http://r3mi.github.io/poly2tri.js),
+  using [KineticJS](http://kineticjs.com/).
+
 <a name="1.3.0"></a>
 # 1.3.0 (2013-12-15)
 
