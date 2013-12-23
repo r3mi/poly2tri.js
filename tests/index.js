@@ -285,6 +285,7 @@ $(document).ready(function() {
 
     $("#draw_constraints").change(function() {
         setVisibleLayers(stage);
+        stage.draw();
     });
 
     // Zoom to point and scale
