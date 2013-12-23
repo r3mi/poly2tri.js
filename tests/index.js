@@ -201,6 +201,7 @@ function triangulate(stage) {
     var xscale = (stage.getWidth() - 2 * CANVAS_MARGIN) / (bounds.max.x - bounds.min.x);
     var yscale = (stage.getHeight() - 2 * CANVAS_MARGIN) / (bounds.max.y - bounds.min.y);
     var scale = Math.min(xscale, yscale);
+    // CANVAS_MARGIN is fixed and needs to be unscaled
     stage.setOffset(bounds.min.x - CANVAS_MARGIN / scale, bounds.min.y - CANVAS_MARGIN / scale);
     stage.setScale(scale);
 
@@ -215,6 +216,35 @@ function triangulate(stage) {
     }
     stage.draw();
     setVisibleLayers(stage);
+}
+
+// Adapted from "Zoom to point and scale (kineticjs+mousewheel)"
+// http://nightlycoding.com/index.php/2013/08/zoom-to-point-and-scale-kineticjsmousewheel/
+function onMouseWheel(e, delta) {
+    //prevent the actual wheel movement
+    e.preventDefault();
+
+    var stage = e.data;
+    var scale = stage.getScaleX(); // scaleX === scaleY in this app
+
+    // Change scale by +/- 10%
+    // ("delta" has been normalized at +/-1 by the jquery-mousewheel plugin).
+    var new_scale = scale * (1 + delta * 0.1);
+
+    if (new_scale > 0.0) {
+        var canvas_pos = $(e.target).offset();
+        canvas_pos = {x: canvas_pos.left, y: canvas_pos.top};
+        var stage_pos = stage.getAbsolutePosition();
+
+        var pos_x = (e.pageX - stage_pos.x - canvas_pos.x) / scale;
+        pos_x = (e.pageX - canvas_pos.x) - new_scale * pos_x;
+        var pos_y = (e.pageY - stage_pos.y - canvas_pos.y) / scale;
+        pos_y = (e.pageY - canvas_pos.y) - new_scale * pos_y;
+
+        stage.setPosition(pos_x, pos_y);
+        stage.setScale(new_scale);
+        stage.draw();
+    }
 }
 
 $(document).ready(function() {
@@ -233,6 +263,9 @@ $(document).ready(function() {
     $("#draw_constraints").change(function() {
         setVisibleLayers(stage);
     });
+
+    // Zoom to point and scale
+    $content.on('mousewheel', stage, onMouseWheel);
 
     $("#btnTriangulate").click(function() {
         triangulate(stage);
