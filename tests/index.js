@@ -255,19 +255,26 @@ function onMouseWheel(e, delta) {
     var new_scale = scale * (1 + delta * 0.1);
 
     if (new_scale > 0.0) {
-        var canvas_pos = $(e.target).offset();
-        canvas_pos = {x: canvas_pos.left, y: canvas_pos.top};
+        var pointer = stage.getPointerPosition();
         var stage_pos = stage.getAbsolutePosition();
-
-        var pos_x = (e.pageX - stage_pos.x - canvas_pos.x) / scale;
-        pos_x = (e.pageX - canvas_pos.x) - new_scale * pos_x;
-        var pos_y = (e.pageY - stage_pos.y - canvas_pos.y) / scale;
-        pos_y = (e.pageY - canvas_pos.y) - new_scale * pos_y;
-
-        stage.setPosition(pos_x, pos_y);
+        var x = pointer.x - (pointer.x - stage_pos.x) / scale * new_scale;
+        var y = pointer.y - (pointer.y - stage_pos.y) / scale * new_scale;
+        stage.setPosition(x, y);
         stage.setScale(new_scale);
         stage.draw();
     }
+}
+
+// Display pointer coordinates
+function onMouseMove(e) {
+    var stage = e.data;
+    var pointer = stage.getPointerPosition();
+    var stage_pos = stage.getAbsolutePosition();
+    var x = (pointer.x - stage_pos.x) / stage.getScaleX() + stage.getOffsetX();
+    var y = (pointer.y - stage_pos.y) / stage.getScaleY() + stage.getOffsetY();
+    var digits = Math.min(stage.getScaleX() / 10, 5);
+    $('#pointer_x').text(x.toFixed(digits));
+    $('#pointer_y').text(y.toFixed(digits));
 }
 
 $(document).ready(function() {
@@ -276,6 +283,8 @@ $(document).ready(function() {
         container: $content[0],
         width: $content.width(),
         height: $content.height(),
+        // Don't listen to events : avoid performance problems with mousemove on Firefox
+        listening: false,
         draggable: true
     });
 
@@ -290,6 +299,9 @@ $(document).ready(function() {
 
     // Zoom to point and scale
     $content.on('mousewheel', stage, onMouseWheel);
+
+    // Display pointer coordinates
+    $content.on('mousemove', stage, onMouseMove);
 
     $("#btnTriangulate").click(function() {
         triangulate(stage);
