@@ -1,0 +1,14 @@
+{
+  "name": "kineticjs",
+  "_cacheHeaders": {
+    "ETag": "\"65e80ce24f7844e10834a4b544bb295e\"",
+    "Last-Modified": "Fri, 08 Nov 2013 08:39:44 GMT",
+    "Content-Length": "101375",
+    "Content-Type": "application/x-javascript"
+  },
+  "_release": "e-tag:65e80ce24",
+  "main": "index.js",
+  "_source": "http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.7.4.min.js",
+  "_target": "*",
+  "_originalSource": "http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.7.4.min.js"
+}
