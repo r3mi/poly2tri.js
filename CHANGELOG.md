@@ -1,5 +1,10 @@
-- add Pan and Zoom capability to the [demo](http://r3mi.github.io/poly2tri.js),
-  using [KineticJS](http://kineticjs.com/).
+[demo]: http://r3mi.github.io/poly2tri.js
+
+- add Pan and Zoom capability to the [demo], using [KineticJS](http://kineticjs.com/).
+- display pointer position in the [demo]
+- developement:
+    - use `bower` to manage front-end dependencies for the [demo]
+    - use [Benchmark.js](http://benchmarkjs.com/) to track performances between releases
 
 <a name="1.3.0"></a>
 # 1.3.0 (2013-12-15)

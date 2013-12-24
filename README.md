@@ -191,6 +191,11 @@ and returns a reference to this `poly2tri` object.
 Displaying the samples
 ----------------------
 
+Install the dependent packages by running:
+```sh
+bower install
+```
+
 Use `index.html` (also available online as a [demo]) to display the result of a triangulation.
 Polygon contour, holes, and Steiner points can be added.
 Use any separator between points, e.g.
