@@ -277,6 +277,71 @@ function onMouseMove(e) {
     $('#pointer_y').text(y.toFixed(digits));
 }
 
+// Load index.json and populate 'preset' menu.
+// By default, only show the entries with 'demo'=true.
+// Use ?all=1 to force showing all entries.
+function loadPresetMenu() {
+    var $menu = $("#preset");
+    var all = +($.url().param('all'));
+    $menu.empty().append($('<option>', {
+        text: "--Empty--"
+    }));
+    $.ajax({
+        url: "tests/data/index.json",
+        dataType: "json",
+        success: function(data) {
+            var options = [];
+            data.forEach(function(group) {
+                group.files.filter(function(file) {
+                    return file.name && (file.demo || all);
+                }).forEach(function(file) {
+                    var text = (file.content || file.name);
+                    if (file.throws) {
+                        text += " (throws!)";
+                    }
+                    options.push($('<option>', {
+                        value: file.name,
+                        text: text
+                    }).data("file", file).data("attrib", {
+                        title: group.title,
+                        source: group.source
+                    }));
+                });
+            });
+            // Sort before adding
+            options.sort(function(a, b) {
+                return $(a).text().localeCompare($(b).text());
+            }).forEach(function(option) {
+                $menu.append(option);
+            });
+            // Load some default data
+            $menu.find("option[value='dude.dat']").attr("selected", "selected");
+            $menu.change();
+        }
+    });
+    $menu.change(function() {
+        var file = $menu.find("option:selected").data("file") || {};
+        var attrib = $menu.find("option:selected").data("attrib") || {};
+        function load(filename, selector) {
+            if (filename) {
+                $.ajax({
+                    url: "tests/data/" + filename,
+                    success: function(data) {
+                        $(selector).val(data);
+                    }
+                });
+            }
+        }
+        clearData();
+        if (attrib.title) {
+            $("#attribution").html("(source: <a href='" + attrib.source + "'>" + attrib.title + "</a>)");
+        }
+        load(file.name, "#poly_contour");
+        load(file.holes, "#poly_holes");
+        load(file.steiner, "#poly_points");
+    });
+}
+
 $(document).ready(function() {
     var $content = $('#content');
     var stage = new Kinetic.Stage({
@@ -308,59 +373,6 @@ $(document).ready(function() {
     });
     clearData();
 
-    // Load index.json and populate 'preset' menu
-    $("#preset").empty().append($('<option>', {
-        text: "--Empty--"
-    }));
-    $.ajax({
-        url: "tests/data/index.json",
-        dataType: "json",
-        success: function(data) {
-            var options = [];
-            data.forEach(function(group) {
-                group.files.filter(function(file) {
-                    return file.name && file.content;
-                }).forEach(function(file) {
-                    options.push($('<option>', {
-                        value: file.name,
-                        text: (file.content || file.name)
-                    }).data("file", file).data("attrib", {
-                        title: group.title,
-                        source: group.source
-                    }));
-                });
-            });
-            // Sort before adding
-            options.sort(function(a, b) {
-                return $(a).text().localeCompare($(b).text());
-            }).forEach(function(option) {
-                $("#preset").append(option);
-            });
-            // Load some default data
-            $("#preset option[value='dude.dat']").attr("selected", "selected");
-            $("#preset").change();
-        }
-    });
-    $("#preset").change(function() {
-        var file = $("#preset option:selected").data("file") || {};
-        var attrib = $("#preset option:selected").data("attrib") || {};
-        function load(filename, selector) {
-            if (filename) {
-                $.ajax({
-                    url: "tests/data/" + filename,
-                    success: function(data) {
-                        $(selector).val(data);
-                    }
-                });
-            }
-        }
-        clearData();
-        if (attrib.title) {
-            $("#attribution").html("(source: <a href='" + attrib.source + "'>" + attrib.title + "</a>)");
-        }
-        load(file.name, "#poly_contour");
-        load(file.holes, "#poly_holes");
-        load(file.steiner, "#poly_points");
-    });
+    loadPresetMenu();
 });
 
