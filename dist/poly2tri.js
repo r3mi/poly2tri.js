@@ -598,6 +598,7 @@ var Sweep = {};
 
 /**
  * Triangulate the polygon with holes and Steiner points.
+ * Do this AFTER you've added the polyline, holes, and Steiner points
  * @param   tcx SweepContext object.
  */
 Sweep.triangulate = function(tcx) {
@@ -609,6 +610,10 @@ Sweep.triangulate = function(tcx) {
     Sweep.finalizationPolygon(tcx);
 };
 
+/**
+ * Start sweeping the Y-sorted point set from bottom to top
+ * @param   tcx SweepContext object.
+ */
 Sweep.sweepPoints = function(tcx) {
     var i, len = tcx.pointCount();
     for (i = 1; i < len; ++i) {
@@ -678,6 +683,7 @@ Sweep.edgeEventByPoints = function(tcx, ep, eq, triangle, point) {
     var o1 = orient2d(eq, p1, ep);
     if (o1 === Orientation.COLLINEAR) {
         // TODO integrate here changes from C++ version
+        // (C++ repo revision 09880a869095 dated March 8, 2011)
         throw new PointError('poly2tri EdgeEvent: Collinear not supported!', [eq, p1, ep]);
     }
 
@@ -685,6 +691,7 @@ Sweep.edgeEventByPoints = function(tcx, ep, eq, triangle, point) {
     var o2 = orient2d(eq, p2, ep);
     if (o2 === Orientation.COLLINEAR) {
         // TODO integrate here changes from C++ version
+        // (C++ repo revision 09880a869095 dated March 8, 2011)
         throw new PointError('poly2tri EdgeEvent: Collinear not supported!', [eq, p2, ep]);
     }
 
@@ -716,6 +723,9 @@ Sweep.isEdgeSideOfTriangle = function(triangle, ep, eq) {
     return false;
 };
 
+/**
+ * Creates a new front triangle and legalize it
+ */
 Sweep.newFrontTriangle = function(tcx, point, node) {
     var triangle = new Triangle(point, node.point, node.next.point);
 
@@ -799,6 +809,9 @@ Sweep.fillAdvancingFront = function(tcx, n) {
     }
 };
 
+/**
+ * The basin angle is decided against the horizontal line [1,0]
+ */
 Sweep.basinAngle = function(node) {
     var ax = node.point.x - node.next.next.point.x;
     var ay = node.point.y - node.next.next.point.y;
@@ -1289,6 +1302,18 @@ Sweep.flipEdgeEvent = function(tcx, ep, eq, t, p) {
     }
 };
 
+/**
+ * After a flip we have two triangles and know that only one will still be
+ * intersecting the edge. So decide which to contiune with and legalize the other
+ *
+ * @param tcx
+ * @param o - should be the result of an orient2d( eq, op, ep )
+ * @param t - triangle 1
+ * @param ot - triangle 2
+ * @param p - a point shared by both triangles
+ * @param op - another point shared by both triangles
+ * @return returns the triangle still intersecting the edge
+ */
 Sweep.nextFlipTriangle = function(tcx, o, t, ot, p, op) {
     var edge_index;
     if (o === Orientation.CCW) {
@@ -1309,6 +1334,11 @@ Sweep.nextFlipTriangle = function(tcx, o, t, ot, p, op) {
     return ot;
 };
 
+/**
+ * When we need to traverse from one triangle to the next we need
+ * the point in current triangle that is the opposite point to the next
+ * triangle.
+ */
 Sweep.nextFlipPoint = function(ep, eq, ot, op) {
     var o2d = orient2d(eq, op, ep);
     if (o2d === Orientation.CW) {
@@ -1322,6 +1352,19 @@ Sweep.nextFlipPoint = function(ep, eq, ot, op) {
     }
 };
 
+/**
+ * Scan part of the FlipScan algorithm<br>
+ * When a triangle pair isn't flippable we will scan for the next
+ * point that is inside the flip triangle scan area. When found
+ * we generate a new flipEdgeEvent
+ *
+ * @param tcx
+ * @param ep - last point on the edge we are traversing
+ * @param eq - first point on the edge we are traversing
+ * @param flipTriangle - the current triangle sharing the point eq with edge
+ * @param t
+ * @param p
+ */
 Sweep.flipScanEdgeEvent = function(tcx, ep, eq, flip_triangle, t, p) {
     var ot = t.neighborAcross(p);
     if (!ot) {
@@ -1351,7 +1394,8 @@ Sweep.flipScanEdgeEvent = function(tcx, ep, eq, flip_triangle, t, p) {
 // ----------------------------------------------------SweepContext (public API)
 /**
  * Constructor for the triangulation context.
- * It accepts a simple polyline, which defines the constrained edges.
+ * It accepts a simple polyline (with non repeating points), 
+ * which defines the constrained edges.
  * Possible options are:
  *    cloneArrays:  if true, do a shallow copy of the Array parameters 
  *                  (contour, holes). Points inside arrays are never copied.
@@ -1430,6 +1474,7 @@ SweepContext.prototype.addPoints = function(points) {
 
 /**
  * Triangulate the polygon with holes and Steiner points.
+ * Do this AFTER you've added the polyline, holes, and Steiner points
  */
 // Shortcut method for Sweep.triangulate(SweepContext).
 // Method added in the JavaScript version (was not present in the c++ version)
