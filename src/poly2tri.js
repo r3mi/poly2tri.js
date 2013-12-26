@@ -152,32 +152,15 @@ function orient2d(pa, pb, pc) {
 }
 
 function inScanArea(pa, pb, pc, pd) {
-    var pdx = pd.x;
-    var pdy = pd.y;
-    var adx = pa.x - pdx;
-    var ady = pa.y - pdy;
-    var bdx = pb.x - pdx;
-    var bdy = pb.y - pdy;
-
-    var adxbdy = adx * bdy;
-    var bdxady = bdx * ady;
-    var oabd = adxbdy - bdxady;
-
-    if (oabd <= (EPSILON)) {
+    var oadb = (pa.x - pb.x) * (pd.y - pb.y) - (pd.x - pb.x) * (pa.y - pb.y);
+    if (oadb >= -EPSILON) {
         return false;
     }
 
-    var cdx = pc.x - pdx;
-    var cdy = pc.y - pdy;
-
-    var cdxady = cdx * ady;
-    var adxcdy = adx * cdy;
-    var ocad = cdxady - adxcdy;
-
-    if (ocad <= (EPSILON)) {
+    var oadc = (pa.x - pc.x) * (pd.y - pc.y) - (pd.x - pc.x) * (pa.y - pc.y);
+    if (oadc <= EPSILON) {
         return false;
     }
-
     return true;
 }
 
