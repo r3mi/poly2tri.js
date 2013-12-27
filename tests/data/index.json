@@ -2,7 +2,6 @@
     {
         "title": "Data copied from poly2tri c++ testbed",
         "source": "https://code.google.com/p/poly2tri/source/browse/#hg%2Ftestbed%2Fdata",
-        "dateupdated": "2013-03-15",
         "files": [
             {"name": "2.dat", "content": "2", "triangles": 58},
             {"name": "bird.dat", "content": "Bird", "triangles": 273},
@@ -29,7 +28,6 @@
     {
         "title": "Data extracted from poly2tri issues",
         "source": "https://code.google.com/p/poly2tri/issues/list?can=1",
-        "dateupdated": "2013-11-25",
         "files": [
             {
                 "name": "issue13.dat", "holes": "issue13_hole.dat",
@@ -50,7 +48,6 @@
     {
         "title": "Data extracted from poly2tri issue #34",
         "source": "https://code.google.com/p/poly2tri/issues/detail?id=34",
-        "dateupdated": "2013-03-19",
         "files": [
             {"name": "issue34/stackoverflow.dat", "throws": "RangeError: Maximum call stack size exceeded"},
             {"name": "issue34/stackoverflow_uncommented.dat", "throws": "RangeError: Maximum call stack size exceeded"},
@@ -82,7 +79,6 @@
     {
         "title": "Data extracted from poly2tri forum 'Library hangs'",
         "source": "https://groups.google.com/forum/?fromgroups=#!topic/poly2tri/H1OzouuOZ_s",
-        "dateupdated": "2013-04-08",
         "files": [
             {"name": "map_invalid.dat", "throws": "weak polygon with touching edges"},
             {"name": "map_fixed.dat", "content": "Map indoor", "triangles": 121}
@@ -91,7 +87,6 @@
     {
         "title": "Data extracted from poly2tri forum 'Allow touching holes within the polygon'",
         "source": "https://groups.google.com/forum/#!topic/poly2tri/Lep0ajMp_T8",
-        "dateupdated": "2013-11-25",
         "files": [
             {"name": "forum_2013-08-01.dat", "holes": "forum_2013-08-01_hole.dat", "triangles": 129}
         ]
@@ -99,7 +94,6 @@
     {
         "title": "Data extracted from poly2tri forum 'Strange results'",
         "source": "https://groups.google.com/forum/#!topic/poly2tri/5cgj8241Qwo",
-        "dateupdated": "2013-11-25",
         "files": [
             {
                 "name": "road_on_grid.dat", "xxxcontent": "road hole on regular grid [XXX BAD]",
@@ -111,7 +105,6 @@
     {
         "title": "France borders",
         "source": "http://commons.wikimedia.org/wiki/File:Blank_France_map,_no_Departments.svg",
-        "dateupdated": "2013-04-19",
         "files": [
             {"name": "France.dat", "content": "France", "triangles": 768}
         ]
@@ -119,7 +112,6 @@
     {
         "title": "Berkeley CS 274 tests",
         "source": "http://www.cs.berkeley.edu/~jrs/274s03/proj.html",
-        "dateupdated": "2013-04-19",
         "files": [
             {"name": "spiral.dat", "content": "Spiral", "triangles": 13}
         ]
