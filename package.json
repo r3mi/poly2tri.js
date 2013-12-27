@@ -17,7 +17,8 @@
         "test.phantom": "karma start tests/karma.conf.js --single-run --browsers PhantomJS",
         "test.browsers": "karma start tests/karma.conf.js --single-run",
         "jshint": "jshint src/*.js tests/*.js tests/spec/*.js",
-        "build": "npm run jshint && mkdir -p dist && browserify src/poly2tri.js --standalone poly2tri -o dist/poly2tri.js",
+        "build": "npm run jshint && npm run build.nocheck",
+        "build.nocheck": "mkdir -p dist && browserify src/poly2tri.js --standalone poly2tri -o dist/poly2tri.js",
         "bench": "node ./tests/benchmark.js"
     },
     "keywords": [
