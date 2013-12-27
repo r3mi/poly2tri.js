@@ -52,7 +52,7 @@
         "karma-phantomjs-launcher": "~0.1.0",
         "karma-chrome-launcher": "~0.1.0",
         "karma-firefox-launcher": "~0.1.0",
-        "jshint": "~2.3.0",
+        "jshint": "~2.4.0",
         "browserify": "~2.36.0",
         "karma-browserify": "~0.0.6",
         "benchmark": "~1.0.0",

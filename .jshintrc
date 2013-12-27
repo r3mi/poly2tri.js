@@ -14,5 +14,6 @@
   "newcap": true,
   "trailing": true,
   "maxcomplexity": 5,
+  "freeze":true,
   "indent": 4
 }
