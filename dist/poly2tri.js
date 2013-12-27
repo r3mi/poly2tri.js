@@ -2088,4 +2088,3 @@ module.exports = Triangle;
 },{"./point":1}]},{},[2])
 (2)
 });
-;
