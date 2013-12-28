@@ -46,6 +46,7 @@
  */
 
 global.poly2tri = "previous";
+// For the browser, we require the final distributed bundle
 var p2t = (process.browser ? require('../../dist/poly2tri') : require('../../src/poly2tri'));
 global.poly2tri = p2t;
 

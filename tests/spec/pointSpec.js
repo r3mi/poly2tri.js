@@ -40,7 +40,7 @@
 "use strict";
 
 
-var Point = (process.browser ? require('../../dist/poly2tri').Point : require('../../src/point'));
+var Point = require('../../src/point');
 
 
 /*
