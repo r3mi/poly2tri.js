@@ -189,36 +189,6 @@ describe("poly2tri", function() {
     }
 
 
-// ---------------------------------------------------------------------Triangle
-  
-    describe("Triangle", function() {
-        var t, p1, p2, p3;
-        beforeEach(function() {
-            p1 = new p2t.Point(1, 2);
-            p2 = new p2t.Point(3, 4);
-            p3 = new p2t.Point(5, 6);
-            t = new p2t.Triangle(p1, p2, p3);
-        });
-        it("should have a getPoint() method", function() {
-            expect(t.getPoint(0)).toBe(p1);
-            expect(t.getPoint(1)).toBe(p2);
-            expect(t.getPoint(2)).toBe(p3);
-        });
-        it("should have a getPoints() method", function() {
-            expect(t.getPoints()).toEqual([p1, p2, p3]);
-        });
-        it("should have a containsPoint() method", function() {
-            expect(t.containsPoint(p1)).toBeTruthy();
-            expect(t.containsPoint(p2)).toBeTruthy();
-            expect(t.containsPoint(p3)).toBeTruthy();
-            expect(t.containsPoint(new p2t.Point(1, 2))).toBeFalsy(); // compares references, not values
-            expect(t.containsPoint(new p2t.Point(7, 8))).toBeFalsy();
-        });
-        it("should have a toString() method", function() {
-            expect(t.toString()).toBe("[(1;2)(3;4)(5;6)]");
-        });
-    });
-
 // -----------------------------------------------------------------SweepContext
 
     describe("SweepContext", function() {
