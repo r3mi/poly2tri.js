@@ -120,5 +120,16 @@
         "files": [
             {"name": "spiral.dat", "demo": true, "content": "Spiral", "triangles": 13}
         ]
+    },
+    {
+        "title": "Data extracted from poly2tri issue #1",
+        "source": "https://code.google.com/p/poly2tri/issues/detail?id=1",
+        "files": [
+            {"name": "issue1/T_uppercase.dat", "content": "Letter T", "triangles": 6},
+            {"name": "issue1/a.dat", "content": "Letter a", "holes": "issue1/a_hole.dat", "triangles": 61},
+            {"name": "issue1/e.dat", "demo": true, "content": "Letter e", "holes": "issue1/e_hole.dat", "triangles": 49},
+            {"name": "issue1/t.dat", "content": "Letter t", "triangles": 19},
+            {"name": "issue1/x.dat", "content": "Letter x", "triangles": 13}
+        ]
     }
 ]
