@@ -34,7 +34,7 @@
                 "throws": "intersecting constraints: polygon with 1 hole close to edge"
             },
             {
-                "name": "issue39.dat", "demo": true, "content": "Brokepolygon with points", 
+                "name": "issue39.dat", "demo": true, "content": "Brokepolygon with points",
                 "holes": "issue39_holes.dat", "steiner": "issue39_steiner.dat",
                 "triangles": 143
             },
@@ -73,8 +73,12 @@
             {"name": "issue34/dump857.dat", "triangles": 343},
             {"name": "issue34/dump862.dat", "triangles": 312},
             {"name": "issue34/dump910.dat", "triangles": 359},
-            {"name": "issue34/dump1208.dat", "demo": true, "content": "Big roundish polygon", "triangles": 380}
-
+            {"name": "issue34/dump1208.dat", "demo": true, "content": "Big roundish polygon", "triangles": 380},
+            {
+                "name": "issue34/square_1e-14.dat", "holes": "issue34/square_1e-14_holes.dat",
+                "content": "Square with 2 holes whose edge differs < ε",
+                "throws": "collinear due to precision issue"
+            }
         ]
     },
     {
