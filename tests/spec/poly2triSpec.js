@@ -39,28 +39,21 @@
 
 "use strict";
 
-// ---------------------------------------------------------------Module loading
 
-global.poly2tri = "previous";
+// For the browser, we require the final distributed bundle
 var p2t = (process.browser ? require('../../dist/poly2tri') : require('../../src/poly2tri'));
-global.poly2tri = p2t;
-
-describe("poly2tri module", function() {
-    it("should require 'poly2tri'", function() {
-        expect(p2t).toBeDefined();
-        expect(p2t.triangulate).toBeDefined();
-    });
-    it("should have a noConflict() method", function() {
-        var pp = global.poly2tri.noConflict();
-        expect(pp).toBe(p2t);
-        if (process.browser) {
-            expect(global.poly2tri).toBe("previous");
-        }
-    });
-});
 
 
-// -------------------------------------------------------------Node vs. Browser 
+/*
+ * Tests
+ * =====
+ *   TODO we test only part of the "public API" of poly2tri for the time being
+ *   (methods used in the "triangulate" tests),
+ *   not all the methods or all sub-classes.
+ */
+
+
+// ------------------------------------------------------------readFileSync util
 
 var readFileSync;
 if (process.browser) {
@@ -195,94 +188,6 @@ describe("poly2tri", function() {
         return makePoints(points);
     }
 
-
-// -----------------------------------------------------------------------Shapes
-    /*
-     * Tests
-     * =====
-     *   TODO we test only part of the "public API" of poly2tri for the time being
-     *   (methods used in the "triangulate" tests),
-     *   not all the methods or all sub-classes.
-     */
-
-    describe("Point", function() {
-        it("should have a default constructor", function() {
-            expect(p2t.Point).toBeDefined();
-            var point = new p2t.Point();
-            expect(point).toEqual(jasmine.any(p2t.Point));
-            expect(point.x).toBe(0);
-            expect(point.y).toBe(0);
-        });
-        it("should have a constructor", function() {
-            var point = new p2t.Point(1, 2);
-            expect(point.x).toBe(1);
-            expect(point.y).toBe(2);
-        });
-        it("should have a set() method", function() {
-            var point = new p2t.Point(1, 2);
-            point.set(3, 4);
-            expect(point.x).toBe(3);
-            expect(point.y).toBe(4);
-        });
-        it("should have a clone() method", function() {
-            var point1 = new p2t.Point(1, 2), point2 = point1.clone();
-            expect(point2.x).toBe(point1.x);
-            expect(point2.y).toBe(point1.y);
-        });
-        it("should have a equals() method", function() {
-            var point = new p2t.Point(1, 2);
-            expect(point.equals(point)).toBeTruthy();
-            expect(point.equals(new p2t.Point(1, 2))).toBeTruthy();
-            expect(point.equals(new p2t.Point(1, 3))).toBeFalsy();
-        });
-        it("should have a equals() static function", function() {
-            var point = new p2t.Point(1, 2);
-            expect(p2t.Point.equals(point, point)).toBeTruthy();
-            expect(p2t.Point.equals(point, new p2t.Point(1, 2))).toBeTruthy();
-            expect(p2t.Point.equals(point, {x: 1, y: 2})).toBeTruthy();
-            expect(p2t.Point.equals(point, new p2t.Point(1, 3))).toBeFalsy();
-        });
-        it("should have a toString() method", function() {
-            var point = new p2t.Point(1, 2);
-            expect(point.toString()).toBe("(1;2)");
-        });
-        it("should have a toString() static function", function() {
-            expect(p2t.Point.toString(new p2t.Point(1, 2))).toBe("(1;2)");
-            expect(p2t.Point.toString({x: 3, y: 4})).toBe("(3;4)");
-            expect(p2t.Point.toString({z: 7, toString: function() {
-                    return "56";
-                }
-            })).toBe("56");
-        });
-    });
-
-    describe("Triangle", function() {
-        var t, p1, p2, p3;
-        beforeEach(function() {
-            p1 = new p2t.Point(1, 2);
-            p2 = new p2t.Point(3, 4);
-            p3 = new p2t.Point(5, 6);
-            t = new p2t.Triangle(p1, p2, p3);
-        });
-        it("should have a getPoint() method", function() {
-            expect(t.getPoint(0)).toBe(p1);
-            expect(t.getPoint(1)).toBe(p2);
-            expect(t.getPoint(2)).toBe(p3);
-        });
-        it("should have a getPoints() method", function() {
-            expect(t.getPoints()).toEqual([p1, p2, p3]);
-        });
-        it("should have a containsPoint() method", function() {
-            expect(t.containsPoint(p1)).toBeTruthy();
-            expect(t.containsPoint(p2)).toBeTruthy();
-            expect(t.containsPoint(p3)).toBeTruthy();
-            expect(t.containsPoint(new p2t.Point(1, 2))).toBeFalsy(); // compares references, not values
-            expect(t.containsPoint(new p2t.Point(7, 8))).toBeFalsy();
-        });
-        it("should have a toString() method", function() {
-            expect(t.toString()).toBe("[(1;2)(3;4)(5;6)]");
-        });
-    });
 
 // -----------------------------------------------------------------SweepContext
 
