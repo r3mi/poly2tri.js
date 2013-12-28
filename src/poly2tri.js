@@ -60,6 +60,7 @@ exports.noConflict = function() {
 
 var Point = require('./point');
 var Triangle = require('./triangle');
+var utils = require('./utils');
 
 
 // -------------------------------------------------------------------PointError
@@ -113,56 +114,19 @@ var Edge = function(p1, p2) {
 
 // ------------------------------------------------------------------------utils
 var PI_3div4 = 3 * Math.PI / 4;
-var PI_2 = Math.PI / 2;
-var EPSILON = 1e-12;
+var PI_div2 = Math.PI / 2;
+var EPSILON = utils.EPSILON;
 
 /* 
- * Inital triangle factor, seed triangle will extend 30% of
+ * Initial triangle factor, seed triangle will extend 30% of
  * PointSet width to both left and right.
  */
 var kAlpha = 0.3;
 
-var Orientation = {
-    "CW": 1,
-    "CCW": -1,
-    "COLLINEAR": 0
-};
+var Orientation = utils.Orientation;
+var orient2d = utils.orient2d;
+var inScanArea = utils.inScanArea;
 
-/**
- * Forumla to calculate signed area<br>
- * Positive if CCW<br>
- * Negative if CW<br>
- * 0 if collinear<br>
- * <pre>
- * A[P1,P2,P3]  =  (x1*y2 - y1*x2) + (x2*y3 - y2*x3) + (x3*y1 - y3*x1)
- *              =  (x1-x3)*(y2-y3) - (y1-y3)*(x2-x3)
- * </pre>
- */
-function orient2d(pa, pb, pc) {
-    var detleft = (pa.x - pc.x) * (pb.y - pc.y);
-    var detright = (pa.y - pc.y) * (pb.x - pc.x);
-    var val = detleft - detright;
-    if (val > -(EPSILON) && val < (EPSILON)) {
-        return Orientation.COLLINEAR;
-    } else if (val > 0) {
-        return Orientation.CCW;
-    } else {
-        return Orientation.CW;
-    }
-}
-
-function inScanArea(pa, pb, pc, pd) {
-    var oadb = (pa.x - pb.x) * (pd.y - pb.y) - (pd.x - pb.x) * (pa.y - pb.y);
-    if (oadb >= -EPSILON) {
-        return false;
-    }
-
-    var oadc = (pa.x - pc.x) * (pd.y - pc.y) - (pd.x - pc.x) * (pa.y - pc.y);
-    if (oadc <= EPSILON) {
-        return false;
-    }
-    return true;
-}
 
 // ---------------------------------------------------------------AdvancingFront
 /**
@@ -495,7 +459,7 @@ Sweep.fillAdvancingFront = function(tcx, n) {
     var angle;
     while (node.next) {
         angle = Sweep.holeAngle(node);
-        if (angle > PI_2 || angle < -(PI_2)) {
+        if (angle > PI_div2 || angle < -(PI_div2)) {
             break;
         }
         Sweep.fill(tcx, node);
@@ -506,7 +470,7 @@ Sweep.fillAdvancingFront = function(tcx, n) {
     node = n.prev;
     while (node.prev) {
         angle = Sweep.holeAngle(node);
-        if (angle > PI_2 || angle < -(PI_2)) {
+        if (angle > PI_div2 || angle < -(PI_div2)) {
             break;
         }
         Sweep.fill(tcx, node);

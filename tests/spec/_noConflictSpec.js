@@ -6,7 +6,7 @@
  * https://github.com/r3mi/poly2tri.js
  *
  * Unit tests for poly2tri.js
- * Rémi Turboult, 03/2013
+ * Rémi Turboult, 11/2013
  *
  * All rights reserved.
  *
