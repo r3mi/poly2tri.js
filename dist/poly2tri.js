@@ -388,7 +388,7 @@ var PI_div2 = Math.PI / 2;
 var EPSILON = utils.EPSILON;
 
 /* 
- * Inital triangle factor, seed triangle will extend 30% of
+ * Initial triangle factor, seed triangle will extend 30% of
  * PointSet width to both left and right.
  */
 var kAlpha = 0.3;

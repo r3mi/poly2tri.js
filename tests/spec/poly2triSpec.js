@@ -178,14 +178,14 @@ describe("poly2tri", function() {
 
     /**
      * Parse points coordinates : pairs of x y, with any separator between coordinates
-     * @param {String} data
+     * @param {String} str
      * @returns {Array<Point>}  points 
      */
-    function parsePoints(data) {
-        var points = data.split(/[^-eE\.\d]+/).filter(function(val) {
-            return val;
-        }).map(parseFloat);
-        return makePoints(points);
+    function parsePoints(str) {
+        var floats = str.split(/[^-+eE\.\d]+/).map(parseFloat).filter(function(val) {
+            return !isNaN(val);
+        });
+        return makePoints(floats);
     }
 
 

@@ -61,9 +61,9 @@ function setVisibleLayers(stage) {
 }
 
 function parsePoints(str) {
-    var floats = str.split(/[^-eE\.\d]+/).filter(function(val) {
-        return val;
-    }).map(parseFloat);
+    var floats = str.split(/[^-+eE\.\d]+/).map(parseFloat).filter(function(val) {
+        return !isNaN(val);
+    });
     var i, points = [];
     // bitwise 'and' to ignore any isolated float at the end
     /* jshint bitwise:false */
