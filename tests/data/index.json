@@ -13,7 +13,7 @@
                 "name": "dude.dat", "demo": true, "holes": "dude_holes.dat",
                 "content": "Dude with 2 holes", "triangles": 106
             },
-            {"name": "funny.dat", "demo": true, "content": "Funny polygon", "triangles": 98},
+            {"name": "funny.dat", "demo": false, "content": "Funny polygon", "triangles": 98},
             {"name": "kzer-za.dat", "demo": true, "content": "Kzer-Za Dreadnought", "triangles": 206},
             {"name": "nazca_heron.dat", "demo": true, "content": "Nazca heron", "triangles": 1034},
             {"name": "nazca_monkey.dat", "demo": true, "content": "Nazca monkey", "triangles": 1202},
