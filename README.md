@@ -24,7 +24,7 @@ poly2tri.js
 This document describes the JavaScript version of [poly2tri]. 
 Officially supported langages are C++ and Java : 
 [poly2tri.js] is a community based port, currently based on 
-the "April 3, 2012" C++ version, with patches and JavaScript specificities.
+the "May 1, 2013" C++ version, with patches and JavaScript specificities.
 You can ask support in the [forum].
 
 

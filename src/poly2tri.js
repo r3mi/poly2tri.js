@@ -458,6 +458,8 @@ Sweep.fillAdvancingFront = function(tcx, n) {
     var node = n.next;
     var angle;
     while (node.next) {
+        // TODO integrate here changes from C++ version
+        // (C++ repo revision acf81f1f1764 dated April 7, 2012)
         angle = Sweep.holeAngle(node);
         if (angle > PI_div2 || angle < -(PI_div2)) {
             break;
@@ -469,6 +471,8 @@ Sweep.fillAdvancingFront = function(tcx, n) {
     // Fill left holes
     node = n.prev;
     while (node.prev) {
+        // TODO integrate here changes from C++ version
+        // (C++ repo revision acf81f1f1764 dated April 7, 2012)
         angle = Sweep.holeAngle(node);
         if (angle > PI_div2 || angle < -(PI_div2)) {
             break;
