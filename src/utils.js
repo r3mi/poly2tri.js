@@ -71,7 +71,7 @@ function inScanArea(pa, pb, pc, pd) {
 }
 
 
-// ---------------------------------------------------------Exports (public API)
+// ----------------------------------------------------------------------Exports
 
 module.exports = {
     EPSILON: EPSILON,

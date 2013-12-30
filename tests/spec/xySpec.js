@@ -5,6 +5,9 @@
  * poly2tri.js (JavaScript port) (c) 2009-2013, Poly2Tri Contributors
  * https://github.com/r3mi/poly2tri.js
  *
+ * Unit tests for xy.js
+ * Rémi Turboult, 12/2013
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -32,33 +35,46 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/* global describe, it, expect */
+
 "use strict";
 
-/*
- * Public API for poly2tri.js
- * ==========================
- */
 
+var xy = require('../../src/xy');
 
-/*
- * for Browser + <script> : 
- * return the poly2tri global variable to its previous value. 
- * (this feature is not automatically provided by browserify).
- */
-var previousPoly2tri = global.poly2tri;
-exports.noConflict = function() {
-    global.poly2tri = previousPoly2tri;
-    return exports;
+// Any "Point like" object  with {x,y} (duck typing)
+var Point = function(x, y) {
+    this.y = y;
+    this.x = x;
 };
 
+describe("xy", function() {
+    it("should have a toString() function", function() {
+        expect(xy.toString({x: 3, y: 4})).toBe("(3;4)");
+        expect(xy.toString(new Point(1, 2))).toBe("(1;2)");
+        expect(xy.toString({z: 7, toString: function() {
+                return "56";
+            }
+        })).toBe("56");
+    });
+    it("should have a equals() function", function() {
+        var point = {x: 1, y: 2};
+        expect(xy.equals(point, point)).toBeTruthy();
+        expect(xy.equals(point, {x: 1, y: 2})).toBeTruthy();
+        expect(xy.equals(point, new Point(1, 2))).toBeTruthy();
+        expect(xy.equals({x: 1, y: 2}, point)).toBeTruthy();
+        expect(xy.equals(point, {x: 1, y: 3})).toBeFalsy();
+    });
+    it("should have a compare() function", function() {
+        var point = {x: 1, y: 2};
+        expect(xy.compare(point, point)).toBe(0);
+        expect(xy.compare(point, {x: 1, y: 2})).toBe(0);
+        expect(xy.compare(point, new Point(1, 2))).toBe(0);
+        // y ordering first, then x
+        expect(xy.compare(point, {x: 1, y: 1})).toBeGreaterThan(0);
+        expect(xy.compare(point, {x: 3, y: 1})).toBeGreaterThan(0);
+        expect(xy.compare(point, {x: 1, y: 3})).toBeLessThan(0);
+        expect(xy.compare(point, {x: 0, y: 3})).toBeLessThan(0);
+    });
+});
 
-exports.PointError = require('./pointerror');
-exports.Point = require('./point');
-exports.Triangle = require('./triangle');
-exports.SweepContext = require('./sweepcontext');
-
-
-// Backward compatibility
-var sweep = require('./sweep');
-exports.triangulate = sweep.triangulate;
-exports.sweep = {Triangulate: sweep.triangulate};

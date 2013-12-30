@@ -21,7 +21,7 @@
  * easier to keep the 2 versions in sync.
  */
 
-
+var xy = require('./xy');
 
 // ------------------------------------------------------------------------Point
 /**
@@ -44,7 +44,7 @@ var Point = function(x, y) {
  * For pretty printing ex. <i>"(5;42)"</i>)
  */
 Point.prototype.toString = function() {
-    return ("(" + this.x + ";" + this.y + ")");
+    return xy.toStringBase(this);
 };
 
 /**
@@ -215,42 +215,10 @@ Point.cross = function(a, b) {
  * with {x,y} (duck typing).
  */
 
-
-/**
- * Point pretty printing ex. <i>"(5;42)"</i>)
- * @param   p   any "Point like" object with {x,y} 
- * @returns {String}
- */
-Point.toString = function(p) {
-    // Try a custom toString first, and fallback to Point.prototype.toString if none
-    var s = p.toString();
-    return (s === '[object Object]' ? Point.prototype.toString.call(p) : s);
-};
-
-/**
- * Compare two points component-wise.
- * @param   a,b   any "Point like" objects with {x,y} 
- * @return <code>&lt; 0</code> if <code>a &lt; b</code>, 
- *         <code>&gt; 0</code> if <code>a &gt; b</code>, 
- *         <code>0</code> otherwise.
- */
-Point.compare = function(a, b) {
-    if (a.y === b.y) {
-        return a.x - b.x;
-    } else {
-        return a.y - b.y;
-    }
-};
-Point.cmp = Point.compare; // backward compatibility
-
-/**
- * Test two Point objects for equality.
- * @param   a,b   any "Point like" objects with {x,y} 
- * @return <code>True</code> if <code>a == b</code>, <code>false</code> otherwise.
- */
-Point.equals = function(a, b) {
-    return a.x === b.x && a.y === b.y;
-};
+Point.toString = xy.toString;
+Point.compare = xy.compare;
+Point.cmp = xy.compare; // backward compatibility
+Point.equals = xy.equals;
 
 /**
  * Peform the dot product on two vectors.

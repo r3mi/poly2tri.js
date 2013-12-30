@@ -23,7 +23,7 @@
  * easier to keep the 2 versions in sync.
  */
 
-var Point = require("./point");
+var xy = require("./xy");
 
 
 // ---------------------------------------------------------------------Triangle
@@ -52,7 +52,7 @@ var Triangle = function(a, b, c) {
 /**
  * For pretty printing ex. <i>"[(5;42)(10;20)(21;30)]"</i>)
  */
-var p2s = Point.toString;
+var p2s = xy.toString;
 Triangle.prototype.toString = function() {
     return ("[" + p2s(this.points_[0]) + p2s(this.points_[1]) + p2s(this.points_[2]) + "]");
 };
