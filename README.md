@@ -80,6 +80,7 @@ wget http://r3mi.github.io/poly2tri.js/dist/poly2tri.js
 ```
 The file `dist/poly2tri.js` can be included directly.
 It is standalone and has no mandatory dependency.
+Use `dist/poly2tri.min.js` for the compressed version.
 
 
 Usage

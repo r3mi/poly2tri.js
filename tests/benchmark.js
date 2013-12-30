@@ -56,8 +56,9 @@ var v_1_2_0 = require('./versions/1.2.0/poly2tri');
 // Last version before browserify
 var v_1_2_7 = require('./versions/1.2.7/poly2tri');
 
-var v_current_node = require('../src/poly2tri');
-var v_current_browser = require('../dist/poly2tri');
+var v_current_src = require('../src/poly2tri');
+var v_current_dist = require('../dist/poly2tri');
+var v_current_dist_min = require('../dist/poly2tri.min');
 
 
 /*
@@ -109,11 +110,14 @@ suite
         .add('v1.2.7', function() {
     triangulate(v_1_2_7);
 })
-        .add('current.node', function() {
-    triangulate(v_current_node);
+        .add('current.src', function() {
+    triangulate(v_current_src);
 })
-        .add('current.browser', function() {
-    triangulate(v_current_browser);
+        .add('current.dist', function() {
+    triangulate(v_current_dist);
+})
+        .add('current.dist.min', function() {
+    triangulate(v_current_dist_min);
 })
 // add listeners
         .on('cycle', function(event) {

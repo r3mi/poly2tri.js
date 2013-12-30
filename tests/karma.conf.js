@@ -21,7 +21,7 @@ module.exports = function(config) {
         },
         browserify: {
             // work around --standalone bug, see https://github.com/substack/node-browserify/issues/525
-            noParse: ['dist/poly2tri.js']
+            noParse: ['dist/*.js']
         },
         //logLevel: "LOG_DEBUG",
         browsers: ['Chrome', 'Firefox', 'PhantomJS']
