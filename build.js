@@ -20,6 +20,9 @@ var fs = require('fs');
 var uglify = require('uglify-js');
 var pkg = require('./package.json');
 
+// Update version file (require'd by main poly2tri.js for VERSION string)
+fs.writeFileSync('./dist/version.json', '{ "version": "' + pkg.version + '" }');
+
 var today = new Date().toJSON().slice(0, 10);
 var preamble = '/*! ' + pkg.name + ' v' + pkg.version + ' | built ' + today + ' | (c) 2009-2013 Poly2Tri Contributors */\n';
 

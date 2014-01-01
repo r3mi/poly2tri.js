@@ -1,4 +1,6 @@
 !function(e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):"undefined"!=typeof window?window.poly2tri=e():"undefined"!=typeof global?global.poly2tri=e():"undefined"!=typeof self&&(self.poly2tri=e())}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+module.exports={ "version": "1.3.1" }
+},{}],2:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -145,7 +147,7 @@ module.exports = AdvancingFront;
 module.exports.Node = Node;
 
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -382,7 +384,7 @@ Point.dot = function(a, b) {
 
 module.exports = Point;
 
-},{"./xy":9}],3:[function(require,module,exports){
+},{"./xy":10}],4:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -422,7 +424,7 @@ PointError.prototype.constructor = PointError;
 
 module.exports = PointError;
 
-},{"./xy":9}],4:[function(require,module,exports){
+},{"./xy":10}],5:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -476,6 +478,7 @@ exports.noConflict = function() {
     return exports;
 };
 
+exports.VERSION = require('../dist/version.json').version;
 
 exports.PointError = require('./pointerror');
 exports.Point = require('./point');
@@ -488,7 +491,7 @@ var sweep = require('./sweep');
 exports.triangulate = sweep.triangulate;
 exports.sweep = {Triangulate: sweep.triangulate};
 
-},{"./point":2,"./pointerror":3,"./sweep":5,"./sweepcontext":6,"./triangle":7}],5:[function(require,module,exports){
+},{"../dist/version.json":1,"./point":3,"./pointerror":4,"./sweep":6,"./sweepcontext":7,"./triangle":8}],6:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -1341,7 +1344,7 @@ function flipScanEdgeEvent(tcx, ep, eq, flip_triangle, t, p) {
 
 exports.triangulate = triangulate;
 
-},{"./advancingfront":1,"./pointerror":3,"./triangle":7,"./utils":8}],6:[function(require,module,exports){
+},{"./advancingfront":2,"./pointerror":4,"./triangle":8,"./utils":9}],7:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -1701,7 +1704,7 @@ SweepContext.prototype.meshClean = function(triangle) {
 
 module.exports = SweepContext;
 
-},{"./advancingfront":1,"./point":2,"./pointerror":3,"./sweep":5,"./triangle":7}],7:[function(require,module,exports){
+},{"./advancingfront":2,"./point":3,"./pointerror":4,"./sweep":6,"./triangle":8}],8:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -2140,7 +2143,7 @@ Triangle.prototype.markConstrainedEdgeByPoints = function(p, q) {
 
 module.exports = Triangle;
 
-},{"./xy":9}],8:[function(require,module,exports){
+},{"./xy":10}],9:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -2223,7 +2226,7 @@ module.exports = {
     inScanArea: inScanArea
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -2290,6 +2293,6 @@ module.exports = {
     equals: equals
 };
 
-},{}]},{},[4])
-(4)
+},{}]},{},[5])
+(5)
 });

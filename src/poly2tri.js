@@ -51,6 +51,7 @@ exports.noConflict = function() {
     return exports;
 };
 
+exports.VERSION = require('../dist/version.json').version;
 
 exports.PointError = require('./pointerror');
 exports.Point = require('./point');

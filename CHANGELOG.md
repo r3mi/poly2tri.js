@@ -2,6 +2,7 @@
 
 - provide a minified build in `dist/poly2tri.min.js`, 
   using [UglifyJS 2](https://github.com/mishoo/UglifyJS2).
+- add a `poly2tri.VERSION` string
 
 <a name="1.3.1"></a>
 # 1.3.1 (2013-12-24)

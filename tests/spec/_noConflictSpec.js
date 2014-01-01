@@ -55,6 +55,9 @@ describe("poly2tri module", function() {
         expect(p2t).toBeDefined();
         expect(p2t.triangulate).toBeDefined();
     });
+    it("should have 'VERSION' constant", function() {
+        expect(p2t.VERSION).toMatch(/^1\.\d+\.\d+$/);
+    });
     it("should have a noConflict() method", function() {
         var pp = global.poly2tri.noConflict();
         expect(pp).toBe(p2t);
