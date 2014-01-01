@@ -343,6 +343,8 @@ function loadPresetMenu() {
 }
 
 $(document).ready(function() {
+    $('#version').text(poly2tri.VERSION);
+    
     var $content = $('#content');
     var stage = new Kinetic.Stage({
         container: $content[0],
