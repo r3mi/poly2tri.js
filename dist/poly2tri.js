@@ -29,55 +29,82 @@
 
 /**
  * Advancing front node
- * @param {Point} p any "Point like" object with {x,y} (duck typing)
- * @param {Triangle} t triangle (optionnal)
+ * @constructor
+ * @struct
+ * @param {{x:number, y:number}} p any "Point like" object with {x,y} (duck typing)
+ * @param {Triangle=} t triangle (optionnal)
  */
 var Node = function(p, t) {
+    /** @type {{x:number, y:number}} */
     this.point = p;
+
+    /** @type {Triangle$$module$triangle|null} */
     this.triangle = t || null;
 
-    this.next = null; // Node
-    this.prev = null; // Node
+    /** @type {Node|null} */
+    this.next = null;
+    /** @type {Node|null} */
+    this.prev = null;
 
+    /** @type {number} */
     this.value = p.x;
 };
 
 // ---------------------------------------------------------------AdvancingFront
+/**
+ * @constructor
+ * @param {Node} head
+ * @param {Node} tail
+ */
 var AdvancingFront = function(head, tail) {
-    this.head_ = head; // Node
-    this.tail_ = tail; // Node
-    this.search_node_ = head; // Node
+    /** @type {Node} */
+    this.head_ = head;
+    /** @type {Node} */
+    this.tail_ = tail;
+    /** @type {Node} */
+    this.search_node_ = head;
 };
 
+/** @return {Node} */
 AdvancingFront.prototype.head = function() {
     return this.head_;
 };
 
+/** @param {Node} node */
 AdvancingFront.prototype.setHead = function(node) {
     this.head_ = node;
 };
 
+/** @return {Node} */
 AdvancingFront.prototype.tail = function() {
     return this.tail_;
 };
 
+/** @param {Node} node */
 AdvancingFront.prototype.setTail = function(node) {
     this.tail_ = node;
 };
 
+/** @return {Node} */
 AdvancingFront.prototype.search = function() {
     return this.search_node_;
 };
 
+/** @param {Node} node */
 AdvancingFront.prototype.setSearch = function(node) {
     this.search_node_ = node;
 };
 
+/** @return {Node} */
 AdvancingFront.prototype.findSearchNode = function(/*x*/) {
     // TODO: implement BST index
     return this.search_node_;
 };
 
+/**
+ * @param {number} x value
+ * @return {Node}
+ */
 AdvancingFront.prototype.locateNode = function(x) {
     var node = this.search_node_;
 
@@ -100,6 +127,10 @@ AdvancingFront.prototype.locateNode = function(x) {
     return null;
 };
 
+/**
+ * @param {{x:number, y:number}} point any "Point like" object with {x,y} (duck typing)
+ * @return {Node}
+ */
 AdvancingFront.prototype.locatePoint = function(point) {
     var px = point.x;
     var node = this.findSearchNode(px);
@@ -160,6 +191,9 @@ module.exports.Node = Node;
 
 "use strict";
 
+/**
+ * @module point
+ */
 
 /*
  * Note
@@ -172,13 +206,26 @@ module.exports.Node = Node;
 var xy = require('./xy');
 
 // ------------------------------------------------------------------------Point
+
 /**
  * Construct a point
- * @param {Number} x    coordinate (0 if undefined)
- * @param {Number} y    coordinate (0 if undefined)
+ * 
+ * @expose 
+ * @constructor
+ * @struct
+ * @param {number=} x    coordinate (0 if undefined)
+ * @param {number=} y    coordinate (0 if undefined)
  */
 var Point = function(x, y) {
+    /** 
+     * @type {number} 
+     * @expose
+     */
     this.x = +x || 0;
+    /** 
+     * @type {number} 
+     * @expose
+     */
     this.y = +y || 0;
 
     // All extra fields added to Point are prefixed with _p2t_
@@ -188,8 +235,11 @@ var Point = function(x, y) {
     this._p2t_edge_list = null;
 };
 
+
 /**
  * For pretty printing ex. <i>"(5;42)"</i>)
+ * @expose 
+ * @return {string} "(x,y)"
  */
 Point.prototype.toString = function() {
     return xy.toStringBase(this);
@@ -197,7 +247,8 @@ Point.prototype.toString = function() {
 
 /**
  * Creates a copy of this Point object.
- * @returns Point
+ * @expose 
+ * @return {Point$$module$point}
  */
 Point.prototype.clone = function() {
     return new Point(this.x, this.y);
@@ -205,6 +256,8 @@ Point.prototype.clone = function() {
 
 /**
  * Set this Point instance to the origo. <code>(0; 0)</code>
+ * @expose 
+ * @return {Point$$module$point}
  */
 Point.prototype.set_zero = function() {
     this.x = 0.0;
@@ -214,8 +267,10 @@ Point.prototype.set_zero = function() {
 
 /**
  * Set the coordinates of this instance.
- * @param   x   number.
- * @param   y   number;
+ * @expose 
+ * @param {number} x   coordinate
+ * @param {number} y   coordinate
+ * @return {Point$$module$point}
  */
 Point.prototype.set = function(x, y) {
     this.x = +x || 0;
@@ -225,6 +280,8 @@ Point.prototype.set = function(x, y) {
 
 /**
  * Negate this Point instance. (component-wise)
+ * @expose 
+ * @return {Point$$module$point}
  */
 Point.prototype.negate = function() {
     this.x = -this.x;
@@ -234,7 +291,9 @@ Point.prototype.negate = function() {
 
 /**
  * Add another Point object to this instance. (component-wise)
+ * @expose 
  * @param   n   Point object.
+ * @return {Point$$module$point}
  */
 Point.prototype.add = function(n) {
     this.x += n.x;
@@ -244,7 +303,9 @@ Point.prototype.add = function(n) {
 
 /**
  * Subtract this Point instance with another point given. (component-wise)
+ * @expose 
  * @param   n   Point object.
+ * @return {Point$$module$point}
  */
 Point.prototype.sub = function(n) {
     this.x -= n.x;
@@ -254,7 +315,9 @@ Point.prototype.sub = function(n) {
 
 /**
  * Multiply this Point instance by a scalar. (component-wise)
- * @param   s   scalar.
+ * @expose 
+ * @param {number} s   scalar.
+ * @return {Point$$module$point}
  */
 Point.prototype.mul = function(s) {
     this.x *= s;
@@ -264,6 +327,8 @@ Point.prototype.mul = function(s) {
 
 /**
  * Return the distance of this Point instance from the origo.
+ * @expose 
+ * @return {number} distance
  */
 Point.prototype.length = function() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
@@ -271,6 +336,7 @@ Point.prototype.length = function() {
 
 /**
  * Normalize this Point instance (as a vector).
+ * @expose 
  * @return The original distance of this instance from the origo.
  */
 Point.prototype.normalize = function() {
@@ -282,7 +348,8 @@ Point.prototype.normalize = function() {
 
 /**
  * Test this Point object with another for equality.
- * @param   p   any "Point like" object with {x,y} (duck typing)
+ * @expose 
+ * @param {{x:number,y:number}} p   any "Point like" object with {x,y} 
  * @return <code>True</code> if <code>this == p</code>, <code>false</code> otherwise.
  */
 Point.prototype.equals = function(p) {
@@ -294,8 +361,9 @@ Point.prototype.equals = function(p) {
 
 /**
  * Negate a point component-wise and return the result as a new Point object.
+ * @expose 
  * @param   p   Point object.
- * @return the resulting Point object.
+ * @return {Point$$module$point}  the resulting Point object.
  */
 Point.negate = function(p) {
     return new Point(-p.x, -p.y);
@@ -303,9 +371,10 @@ Point.negate = function(p) {
 
 /**
  * Add two points component-wise and return the result as a new Point object.
+ * @expose 
  * @param   a   Point object.
  * @param   b   Point object.
- * @return the resulting Point object.
+ * @return {Point$$module$point}  the resulting Point object.
  */
 Point.add = function(a, b) {
     return new Point(a.x + b.x, a.y + b.y);
@@ -313,9 +382,10 @@ Point.add = function(a, b) {
 
 /**
  * Subtract two points component-wise and return the result as a new Point object.
+ * @expose 
  * @param   a   Point object.
  * @param   b   Point object.
- * @return the resulting Point object.
+ * @return {Point$$module$point}  the resulting Point object.
  */
 Point.sub = function(a, b) {
     return new Point(a.x - b.x, a.y - b.y);
@@ -323,9 +393,10 @@ Point.sub = function(a, b) {
 
 /**
  * Multiply a point by a scalar and return the result as a new Point object.
- * @param   s   the scalar (a number).
+ * @expose 
+ * @param {number}  s   the scalar
  * @param   p   Point object.
- * @return the resulting Point object.
+ * @return {Point$$module$point}  the resulting Point object.
  */
 Point.mul = function(s, p) {
     return new Point(s * p.x, s * p.y);
@@ -336,9 +407,10 @@ Point.mul = function(s, p) {
  * or a point and a scalar (this produces a point).
  * This function requires two parameters, either may be a Point object or a
  * number.
- * @param   a   Point object or scalar.
- * @param   b   Point object or scalar.
- * @return  a   Point object or a number, depending on the parameters.
+ * @expose 
+ * @param  {Point$$module$point|number} a  Point object or scalar.
+ * @param  {Point$$module$point|number} b  Point object or scalar.
+ * @return {Point$$module$point|number} a Point object or a number, depending on the parameters.
  */
 Point.cross = function(a, b) {
     if (typeof(a) === 'number') {
@@ -370,8 +442,10 @@ Point.equals = xy.equals;
 
 /**
  * Peform the dot product on two vectors.
- * @param   a,b   any "Point like" objects with {x,y} 
- * @return The dot product (as a number).
+ * @expose 
+ * @param {{x:number,y:number}} a   any "Point like" object with {x,y} 
+ * @param {{x:number,y:number}} b   any "Point like" object with {x,y} 
+ * @return {number} The dot product
  */
 Point.dot = function(a, b) {
     return a.x * b.x + a.y * b.y;
@@ -401,12 +475,16 @@ module.exports = Point;
  * Class added in the JavaScript version (was not present in the c++ version)
  */
 
+/** @const */
 var xy = require('./xy');
 
 /**
  * Custom exception class to indicate invalid Point values
+ * @constructor
+ * @struct
+ * @extends {Error}
  * @param {String} message          error message
- * @param {array<Point>} points     invalid points
+ * @param {Array.<{x:number,y:number}>} points     invalid points
  */
 var PointError = function(message, points) {
     this.name = "PointError";
@@ -471,21 +549,28 @@ var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? 
  * (this feature is not automatically provided by browserify).
  */
 var previousPoly2tri = global.poly2tri;
+/** @expose */
 exports.noConflict = function() {
     global.poly2tri = previousPoly2tri;
     return exports;
 };
 
 
+/** @expose */
 exports.PointError = require('./pointerror');
+/** @expose */
 exports.Point = require('./point');
+/** @expose */
 exports.Triangle = require('./triangle');
+/** @expose */
 exports.SweepContext = require('./sweepcontext');
 
 
 // Backward compatibility
 var sweep = require('./sweep');
+/** @deprecated */
 exports.triangulate = sweep.triangulate;
+/** @deprecated */
 exports.sweep = {Triangulate: sweep.triangulate};
 
 },{"./point":2,"./pointerror":3,"./sweep":5,"./sweepcontext":6,"./triangle":7}],5:[function(require,module,exports){
@@ -525,14 +610,21 @@ var Node = require('./advancingfront').Node;
 
 // ------------------------------------------------------------------------utils
 
+/** @const */
 var utils = require('./utils');
 
+/** @const */
 var PI_3div4 = 3 * Math.PI / 4;
+/** @const */
 var PI_div2 = Math.PI / 2;
+/** @const */
 var EPSILON = utils.EPSILON;
 
+/** @const */
 var Orientation = utils.Orientation;
+/** @const */
 var orient2d = utils.orient2d;
+/** @const */
 var inScanArea = utils.inScanArea;
 
 
@@ -541,7 +633,7 @@ var inScanArea = utils.inScanArea;
 /**
  * Triangulate the polygon with holes and Steiner points.
  * Do this AFTER you've added the polyline, holes, and Steiner points
- * @param   tcx SweepContext object.
+ * @param {SweepContext}  tcx SweepContext object.
  */
 function triangulate(tcx) {
     tcx.initTriangulation();
@@ -554,7 +646,7 @@ function triangulate(tcx) {
 
 /**
  * Start sweeping the Y-sorted point set from bottom to top
- * @param   tcx SweepContext object.
+ * @param {SweepContext}  tcx SweepContext object.
  */
 function sweepPoints(tcx) {
     var i, len = tcx.pointCount();
@@ -568,6 +660,9 @@ function sweepPoints(tcx) {
     }
 }
 
+/**
+ * @param {SweepContext}  tcx SweepContext object.
+ */
 function finalizationPolygon(tcx) {
     // Get an Internal triangle to start with
     var t = tcx.front().head().next.triangle;
@@ -584,6 +679,9 @@ function finalizationPolygon(tcx) {
  * Find closes node to the left of the new point and
  * create a new triangle. If needed new holes and basins
  * will be filled to.
+ * 
+ * @param {SweepContext}  tcx SweepContext object.
+ * @param {{x:number,y:number}} point   any "Point like" object with {x,y} 
  */
 function pointEvent(tcx, point) {
     var node = tcx.locateNode(point);
@@ -757,6 +855,8 @@ function fillAdvancingFront(tcx, n) {
 
 /**
  * The basin angle is decided against the horizontal line [1,0]
+ * @param {Node} node
+ * @return {number}
  */
 function basinAngle(node) {
     var ax = node.point.x - node.next.next.point.x;
@@ -766,8 +866,8 @@ function basinAngle(node) {
 
 /**
  *
- * @param node - middle node
- * @return the angle between 3 front nodes
+ * @param {Node} node - middle node
+ * @return {number} the angle between 3 front nodes
  */
 function holeAngle(node) {
     /* Complex plane
@@ -787,6 +887,7 @@ function holeAngle(node) {
 
 /**
  * Returns true if triangle was legalized
+ * @return {boolean}
  */
 function legalize(tcx, t) {
     // To legalize a triangle we start by finding if any of the three edges
@@ -868,7 +969,7 @@ function legalize(tcx, t) {
  * @param pb - triangle point
  * @param pc - triangle point
  * @param pd - point opposite a
- * @return true if d is inside circle, false if on circle edge
+ * @return {boolean} true if d is inside circle, false if on circle edge
  */
 function inCircle(pa, pb, pc, pd) {
     var adx = pa.x - pd.x;
@@ -1307,7 +1408,7 @@ function nextFlipPoint(ep, eq, ot, op) {
  * @param tcx
  * @param ep - last point on the edge we are traversing
  * @param eq - first point on the edge we are traversing
- * @param flipTriangle - the current triangle sharing the point eq with edge
+ * @param flip_triangle - the current triangle sharing the point eq with edge
  * @param t
  * @param p
  */
@@ -1369,6 +1470,7 @@ exports.triangulate = triangulate;
 
 var PointError = require('./pointerror');
 var Point = require('./point');
+/** @typedef {Triangle$$module$triangle} */
 var Triangle = require('./triangle');
 var sweep = require('./sweep');
 var AdvancingFront = require('./advancingfront');
@@ -1381,14 +1483,19 @@ var Node = AdvancingFront.Node;
  * Initial triangle factor, seed triangle will extend 30% of
  * PointSet width to both left and right.
  */
+/** @const */
 var kAlpha = 0.3;
 
 
 // -------------------------------------------------------------------------Edge
 /**
  * Represents a simple polygon's edge
+ * @constructor
+ * @struct
+ * @private
  * @param {Point} p1
  * @param {Point} p2
+ * @throw {PointError} if p1 is same as p2
  */
 var Edge = function(p1, p2) {
     this.p = p1;
@@ -1414,6 +1521,11 @@ var Edge = function(p1, p2) {
 
 
 // ------------------------------------------------------------------------Basin
+/**
+ * @constructor
+ * @struct
+ * @private
+ */
 var Basin = function() {
     this.left_node = null; // Node
     this.bottom_node = null; // Node
@@ -1431,6 +1543,11 @@ Basin.prototype.clear = function() {
 };
 
 // --------------------------------------------------------------------EdgeEvent
+/**
+ * @constructor
+ * @struct
+ * @private
+ */
 var EdgeEvent = function() {
     this.constrained_edge = null; // Edge
     this.right = false;
@@ -1446,8 +1563,12 @@ var EdgeEvent = function() {
  *                  (contour, holes). Points inside arrays are never copied.
  *                  Default is false : keep a reference to the array arguments,
  *                  who will be modified in place.
- * @param {Array} contour  array of "Point like" objects with {x,y} (duck typing)
- * @param {Object} options  constructor options
+ *                  
+ * @constructor
+ * @struct
+ * @expose 
+ * @param {Array.<{x:number,y:number}>} contour  array of "Point like" objects with {x,y} (duck typing)
+ * @param {{cloneArrays:boolean|undefined}=} options  constructor options
  */
 var SweepContext = function(contour, options) {
     options = options || {};
@@ -1460,16 +1581,29 @@ var SweepContext = function(contour, options) {
     // it is stored in case it is needed by the caller.
     this.pmin_ = this.pmax_ = null;
 
-    // Advancing front
-    this.front_ = null; // AdvancingFront
-    // head point used with advancing front
-    this.head_ = null; // Point
-    // tail point used with advancing front
-    this.tail_ = null; // Point
+    /**
+     * Advancing front
+     * @type {AdvancingFront}
+     */
+    this.front_ = null;
 
-    this.af_head_ = null; // Node
-    this.af_middle_ = null; // Node
-    this.af_tail_ = null; // Node
+    /**
+     * head point used with advancing front
+     * @type {Point}
+     */
+    this.head_ = null;
+    /**
+     * tail point used with advancing front
+     * @type {Point}
+     */
+    this.tail_ = null;
+
+    /** @type {Node} */
+    this.af_head_ = null;
+    /** @type {Node} */
+    this.af_middle_ = null;
+    /** @type {Node} */
+    this.af_tail_ = null;
 
     this.basin = new Basin();
     this.edge_event = new EdgeEvent();
@@ -1480,6 +1614,7 @@ var SweepContext = function(contour, options) {
 
 /**
  * Add a hole to the constraints
+ * @expose 
  * @param {Array} polyline  array of "Point like" objects with {x,y} (duck typing)
  */
 SweepContext.prototype.addHole = function(polyline) {
@@ -1490,25 +1625,35 @@ SweepContext.prototype.addHole = function(polyline) {
     }
     return this; // for chaining
 };
-// Backward compatibility
+/**
+ * for backward compatibility
+ * @expose 
+ * @deprecated
+ */
 SweepContext.prototype.AddHole = SweepContext.prototype.addHole;
 
 
 /**
  * Add a Steiner point to the constraints
+ * @expose 
  * @param {Point} point     any "Point like" object with {x,y} (duck typing)
  */
 SweepContext.prototype.addPoint = function(point) {
     this.points_.push(point);
     return this; // for chaining
 };
-// Backward compatibility
+/**
+ * for backward compatibility
+ * @expose 
+ * @deprecated
+ */
 SweepContext.prototype.AddPoint = SweepContext.prototype.addPoint;
 
 
 /**
  * Add several Steiner points to the constraints
- * @param {array<Point>} points     array of "Point like" object with {x,y} 
+ * @expose 
+ * @param {Array.<Point>} points     array of "Point like" object with {x,y} 
  */
 // Method added in the JavaScript version (was not present in the c++ version)
 SweepContext.prototype.addPoints = function(points) {
@@ -1519,6 +1664,7 @@ SweepContext.prototype.addPoints = function(points) {
 
 /**
  * Triangulate the polygon with holes and Steiner points.
+ * @expose 
  * Do this AFTER you've added the polyline, holes, and Steiner points
  */
 // Shortcut method for sweep.triangulate(SweepContext).
@@ -1533,6 +1679,7 @@ SweepContext.prototype.triangulate = function() {
  * Get the bounding box of the provided constraints (contour, holes and 
  * Steinter points). Warning : these values are not available if the triangulation 
  * has not been done yet.
+ * @expose 
  * @returns {Object} object with 'min' and 'max' Point
  */
 // Method added in the JavaScript version (was not present in the c++ version)
@@ -1542,45 +1689,58 @@ SweepContext.prototype.getBoundingBox = function() {
 
 /**
  * Get result of triangulation
- * @returns {array<Triangle>}   array of triangles
+ * @expose 
+ * @returns {Array.<Triangle>}   array of triangles
  */
 SweepContext.prototype.getTriangles = function() {
     return this.triangles_;
 };
-// Backward compatibility
+/**
+ * for backward compatibility
+ * @expose 
+ * @deprecated
+ */
 SweepContext.prototype.GetTriangles = SweepContext.prototype.getTriangles;
 
 
 // ---------------------------------------------------SweepContext (private API)
 
+/** @private */
 SweepContext.prototype.front = function() {
     return this.front_;
 };
 
+/** @private */
 SweepContext.prototype.pointCount = function() {
     return this.points_.length;
 };
 
+/** @private */
 SweepContext.prototype.head = function() {
     return this.head_;
 };
 
+/** @private */
 SweepContext.prototype.setHead = function(p1) {
     this.head_ = p1;
 };
 
+/** @private */
 SweepContext.prototype.tail = function() {
     return this.tail_;
 };
 
+/** @private */
 SweepContext.prototype.setTail = function(p1) {
     this.tail_ = p1;
 };
 
+/** @private */
 SweepContext.prototype.getMap = function() {
     return this.map_;
 };
 
+/** @private */
 SweepContext.prototype.initTriangulation = function() {
     var xmax = this.points_[0].x;
     var xmin = this.points_[0].x;
@@ -1609,6 +1769,7 @@ SweepContext.prototype.initTriangulation = function() {
     this.points_.sort(Point.compare);
 };
 
+/** @private */
 SweepContext.prototype.initEdges = function(polyline) {
     var i, len = polyline.length;
     for (i = 0; i < len; ++i) {
@@ -1616,23 +1777,31 @@ SweepContext.prototype.initEdges = function(polyline) {
     }
 };
 
+/** @private */
 SweepContext.prototype.getPoint = function(index) {
     return this.points_[index];
 };
 
+/** @private */
 SweepContext.prototype.addToMap = function(triangle) {
     this.map_.push(triangle);
 };
 
+/** @private */
 SweepContext.prototype.locateNode = function(point) {
     return this.front_.locateNode(point.x);
 };
 
+/** @private */
 SweepContext.prototype.createAdvancingFront = function() {
     var head;
     var middle;
     var tail;
-    // Initial triangle
+    
+    /**
+     * Initial triangle
+     * @type {Triangle$$module$triangle} 
+     */
     var triangle = new Triangle(this.points_[0], this.tail_, this.head_);
 
     this.map_.push(triangle);
@@ -1649,11 +1818,13 @@ SweepContext.prototype.createAdvancingFront = function() {
     tail.prev = middle;
 };
 
+/** @private */
 SweepContext.prototype.removeNode = function(node) {
     // do nothing
     /* jshint unused:false */
 };
 
+/** @private */
 SweepContext.prototype.mapTriangleToNodes = function(t) {
     for (var i = 0; i < 3; ++i) {
         if (!t.getNeighbor(i)) {
@@ -1665,6 +1836,10 @@ SweepContext.prototype.mapTriangleToNodes = function(t) {
     }
 };
 
+/**
+ * @private
+ * @param {Triangle$$module$triangle} triangle start
+ */
 SweepContext.prototype.removeFromMap = function(triangle) {
     var i, map = this.map_, len = map.length;
     for (i = 0; i < len; i++) {
@@ -1677,7 +1852,8 @@ SweepContext.prototype.removeFromMap = function(triangle) {
 
 /**
  * Do a depth first traversal to collect triangles
- * @param {Triangle} triangle start
+ * @private 
+ * @param {Triangle$$module$triangle} triangle start
  */
 SweepContext.prototype.meshClean = function(triangle) {
     // New implementation avoids recursive calls and use a loop instead.
@@ -1738,35 +1914,70 @@ var xy = require("./xy");
  * See: J. Shewchuk, "Triangle: Engineering a 2D Quality Mesh Generator and
  * Delaunay Triangulator", "Triangulations in CGAL"
  * 
- * @param   a,b,c   any "Point like" objects with {x,y} (duck typing)
+ * @expose 
+ * @constructor
+ * @struct
+ * @param {{x:number,y:number}} a   any "Point like" object with {x,y} 
+ * @param {{x:number,y:number}} b   any "Point like" object with {x,y} 
+ * @param {{x:number,y:number}} c   any "Point like" object with {x,y} 
  */
 var Triangle = function(a, b, c) {
-    // Triangle points
+    /**
+     * Triangle points
+     * @type {Array.<{x:number,y:number}>}
+     */
     this.points_ = [a, b, c];
-    // Neighbor list
+    /**
+     * Neighbor list
+     * @type {Array.<Triangle$$module$triangle>}
+     */
     this.neighbors_ = [null, null, null];
-    // Has this triangle been marked as an interior triangle?
+    /**
+     * Has this triangle been marked as an interior triangle?
+     * @type {boolean}
+     */
     this.interior_ = false;
-    // Flags to determine if an edge is a Constrained edge
+    /**
+     * Flags to determine if an edge is a Constrained edge
+     * @type {Array.<boolean>}
+     */
     this.constrained_edge = [false, false, false];
-    // Flags to determine if an edge is a Delauney edge
+    /**
+     * Flags to determine if an edge is a Delauney edge
+     * @type {Array.<boolean>}
+     */
     this.delaunay_edge = [false, false, false];
 };
 
+
 /**
  * For pretty printing ex. <i>"[(5;42)(10;20)(21;30)]"</i>)
+ * @expose 
+ * @return {string}
  */
-var p2s = xy.toString;
 Triangle.prototype.toString = function() {
-    return ("[" + p2s(this.points_[0]) + p2s(this.points_[1]) + p2s(this.points_[2]) + "]");
+    return ("[" + xy.toString(this.points_[0]) + xy.toString(this.points_[1]) + xy.toString(this.points_[2]) + "]");
 };
 
+/**
+ * @expose 
+ * @param {number} index
+ * @returns {{x:number,y:number}}
+ */
 Triangle.prototype.getPoint = function(index) {
     return this.points_[index];
 };
-// for backward compatibility
+/**
+ * for backward compatibility
+ * @expose 
+ * @deprecated
+ */
 Triangle.prototype.GetPoint = Triangle.prototype.getPoint;
 
+/**
+ * @expose 
+ * @return {Array.<{x:number,y:number}>}
+ */
 // Method added in the JavaScript version (was not present in the c++ version)
 Triangle.prototype.getPoints = function() {
     return this.points_;
@@ -1779,7 +1990,9 @@ Triangle.prototype.getNeighbor = function(index) {
 /**
  * Test if this Triangle contains the Point object given as parameters as its
  * vertices. Only point references are compared, not values.
- * @return <code>True</code> if the Point object is of the Triangle's vertices,
+ * @expose
+ * @param {{x:number,y:number}} point Point object.
+ * @return {boolean} <code>True</code> if the Point object is of the Triangle's vertices,
  *         <code>false</code> otherwise.
  */
 Triangle.prototype.containsPoint = function(point) {
@@ -1791,20 +2004,28 @@ Triangle.prototype.containsPoint = function(point) {
 /**
  * Test if this Triangle contains the Edge object given as parameter as its
  * bounding edges. Only point references are compared, not values.
- * @return <code>True</code> if the Edge object is of the Triangle's bounding
+ * @param {Edge$$module$sweepcontext} edge
+ * @return {boolean}  <code>True</code> if the Edge object is of the Triangle's bounding
  *         edges, <code>false</code> otherwise.
  */
 Triangle.prototype.containsEdge = function(edge) {
     return this.containsPoint(edge.p) && this.containsPoint(edge.q);
 };
+
+/**  
+ * @param {{x:number,y:number}} p1 Point object.
+ * @param {{x:number,y:number}} p2 Point object.
+ * @return {boolean} 
+ * */
 Triangle.prototype.containsPoints = function(p1, p2) {
     return this.containsPoint(p1) && this.containsPoint(p2);
 };
 
-
+/** @return {boolean} */
 Triangle.prototype.isInterior = function() {
     return this.interior_;
 };
+/** @param {boolean} interior */
 Triangle.prototype.setInterior = function(interior) {
     this.interior_ = interior;
     return this;
@@ -1812,9 +2033,10 @@ Triangle.prototype.setInterior = function(interior) {
 
 /**
  * Update neighbor pointers.
- * @param {Point} p1 Point object.
- * @param {Point} p2 Point object.
- * @param {Triangle} t Triangle object.
+ * @param {{x:number,y:number}} p1 Point object.
+ * @param {{x:number,y:number}} p2 Point object.
+ * @param {Triangle$$module$triangle} t Triangle object.
+ * @throws {Error} if can't find objects
  */
 Triangle.prototype.markNeighborPointers = function(p1, p2, t) {
     var points = this.points_;
@@ -1832,7 +2054,7 @@ Triangle.prototype.markNeighborPointers = function(p1, p2, t) {
 
 /**
  * Exhaustive search to update neighbor pointers
- * @param {Triangle} t
+ * @param {Triangle$$module$triangle} t Triangle object.
  */
 Triangle.prototype.markNeighbor = function(t) {
     var points = this.points_;
@@ -1863,6 +2085,7 @@ Triangle.prototype.clearDelunayEdges = function() {
 
 /**
  * Returns the point clockwise to the given point.
+ * @param {{x:number, y:number}} p   any "Point like" object with {x,y} 
  */
 Triangle.prototype.pointCW = function(p) {
     var points = this.points_;
@@ -1880,6 +2103,7 @@ Triangle.prototype.pointCW = function(p) {
 
 /**
  * Returns the point counter-clockwise to the given point.
+ * @param {{x:number, y:number}} p   any "Point like" object with {x,y} 
  */
 Triangle.prototype.pointCCW = function(p) {
     var points = this.points_;
@@ -1897,6 +2121,7 @@ Triangle.prototype.pointCCW = function(p) {
 
 /**
  * Returns the neighbor clockwise to given point.
+ * @param {{x:number, y:number}} p   any "Point like" object with {x,y} 
  */
 Triangle.prototype.neighborCW = function(p) {
     // Here we are comparing point references, not values
@@ -1911,6 +2136,7 @@ Triangle.prototype.neighborCW = function(p) {
 
 /**
  * Returns the neighbor counter-clockwise to given point.
+ * @param {{x:number, y:number}} p   any "Point like" object with {x,y} 
  */
 Triangle.prototype.neighborCCW = function(p) {
     // Here we are comparing point references, not values
@@ -2025,6 +2251,8 @@ Triangle.prototype.setDelaunayEdgeCCW = function(p, e) {
 
 /**
  * The neighbor across to given point.
+ * @param {{x:number, y:number}} p   any "Point like" object with {x,y} 
+ * @return {Triangle$$module$triangle}
  */
 Triangle.prototype.neighborAcross = function(p) {
     // Here we are comparing point references, not values
@@ -2037,6 +2265,10 @@ Triangle.prototype.neighborAcross = function(p) {
     }
 };
 
+/**
+ * @param {Triangle$$module$triangle} t Triangle object.
+ * @param {{x:number, y:number}} p   any "Point like" object with {x,y} 
+ */
 Triangle.prototype.oppositePoint = function(t, p) {
     var cw = t.pointCW(p);
     return this.pointCW(cw);
@@ -2044,8 +2276,9 @@ Triangle.prototype.oppositePoint = function(t, p) {
 
 /**
  * Legalize triangle by rotating clockwise around oPoint
- * @param {Point} opoint
- * @param {Point} npoint
+ * @param {{x:number, y:number}} opoint   any "Point like" object with {x,y} 
+ * @param {{x:number, y:number}} npoint   any "Point like" object with {x,y} 
+ * @throws {Error} if oPoint can not be found
  */
 Triangle.prototype.legalize = function(opoint, npoint) {
     var points = this.points_;
@@ -2070,8 +2303,9 @@ Triangle.prototype.legalize = function(opoint, npoint) {
 /**
  * Returns the index of a point in the triangle. 
  * The point *must* be a reference to one of the triangle's vertices.
- * @param {Point} p Point object
- * @returns {Number} index 0, 1 or 2
+ * @param {{x:number, y:number}} p   any "Point like" object with {x,y} 
+ * @throws {Error} if p can not be found
+ * @returns {number} index 0, 1 or 2
  */
 Triangle.prototype.index = function(p) {
     var points = this.points_;
@@ -2087,6 +2321,11 @@ Triangle.prototype.index = function(p) {
     }
 };
 
+/**
+ * @param {{x:number, y:number}} p1   any "Point like" object with {x,y} 
+ * @param {{x:number, y:number}} p2   any "Point like" object with {x,y} 
+ * @return {number} index 0, 1 or 2, or -1 if errror
+ */
 Triangle.prototype.edgeIndex = function(p1, p2) {
     var points = this.points_;
     // Here we are comparing point references, not values
@@ -2113,9 +2352,10 @@ Triangle.prototype.edgeIndex = function(p1, p2) {
 };
 
 /**
- * Mark an edge of this triangle as constrained.<br>
+ * Mark an edge of this triangle as constrained.
  * This method takes either 1 parameter (an edge index or an Edge instance) or
  * 2 parameters (two Point instances defining the edge of the triangle).
+ * @param {number} index
  */
 Triangle.prototype.markConstrainedEdgeByIndex = function(index) {
     this.constrained_edge[index] = true;
@@ -2163,8 +2403,12 @@ module.exports = Triangle;
  * easier to keep the 2 versions in sync.
  */
 
+/** @const */
 var EPSILON = 1e-12;
 
+/** 
+ * @enum {number}
+ */
 var Orientation = {
     "CW": 1,
     "CCW": -1,
@@ -2181,7 +2425,10 @@ var Orientation = {
  *              =  (x1-x3)*(y2-y3) - (y1-y3)*(x2-x3)
  * </pre>
  * 
- * @param   pa,pb,pc   any "Point like" objects with {x,y} (duck typing)
+ * @param {{x:number,y:number}} pa   any "Point like" object with {x,y} 
+ * @param {{x:number,y:number}} pb   any "Point like" object with {x,y} 
+ * @param {{x:number,y:number}} pc   any "Point like" object with {x,y} 
+ * @return {Orientation$$module$utils}
  */
 function orient2d(pa, pb, pc) {
     var detleft = (pa.x - pc.x) * (pb.y - pc.y);
@@ -2198,7 +2445,11 @@ function orient2d(pa, pb, pc) {
 
 /**
  *  
- * @param   pa,pb,pc,pd   any "Point like" objects with {x,y} (duck typing)
+ * @param {{x:number,y:number}} pa   any "Point like" object with {x,y} 
+ * @param {{x:number,y:number}} pb   any "Point like" object with {x,y} 
+ * @param {{x:number,y:number}} pc   any "Point like" object with {x,y} 
+ * @param {{x:number,y:number}} pd   any "Point like" object with {x,y} 
+ * @return {boolean}
  */
 function inScanArea(pa, pb, pc, pd) {
     var oadb = (pa.x - pb.x) * (pd.y - pb.y) - (pd.x - pb.x) * (pa.y - pb.y);
@@ -2238,20 +2489,26 @@ module.exports = {
 
 "use strict";
 
-/*
+/**
+ * @module xy
+ * 
  * The following functions operate on "Point" or any "Point like" object 
  * with {x,y} (duck typing).
  */
 
 
 /**
- * Point pretty printing ex. <i>"(5;42)"</i>)
- * @param   p   any "Point like" object with {x,y} 
- * @returns {String}
+ * @param {{x:number, y:number}} p   any "Point like" object with {x,y} 
+ * @returns {string}
  */
 function toStringBase(p) {
     return ("(" + p.x + ";" + p.y + ")");
 }
+/**
+ * Point pretty printing ex. <i>"(5;42)"</i>)
+ * @param {{x:number, y:number}} p   any "Point like" object with {x,y} 
+ * @return {string}
+ */
 function toString(p) {
     // Try a custom toString first, and fallback to own implementation if none
     var s = p.toString();
@@ -2260,7 +2517,8 @@ function toString(p) {
 
 /**
  * Compare two points component-wise. Ordered by y axis first, then x axis.
- * @param   a,b   any "Point like" objects with {x,y} 
+ * @param {{x:number, y:number}} a   any "Point like" object with {x,y} 
+ * @param {{x:number, y:number}} b   any "Point like" object with {x,y} 
  * @return <code>&lt; 0</code> if <code>a &lt; b</code>, 
  *         <code>&gt; 0</code> if <code>a &gt; b</code>, 
  *         <code>0</code> otherwise.
@@ -2275,8 +2533,9 @@ function compare(a, b) {
 
 /**
  * Test two Point objects for equality.
- * @param   a,b   any "Point like" objects with {x,y} 
- * @return <code>True</code> if <code>a == b</code>, <code>false</code> otherwise.
+ * @param {{x:number, y:number}} a   any "Point like" object with {x,y} 
+ * @param {{x:number, y:number}} b   any "Point like" object with {x,y} 
+ * @return {boolean} true if a == b, false otherwise.
  */
 function equals(a, b) {
     return a.x === b.x && a.y === b.y;

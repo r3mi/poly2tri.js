@@ -16,12 +16,16 @@
  * Class added in the JavaScript version (was not present in the c++ version)
  */
 
+/** @const */
 var xy = require('./xy');
 
 /**
  * Custom exception class to indicate invalid Point values
+ * @constructor
+ * @struct
+ * @extends {Error}
  * @param {String} message          error message
- * @param {array<Point>} points     invalid points
+ * @param {Array.<{x:number,y:number}>} points     invalid points
  */
 var PointError = function(message, points) {
     this.name = "PointError";

@@ -34,14 +34,21 @@ var Node = require('./advancingfront').Node;
 
 // ------------------------------------------------------------------------utils
 
+/** @const */
 var utils = require('./utils');
 
+/** @const */
 var PI_3div4 = 3 * Math.PI / 4;
+/** @const */
 var PI_div2 = Math.PI / 2;
+/** @const */
 var EPSILON = utils.EPSILON;
 
+/** @const */
 var Orientation = utils.Orientation;
+/** @const */
 var orient2d = utils.orient2d;
+/** @const */
 var inScanArea = utils.inScanArea;
 
 
@@ -50,7 +57,7 @@ var inScanArea = utils.inScanArea;
 /**
  * Triangulate the polygon with holes and Steiner points.
  * Do this AFTER you've added the polyline, holes, and Steiner points
- * @param   tcx SweepContext object.
+ * @param {SweepContext}  tcx SweepContext object.
  */
 function triangulate(tcx) {
     tcx.initTriangulation();
@@ -63,7 +70,7 @@ function triangulate(tcx) {
 
 /**
  * Start sweeping the Y-sorted point set from bottom to top
- * @param   tcx SweepContext object.
+ * @param {SweepContext}  tcx SweepContext object.
  */
 function sweepPoints(tcx) {
     var i, len = tcx.pointCount();
@@ -77,6 +84,9 @@ function sweepPoints(tcx) {
     }
 }
 
+/**
+ * @param {SweepContext}  tcx SweepContext object.
+ */
 function finalizationPolygon(tcx) {
     // Get an Internal triangle to start with
     var t = tcx.front().head().next.triangle;
@@ -93,6 +103,9 @@ function finalizationPolygon(tcx) {
  * Find closes node to the left of the new point and
  * create a new triangle. If needed new holes and basins
  * will be filled to.
+ * 
+ * @param {SweepContext}  tcx SweepContext object.
+ * @param {{x:number,y:number}} point   any "Point like" object with {x,y} 
  */
 function pointEvent(tcx, point) {
     var node = tcx.locateNode(point);
@@ -266,6 +279,8 @@ function fillAdvancingFront(tcx, n) {
 
 /**
  * The basin angle is decided against the horizontal line [1,0]
+ * @param {Node} node
+ * @return {number}
  */
 function basinAngle(node) {
     var ax = node.point.x - node.next.next.point.x;
@@ -275,8 +290,8 @@ function basinAngle(node) {
 
 /**
  *
- * @param node - middle node
- * @return the angle between 3 front nodes
+ * @param {Node} node - middle node
+ * @return {number} the angle between 3 front nodes
  */
 function holeAngle(node) {
     /* Complex plane
@@ -296,6 +311,7 @@ function holeAngle(node) {
 
 /**
  * Returns true if triangle was legalized
+ * @return {boolean}
  */
 function legalize(tcx, t) {
     // To legalize a triangle we start by finding if any of the three edges
@@ -377,7 +393,7 @@ function legalize(tcx, t) {
  * @param pb - triangle point
  * @param pc - triangle point
  * @param pd - point opposite a
- * @return true if d is inside circle, false if on circle edge
+ * @return {boolean} true if d is inside circle, false if on circle edge
  */
 function inCircle(pa, pb, pc, pd) {
     var adx = pa.x - pd.x;
@@ -816,7 +832,7 @@ function nextFlipPoint(ep, eq, ot, op) {
  * @param tcx
  * @param ep - last point on the edge we are traversing
  * @param eq - first point on the edge we are traversing
- * @param flipTriangle - the current triangle sharing the point eq with edge
+ * @param flip_triangle - the current triangle sharing the point eq with edge
  * @param t
  * @param p
  */

@@ -12,20 +12,26 @@
 
 "use strict";
 
-/*
+/**
+ * @module xy
+ * 
  * The following functions operate on "Point" or any "Point like" object 
  * with {x,y} (duck typing).
  */
 
 
 /**
- * Point pretty printing ex. <i>"(5;42)"</i>)
- * @param   p   any "Point like" object with {x,y} 
- * @returns {String}
+ * @param {{x:number, y:number}} p   any "Point like" object with {x,y} 
+ * @returns {string}
  */
 function toStringBase(p) {
     return ("(" + p.x + ";" + p.y + ")");
 }
+/**
+ * Point pretty printing ex. <i>"(5;42)"</i>)
+ * @param {{x:number, y:number}} p   any "Point like" object with {x,y} 
+ * @return {string}
+ */
 function toString(p) {
     // Try a custom toString first, and fallback to own implementation if none
     var s = p.toString();
@@ -34,7 +40,8 @@ function toString(p) {
 
 /**
  * Compare two points component-wise. Ordered by y axis first, then x axis.
- * @param   a,b   any "Point like" objects with {x,y} 
+ * @param {{x:number, y:number}} a   any "Point like" object with {x,y} 
+ * @param {{x:number, y:number}} b   any "Point like" object with {x,y} 
  * @return <code>&lt; 0</code> if <code>a &lt; b</code>, 
  *         <code>&gt; 0</code> if <code>a &gt; b</code>, 
  *         <code>0</code> otherwise.
@@ -49,8 +56,9 @@ function compare(a, b) {
 
 /**
  * Test two Point objects for equality.
- * @param   a,b   any "Point like" objects with {x,y} 
- * @return <code>True</code> if <code>a == b</code>, <code>false</code> otherwise.
+ * @param {{x:number, y:number}} a   any "Point like" object with {x,y} 
+ * @param {{x:number, y:number}} b   any "Point like" object with {x,y} 
+ * @return {boolean} true if a == b, false otherwise.
  */
 function equals(a, b) {
     return a.x === b.x && a.y === b.y;

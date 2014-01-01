@@ -25,6 +25,7 @@
 
 var PointError = require('./pointerror');
 var Point = require('./point');
+/** @typedef {Triangle$$module$triangle} */
 var Triangle = require('./triangle');
 var sweep = require('./sweep');
 var AdvancingFront = require('./advancingfront');
@@ -37,14 +38,19 @@ var Node = AdvancingFront.Node;
  * Initial triangle factor, seed triangle will extend 30% of
  * PointSet width to both left and right.
  */
+/** @const */
 var kAlpha = 0.3;
 
 
 // -------------------------------------------------------------------------Edge
 /**
  * Represents a simple polygon's edge
+ * @constructor
+ * @struct
+ * @private
  * @param {Point} p1
  * @param {Point} p2
+ * @throw {PointError} if p1 is same as p2
  */
 var Edge = function(p1, p2) {
     this.p = p1;
@@ -70,6 +76,11 @@ var Edge = function(p1, p2) {
 
 
 // ------------------------------------------------------------------------Basin
+/**
+ * @constructor
+ * @struct
+ * @private
+ */
 var Basin = function() {
     this.left_node = null; // Node
     this.bottom_node = null; // Node
@@ -87,6 +98,11 @@ Basin.prototype.clear = function() {
 };
 
 // --------------------------------------------------------------------EdgeEvent
+/**
+ * @constructor
+ * @struct
+ * @private
+ */
 var EdgeEvent = function() {
     this.constrained_edge = null; // Edge
     this.right = false;
@@ -102,8 +118,12 @@ var EdgeEvent = function() {
  *                  (contour, holes). Points inside arrays are never copied.
  *                  Default is false : keep a reference to the array arguments,
  *                  who will be modified in place.
- * @param {Array} contour  array of "Point like" objects with {x,y} (duck typing)
- * @param {Object} options  constructor options
+ *                  
+ * @constructor
+ * @struct
+ * @expose 
+ * @param {Array.<{x:number,y:number}>} contour  array of "Point like" objects with {x,y} (duck typing)
+ * @param {{cloneArrays:boolean|undefined}=} options  constructor options
  */
 var SweepContext = function(contour, options) {
     options = options || {};
@@ -116,16 +136,29 @@ var SweepContext = function(contour, options) {
     // it is stored in case it is needed by the caller.
     this.pmin_ = this.pmax_ = null;
 
-    // Advancing front
-    this.front_ = null; // AdvancingFront
-    // head point used with advancing front
-    this.head_ = null; // Point
-    // tail point used with advancing front
-    this.tail_ = null; // Point
+    /**
+     * Advancing front
+     * @type {AdvancingFront}
+     */
+    this.front_ = null;
 
-    this.af_head_ = null; // Node
-    this.af_middle_ = null; // Node
-    this.af_tail_ = null; // Node
+    /**
+     * head point used with advancing front
+     * @type {Point}
+     */
+    this.head_ = null;
+    /**
+     * tail point used with advancing front
+     * @type {Point}
+     */
+    this.tail_ = null;
+
+    /** @type {Node} */
+    this.af_head_ = null;
+    /** @type {Node} */
+    this.af_middle_ = null;
+    /** @type {Node} */
+    this.af_tail_ = null;
 
     this.basin = new Basin();
     this.edge_event = new EdgeEvent();
@@ -136,6 +169,7 @@ var SweepContext = function(contour, options) {
 
 /**
  * Add a hole to the constraints
+ * @expose 
  * @param {Array} polyline  array of "Point like" objects with {x,y} (duck typing)
  */
 SweepContext.prototype.addHole = function(polyline) {
@@ -146,25 +180,35 @@ SweepContext.prototype.addHole = function(polyline) {
     }
     return this; // for chaining
 };
-// Backward compatibility
+/**
+ * for backward compatibility
+ * @expose 
+ * @deprecated
+ */
 SweepContext.prototype.AddHole = SweepContext.prototype.addHole;
 
 
 /**
  * Add a Steiner point to the constraints
+ * @expose 
  * @param {Point} point     any "Point like" object with {x,y} (duck typing)
  */
 SweepContext.prototype.addPoint = function(point) {
     this.points_.push(point);
     return this; // for chaining
 };
-// Backward compatibility
+/**
+ * for backward compatibility
+ * @expose 
+ * @deprecated
+ */
 SweepContext.prototype.AddPoint = SweepContext.prototype.addPoint;
 
 
 /**
  * Add several Steiner points to the constraints
- * @param {array<Point>} points     array of "Point like" object with {x,y} 
+ * @expose 
+ * @param {Array.<Point>} points     array of "Point like" object with {x,y} 
  */
 // Method added in the JavaScript version (was not present in the c++ version)
 SweepContext.prototype.addPoints = function(points) {
@@ -175,6 +219,7 @@ SweepContext.prototype.addPoints = function(points) {
 
 /**
  * Triangulate the polygon with holes and Steiner points.
+ * @expose 
  * Do this AFTER you've added the polyline, holes, and Steiner points
  */
 // Shortcut method for sweep.triangulate(SweepContext).
@@ -189,6 +234,7 @@ SweepContext.prototype.triangulate = function() {
  * Get the bounding box of the provided constraints (contour, holes and 
  * Steinter points). Warning : these values are not available if the triangulation 
  * has not been done yet.
+ * @expose 
  * @returns {Object} object with 'min' and 'max' Point
  */
 // Method added in the JavaScript version (was not present in the c++ version)
@@ -198,45 +244,58 @@ SweepContext.prototype.getBoundingBox = function() {
 
 /**
  * Get result of triangulation
- * @returns {array<Triangle>}   array of triangles
+ * @expose 
+ * @returns {Array.<Triangle>}   array of triangles
  */
 SweepContext.prototype.getTriangles = function() {
     return this.triangles_;
 };
-// Backward compatibility
+/**
+ * for backward compatibility
+ * @expose 
+ * @deprecated
+ */
 SweepContext.prototype.GetTriangles = SweepContext.prototype.getTriangles;
 
 
 // ---------------------------------------------------SweepContext (private API)
 
+/** @private */
 SweepContext.prototype.front = function() {
     return this.front_;
 };
 
+/** @private */
 SweepContext.prototype.pointCount = function() {
     return this.points_.length;
 };
 
+/** @private */
 SweepContext.prototype.head = function() {
     return this.head_;
 };
 
+/** @private */
 SweepContext.prototype.setHead = function(p1) {
     this.head_ = p1;
 };
 
+/** @private */
 SweepContext.prototype.tail = function() {
     return this.tail_;
 };
 
+/** @private */
 SweepContext.prototype.setTail = function(p1) {
     this.tail_ = p1;
 };
 
+/** @private */
 SweepContext.prototype.getMap = function() {
     return this.map_;
 };
 
+/** @private */
 SweepContext.prototype.initTriangulation = function() {
     var xmax = this.points_[0].x;
     var xmin = this.points_[0].x;
@@ -265,6 +324,7 @@ SweepContext.prototype.initTriangulation = function() {
     this.points_.sort(Point.compare);
 };
 
+/** @private */
 SweepContext.prototype.initEdges = function(polyline) {
     var i, len = polyline.length;
     for (i = 0; i < len; ++i) {
@@ -272,23 +332,31 @@ SweepContext.prototype.initEdges = function(polyline) {
     }
 };
 
+/** @private */
 SweepContext.prototype.getPoint = function(index) {
     return this.points_[index];
 };
 
+/** @private */
 SweepContext.prototype.addToMap = function(triangle) {
     this.map_.push(triangle);
 };
 
+/** @private */
 SweepContext.prototype.locateNode = function(point) {
     return this.front_.locateNode(point.x);
 };
 
+/** @private */
 SweepContext.prototype.createAdvancingFront = function() {
     var head;
     var middle;
     var tail;
-    // Initial triangle
+    
+    /**
+     * Initial triangle
+     * @type {Triangle$$module$triangle} 
+     */
     var triangle = new Triangle(this.points_[0], this.tail_, this.head_);
 
     this.map_.push(triangle);
@@ -305,11 +373,13 @@ SweepContext.prototype.createAdvancingFront = function() {
     tail.prev = middle;
 };
 
+/** @private */
 SweepContext.prototype.removeNode = function(node) {
     // do nothing
     /* jshint unused:false */
 };
 
+/** @private */
 SweepContext.prototype.mapTriangleToNodes = function(t) {
     for (var i = 0; i < 3; ++i) {
         if (!t.getNeighbor(i)) {
@@ -321,6 +391,10 @@ SweepContext.prototype.mapTriangleToNodes = function(t) {
     }
 };
 
+/**
+ * @private
+ * @param {Triangle$$module$triangle} triangle start
+ */
 SweepContext.prototype.removeFromMap = function(triangle) {
     var i, map = this.map_, len = map.length;
     for (i = 0; i < len; i++) {
@@ -333,7 +407,8 @@ SweepContext.prototype.removeFromMap = function(triangle) {
 
 /**
  * Do a depth first traversal to collect triangles
- * @param {Triangle} triangle start
+ * @private 
+ * @param {Triangle$$module$triangle} triangle start
  */
 SweepContext.prototype.meshClean = function(triangle) {
     // New implementation avoids recursive calls and use a loop instead.

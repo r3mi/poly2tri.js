@@ -20,8 +20,12 @@
  * easier to keep the 2 versions in sync.
  */
 
+/** @const */
 var EPSILON = 1e-12;
 
+/** 
+ * @enum {number}
+ */
 var Orientation = {
     "CW": 1,
     "CCW": -1,
@@ -38,7 +42,10 @@ var Orientation = {
  *              =  (x1-x3)*(y2-y3) - (y1-y3)*(x2-x3)
  * </pre>
  * 
- * @param   pa,pb,pc   any "Point like" objects with {x,y} (duck typing)
+ * @param {{x:number,y:number}} pa   any "Point like" object with {x,y} 
+ * @param {{x:number,y:number}} pb   any "Point like" object with {x,y} 
+ * @param {{x:number,y:number}} pc   any "Point like" object with {x,y} 
+ * @return {Orientation$$module$utils}
  */
 function orient2d(pa, pb, pc) {
     var detleft = (pa.x - pc.x) * (pb.y - pc.y);
@@ -55,7 +62,11 @@ function orient2d(pa, pb, pc) {
 
 /**
  *  
- * @param   pa,pb,pc,pd   any "Point like" objects with {x,y} (duck typing)
+ * @param {{x:number,y:number}} pa   any "Point like" object with {x,y} 
+ * @param {{x:number,y:number}} pb   any "Point like" object with {x,y} 
+ * @param {{x:number,y:number}} pc   any "Point like" object with {x,y} 
+ * @param {{x:number,y:number}} pd   any "Point like" object with {x,y} 
+ * @return {boolean}
  */
 function inScanArea(pa, pb, pc, pd) {
     var oadb = (pa.x - pb.x) * (pd.y - pb.y) - (pd.x - pb.x) * (pa.y - pb.y);

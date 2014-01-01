@@ -46,19 +46,26 @@
  * (this feature is not automatically provided by browserify).
  */
 var previousPoly2tri = global.poly2tri;
+/** @expose */
 exports.noConflict = function() {
     global.poly2tri = previousPoly2tri;
     return exports;
 };
 
 
+/** @expose */
 exports.PointError = require('./pointerror');
+/** @expose */
 exports.Point = require('./point');
+/** @expose */
 exports.Triangle = require('./triangle');
+/** @expose */
 exports.SweepContext = require('./sweepcontext');
 
 
 // Backward compatibility
 var sweep = require('./sweep');
+/** @deprecated */
 exports.triangulate = sweep.triangulate;
+/** @deprecated */
 exports.sweep = {Triangulate: sweep.triangulate};
