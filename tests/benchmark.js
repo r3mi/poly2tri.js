@@ -85,6 +85,8 @@ function triangulate(P) {
     var h2 = makePoints(P.Point, hole2);
     var p = makePoints(P.Point, points);
     var swctx = new P.SweepContext(c);
+    // Call methods with old names, in order to be compatible
+    // with old and new version of poly2tri.
     swctx.AddHole(h1);
     swctx.AddHole(h2);
     p.forEach(function(point) {

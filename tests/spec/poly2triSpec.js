@@ -297,7 +297,7 @@ describe("poly2tri", function() {
             it("should triangulate (backward compatibility)", function() {
                 var swctx2 = new p2t.SweepContext(contour, options);
                 p2t.sweep.Triangulate(swctx2);
-                var t2 = swctx2.getTriangles();
+                var t2 = swctx2.GetTriangles();
                 expect(t2.length).toBe(1);
                 expect(t[0].getPoint(0)).toEqualPoint(t2[0].getPoint(0));
                 expect(t[0].getPoint(1)).toEqualPoint(t2[0].getPoint(1));
@@ -306,7 +306,7 @@ describe("poly2tri", function() {
             it("should triangulate (backward compatibility)", function() {
                 var swctx2 = new p2t.SweepContext(contour, options);
                 p2t.triangulate(swctx2);
-                var t2 = swctx2.getTriangles();
+                var t2 = swctx2.GetTriangles();
                 expect(t2.length).toBe(1);
                 expect(t[0].getPoint(0)).toEqualPoint(t2[0].getPoint(0));
                 expect(t[0].getPoint(1)).toEqualPoint(t2[0].getPoint(1));
@@ -508,6 +508,21 @@ describe("poly2tri", function() {
                 });
                 it("should contain the contour and hole and points", function() {
                     expect(t).toContainPoints([contour, hole, points]);
+                });
+            });
+            describe("backward compatibility methods", function() {
+                it("should triangulate", function() {
+                    var swctx = new p2t.SweepContext(contour, options);
+                    swctx.AddHole(hole);
+                    points.forEach(function(point) {
+                        swctx.AddPoint(point);
+                    });
+                    p2t.sweep.Triangulate(swctx);
+                    t = swctx.GetTriangles();
+                    expect(t).toBeTruthy();
+                });
+                it("should return 11 triangles", function() {
+                    expect(t.length).toBe(11);
                 });
             });
         });
