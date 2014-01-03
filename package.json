@@ -18,7 +18,7 @@
         "test.browsers": "./node_modules/karma/bin/karma start tests/karma.browsers.js",
         "jshint": "jshint *.js src/*.js tests/*.js tests/spec/*.js",
         "build": "npm run jshint && npm run build.nocheck",
-        "build.nocheck": "mkdir -p dist && node ./build.js",
+        "build.nocheck": "mkdir -p dist && mkdir -p build && node ./build.js",
         "bench": "node ./tests/benchmark.js"
     },
     "keywords": [

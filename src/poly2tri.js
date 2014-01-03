@@ -51,7 +51,7 @@ exports.noConflict = function() {
     return exports;
 };
 
-exports.VERSION = require('../dist/version.json').version;
+exports.VERSION = require('../build/version.json').version;
 
 exports.PointError = require('./pointerror');
 exports.Point = require('./point');
@@ -60,6 +60,8 @@ exports.SweepContext = require('./sweepcontext');
 
 
 // Backward compatibility
-var sweep = require('./sweep');
-exports.triangulate = sweep.triangulate;
-exports.sweep = {Triangulate: sweep.triangulate};
+function triangulate(tcx) {
+    tcx.triangulate();
+}
+exports.triangulate = triangulate;
+exports.sweep = {Triangulate: triangulate};

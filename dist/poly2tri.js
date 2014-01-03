@@ -425,7 +425,7 @@ PointError.prototype.constructor = PointError;
 module.exports = PointError;
 
 },{"./xy":10}],5:[function(_dereq_,module,exports){
-var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/*
+(function (global){/*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  * 
@@ -478,7 +478,7 @@ exports.noConflict = function() {
     return exports;
 };
 
-exports.VERSION = _dereq_('../dist/version.json').version;
+exports.VERSION = _dereq_('../build/version.json').version;
 
 exports.PointError = _dereq_('./pointerror');
 exports.Point = _dereq_('./point');
@@ -487,11 +487,13 @@ exports.SweepContext = _dereq_('./sweepcontext');
 
 
 // Backward compatibility
-var sweep = _dereq_('./sweep');
-exports.triangulate = sweep.triangulate;
-exports.sweep = {Triangulate: sweep.triangulate};
-
-},{"../dist/version.json":1,"./point":3,"./pointerror":4,"./sweep":6,"./sweepcontext":7,"./triangle":8}],6:[function(_dereq_,module,exports){
+function triangulate(tcx) {
+    tcx.triangulate();
+}
+exports.triangulate = triangulate;
+exports.sweep = {Triangulate: triangulate};
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../build/version.json":1,"./point":3,"./pointerror":4,"./sweepcontext":7,"./triangle":8}],6:[function(_dereq_,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
