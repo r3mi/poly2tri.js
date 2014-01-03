@@ -39,9 +39,15 @@
 
 "use strict";
 
+// In node, we check for the pure-js or emscripten version.
+var p2t_id = (process.env.USE_CPP ? '../../cpp/poly2tri' : '../../src/poly2tri');
 
-// For the browser, we require the final distributed bundle
-var p2t = (process.browser ? require('../../dist/poly2tri.min') : require('../../src/poly2tri'));
+// For the browser, we require the final distributed bundle.
+// For node, use a variable for the id and not a constant string, else 
+// (karma-)browserify will embed the node module as well in the browser tests : 
+// this will either take too long and crash if we try to embed the cpp version, 
+// or fail if the cpp version is not built.
+var p2t = (process.browser ? require('../../dist/poly2tri.min') : require(p2t_id));
 
 
 /*

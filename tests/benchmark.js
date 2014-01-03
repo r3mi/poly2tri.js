@@ -41,6 +41,9 @@ var loaders = {
     },
     'current.dist.min': function() {
         return require('../dist/poly2tri.min');
+    },
+    'current.cpp': function() {
+        return require('../cpp/poly2tri');
     }
 };
 
@@ -96,6 +99,9 @@ function triangulate(P) {
     });
     P.sweep.Triangulate(swctx);
     swctx.GetTriangles();
+    if ('delete' in swctx) {
+        swctx.delete();
+    }
 }
 
 
