@@ -29,8 +29,16 @@ var preamble = '/*! ' + pkg.name + ' v' + pkg.version + ' | built ' + today + ' 
 var b = browserify();
 b.add('./src/poly2tri.js');
 b.bundle({standalone: 'poly2tri'}, function(err, code) {
-    fs.writeFileSync('./dist/poly2tri.js', code);
+    if (err instanceof Error) {
+        throw(err);
+    }
+    if (err) {
+        process.stderr.write(err);
+    }
+    if (code) {
+        fs.writeFileSync('./dist/poly2tri.js', code);
 
-    var min = uglify.minify(code, {fromString: true, compress: true, mangle: true});
-    fs.writeFileSync('./dist/poly2tri.min.js', preamble + min.code);
+        var min = uglify.minify(code, {fromString: true, compress: true, mangle: true});
+        fs.writeFileSync('./dist/poly2tri.min.js', preamble + min.code);
+    }
 });
