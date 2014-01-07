@@ -36,7 +36,7 @@
 
 /*
  * Public API for poly2tri.js
- * (emscripten version)
+ * (emscripten C++ version)
  * ==========================
  */
 

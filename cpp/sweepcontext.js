@@ -13,8 +13,8 @@
 "use strict";
 
 /*
- * SweepContext Emscripten version
- * ===============================
+ * SweepContext Emscripten C++ version
+ * ===================================
  */
 
 var Point = require('../src/point');
