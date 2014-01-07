@@ -57,7 +57,7 @@ exports.VERSION = require('../build/version.json').version;
 // TBD XXX exports.PointError = require('./pointerror');
 exports.Point = require('../src/point');
 exports.Triangle = require('../src/triangle');
-exports.SweepContext = require('./sweepcontext');
+exports.SweepContext = require('./sweepcontext-cpp');
 
 
 // Backward compatibility
