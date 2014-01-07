@@ -39,8 +39,10 @@
 
 "use strict";
 
-// In node, we check for the pure-js or emscripten version.
-var p2t_id = (process.env.USE_CPP ? '../../cpp/poly2tri' : '../../src/poly2tri');
+// In node, we check for the pure-js or emscripten version (C or C++).
+var p2t_id = (process.env.USE_CPP ? '../../cpp/poly2tri' :
+        process.env.USE_C ? '../../c/poly2tri' :
+        '../../src/poly2tri');
 
 // For the browser, we require the final distributed bundle.
 // For node, use a variable for the id and not a constant string, else 
