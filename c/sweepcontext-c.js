@@ -26,13 +26,13 @@ var p2t_cdt_new = c.cwrap('p2t_cdt_new', 'number', ['number']);
 var p2t_cdt_add_hole = c.cwrap('p2t_cdt_add_hole', null, ['number', 'number']);
 var p2t_cdt_add_point = c.cwrap('p2t_cdt_add_point', null, ['number', 'number']);
 var p2t_cdt_triangulate = c.cwrap('p2t_cdt_triangulate', null, ['number']);
-var p2t_cdt_get_triangles = c.cwrap('p2t_cdt_get_triangles', 'number');
+var p2t_cdt_get_triangles = c.cwrap('p2t_cdt_get_triangles', 'number', ['number']);
 var p2t_cdt_free = c.cwrap('p2t_cdt_free', null, ['number']);
 var p2t_point_new_dd_with_id = c.cwrap('p2t_point_new_dd_with_id', 'number', ['number', 'number', 'number']);
 var p2t_triangle_get_point_id = c.cwrap('p2t_triangle_get_point_id', 'number', ['number', 'number']);
 var g_ptr_array_new = c.cwrap('g_ptr_array_new', 'number');
 var g_ptr_array_add = c.cwrap('g_ptr_array_add', null, ['number', 'number']);
-var g_ptr_array_length = c.cwrap('g_ptr_array_length', 'number');
+var g_ptr_array_length = c.cwrap('g_ptr_array_length', 'number', ['number']);
 var g_ptr_array_get = c.cwrap('g_ptr_array_get', 'number', ['number', 'number']);
 
 

@@ -48,7 +48,7 @@ static gint next_pow_of_two(gint num) {
     return n;
 }
 
-static void g_ptr_array_maybe_expand(GPtrArray* array, gint len) {
+static void ptr_array_ensure_room(GPtrArray* array, gint len) {
     if ((array->len + len) > array->_allocated) {
         array->_allocated = next_pow_of_two(array->len + len);
         array->pdata = g_realloc(array->pdata, sizeof (gpointer) * array->_allocated);
@@ -66,7 +66,7 @@ GPtrArray* g_ptr_array_sized_new(guint reserved_size) {
     assert(array != NULL);
     *array = (GPtrArray){.pdata = NULL, .len = 0, ._allocated = 0};
     if (reserved_size > 0) {
-        g_ptr_array_maybe_expand(array, reserved_size);
+        ptr_array_ensure_room(array, reserved_size);
     }
     return array;
 }
@@ -86,24 +86,21 @@ gpointer* g_ptr_array_free(GPtrArray* array, gboolean free_seg) {
 
 void g_ptr_array_add(GPtrArray* array, gpointer data) {
     if (array) {
-        g_ptr_array_maybe_expand(array, 1);
+        ptr_array_ensure_room(array, 1);
         array->pdata[array->len++] = data;
     }
 }
 
 void g_ptr_array_set_size(GPtrArray* array, gint length) {
-    if (array) {
+    if (array && length >= 0) {
         if (length > array->len) {
             gint i;
-            g_ptr_array_maybe_expand(array, length - array->len);
+            ptr_array_ensure_room(array, length - array->len);
             for (i = array->len; i < length; i++) {
                 array->pdata[i] = NULL;
             }
-            array->len = length;
-        } else if (length < array->len) {
-            // Not needed for poly2tri
-            g_error("Not Yet Implemented : g_ptr_array_set_size : reduce size");
         }
+        array->len = length;
     }
 }
 
@@ -138,16 +135,16 @@ void g_list_free(GList* list) {
 }
 
 GList* g_list_append(GList* list, gpointer data) {
-    GList* node = g_slice_new(GList);
-    *node = (GList){.data = data, .next = NULL};
-    if (list) {
-        GList* last = g_list_last(list);
-        last->next = node;
-        node->prev = last;
+    GList* new_node = g_slice_new(GList);
+    *new_node = (GList){.data = data, .next = NULL};
+    GList* last = g_list_last(list);
+    if (last) {
+        last->next = new_node;
+        new_node->prev = last;
         return list;
     } else {
-        node->prev = NULL;
-        return node;
+        new_node->prev = NULL;
+        return new_node;
     }
 }
 
@@ -181,11 +178,10 @@ GList* g_list_last(GList* list) {
 
 void g_queue_push_tail(GQueue* queue, gpointer data) {
     if (queue) {
-        queue->tail = g_list_append(queue->tail, data);
-        if (queue->tail->next) {
-            queue->tail = queue->tail->next;
-        } else {
-            queue->head = queue->tail;
+        GList* list = g_list_append(queue->tail, data);
+        queue->tail = g_list_last(list);
+        if (queue->head == NULL) {
+            queue->head = list;
         }
         queue->length++;
     }
