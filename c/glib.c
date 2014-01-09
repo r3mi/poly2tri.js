@@ -107,7 +107,7 @@ void g_ptr_array_set_size(GPtrArray* array, gint length) {
 //XXX
 
 void xxxxg_ptr_array_sort(GPtrArray* array, GCompareFunc compare_func) {
-    if (array) {
+    if (array && array->pdata) {
         qsort(array->pdata, array->len, sizeof (gpointer), compare_func);
     }
 }

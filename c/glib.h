@@ -43,7 +43,7 @@ typedef const void*     gconstpointer;
 typedef gint(*GCompareFunc) (gconstpointer a, gconstpointer b);
 
 #define G_PI    M_PI
-#define G_PI_2  1.57079632679489661923
+#define G_PI_2  M_PI_2
 
 
     /*
