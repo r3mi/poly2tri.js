@@ -273,28 +273,29 @@ describe("poly2tri", function() {
         var options = {cloneArrays: true};
 
         describe("a triangle", function() {
-            // not reset between tests
-            var contour, t, swctx;
-            contour = makePoints([100, 100, 100, 200, 200, 200]);
+            var contour;
+            beforeEach(function() {
+                contour = makePoints([100, 100, 100, 200, 200, 200]);
+            });
             it("should triangulate", function() {
-                swctx = new p2t.SweepContext(contour, options);
+                var swctx = new p2t.SweepContext(contour, options);
                 swctx.triangulate();
-                t = swctx.getTriangles();
+                var t = swctx.getTriangles();
                 expect(t).toBeTruthy();
-            });
-            it("should return 1 triangle", function() {
+                // should return 1 triangle 
                 expect(t.length).toBe(1);
-            });
-            it("should have a bounding box", function() {
+                // should have a bounding box 
                 expect(swctx.getBoundingBox().min).toEqualPoint({x: 100, y: 100});
                 expect(swctx.getBoundingBox().max).toEqualPoint({x: 200, y: 200});
-            });
-            it("should return the same triangle", function() {
+                // should return the same triangle 
                 expect(t[0].containsPoint(contour[0])).toBeTruthy();
                 expect(t[0].containsPoint(contour[1])).toBeTruthy();
                 expect(t[0].containsPoint(contour[2])).toBeTruthy();
             });
             it("should triangulate (backward compatibility)", function() {
+                var swctx = new p2t.SweepContext(contour, options);
+                swctx.triangulate();
+                var t = swctx.getTriangles();
                 var swctx2 = new p2t.SweepContext(contour, options);
                 p2t.sweep.Triangulate(swctx2);
                 var t2 = swctx2.GetTriangles();
@@ -304,6 +305,9 @@ describe("poly2tri", function() {
                 expect(t[0].getPoint(2)).toEqualPoint(t2[0].getPoint(2));
             });
             it("should triangulate (backward compatibility)", function() {
+                var swctx = new p2t.SweepContext(contour, options);
+                swctx.triangulate();
+                var t = swctx.getTriangles();
                 var swctx2 = new p2t.SweepContext(contour, options);
                 p2t.triangulate(swctx2);
                 var t2 = swctx2.GetTriangles();
@@ -314,222 +318,193 @@ describe("poly2tri", function() {
             });
         });
         describe("a square", function() {
-            // not reset between tests
-            var contour, t, swctx;
-            contour = makePoints([0, 0, 0, 1, 1, 1, 2, 1]); // same as issue #7
+            var contour;
+            beforeEach(function() {
+                contour = makePoints([0, 0, 0, 1, 1, 1, 2, 1]); // same as issue #7
+            });
             it("should triangulate", function() {
-                swctx = new p2t.SweepContext(contour, options);
+                var swctx = new p2t.SweepContext(contour, options);
                 swctx.triangulate();
-                t = swctx.getTriangles();
+                var t = swctx.getTriangles();
                 expect(t).toBeTruthy();
-            });
-            it("should return 2 triangles", function() {
+                // should return 2 triangles
                 expect(t.length).toBe(2);
-            });
-            it("should have a bounding box", function() {
+                // should have a bounding box
                 expect(swctx.getBoundingBox().min).toEqualPoint({x: 0, y: 0});
                 expect(swctx.getBoundingBox().max).toEqualPoint({x: 2, y: 1});
-            });
-            it("should be in the contour", function() {
+                // should be in the contour 
                 expect(t).toBeInPoints([contour]);
-            });
-            it("should contain the contour", function() {
+                // should contain the contour
                 expect(t).toContainPoints([contour]);
             });
         });
         describe("a rectangle", function() {
-            // not reset between tests
-            var contour, t;
-            contour = makePoints([100, 100, 100, 300, 300, 300, 300, 100]);
+            var contour;
+            beforeEach(function() {
+                contour = makePoints([100, 100, 100, 300, 300, 300, 300, 100]);
+            });
             it("should triangulate", function() {
                 var swctx = new p2t.SweepContext(contour, options);
                 swctx.triangulate();
-                t = swctx.getTriangles();
+                var t = swctx.getTriangles();
                 expect(t).toBeTruthy();
-            });
-            it("should return 2 triangles", function() {
+                // should return 2 triangles
                 expect(t.length).toBe(2);
-            });
-            it("should be in the contour", function() {
+                // should be in the contour
                 expect(t).toBeInPoints([contour]);
-            });
-            it("should contain the contour", function() {
+                // should contain the contour
                 expect(t).toContainPoints([contour]);
             });
         });
         describe("a rectangle containing 1 Steiner point", function() {
-            // not reset between tests
-            var contour, points, t;
-            contour = makePoints([100, 100, 100, 300, 300, 300, 300, 100]);
-            points = makePoints([150, 150]);
+            var contour, points;
+            beforeEach(function() {
+                contour = makePoints([100, 100, 100, 300, 300, 300, 300, 100]);
+                points = makePoints([150, 150]);
+            });
             it("should triangulate", function() {
                 var swctx = new p2t.SweepContext(contour, options);
                 swctx.addPoint(points[0]);
                 swctx.triangulate();
-                t = swctx.getTriangles();
+                var t = swctx.getTriangles();
                 expect(t).toBeTruthy();
-            });
-            it("should return 4 triangles", function() {
+                // should return 4 triangles
                 expect(t.length).toBe(4);
-            });
-            it("should be in the contour and point", function() {
+                // should be in the contour and point
                 expect(t).toBeInPoints([contour, points]);
-            });
-            it("should contain the contour and point", function() {
+                // should contain the contour and point
                 expect(t).toContainPoints([contour, points]);
             });
         });
         describe("a rectangle not cloned", function() {
-            // not reset between tests
-            var contour, copy, points, t;
-            contour = makePoints([100, 100, 100, 300, 300, 300, 300, 100]);
-            copy = contour.slice(0);
-            points = makePoints([150, 150]);
+            var contour, copy, points;
+            beforeEach(function() {
+                contour = makePoints([100, 100, 100, 300, 300, 300, 300, 100]);
+                copy = contour.slice(0);
+                points = makePoints([150, 150]);
+            });
             it("should triangulate", function() {
                 var swctx = new p2t.SweepContext(contour, {});
                 swctx.addPoint(points[0]);
                 swctx.triangulate();
-                t = swctx.getTriangles();
+                var t = swctx.getTriangles();
                 expect(t).toBeTruthy();
-            });
-            it("should have modified the original contour", function() {
+                // should have modified the original contour
                 expect(contour.length).toBeGreaterThan(copy.length);
             });
         });
         describe("an octogon", function() {
-            // not reset between tests
-            var contour, t, swctx;
-            contour = makePoints([200, 100, 300, 100, 400, 200, 400, 300, 300, 400, 200, 400, 100, 300, 100, 200]);
+            var contour;
+            beforeEach(function() {
+                contour = makePoints([200, 100, 300, 100, 400, 200, 400, 300, 300, 400, 200, 400, 100, 300, 100, 200]);
+            });
             it("should triangulate", function() {
-                swctx = new p2t.SweepContext(contour, options);
+                var swctx = new p2t.SweepContext(contour, options);
                 swctx.triangulate();
-                t = swctx.getTriangles();
+                var t = swctx.getTriangles();
                 expect(t).toBeTruthy();
-            });
-            it("should return 6 triangles", function() {
+                // should return 6 triangles
                 expect(t.length).toBe(6);
-            });
-            it("should have a bounding box", function() {
+                // should have a bounding box
                 expect(swctx.getBoundingBox().min).toEqualPoint({x: 100, y: 100});
                 expect(swctx.getBoundingBox().max).toEqualPoint({x: 400, y: 400});
-            });
-            it("should be in the contour", function() {
+                // should be in the contour
                 expect(t).toBeInPoints([contour]);
-            });
-            it("should contain the contour", function() {
+                // should contain the contour
                 expect(t).toContainPoints([contour]);
             });
         });
         describe("an octogon containing 1 rectangle hole", function() {
-            // not reset between tests
-            var contour, hole, t;
-            contour = makePoints([200, 100, 300, 100, 400, 200, 400, 300, 300, 400, 200, 400, 100, 300, 100, 200]);
-            hole = makePoints([250, 250, 280, 250, 280, 280, 250, 280]);
+            var contour, hole;
+            beforeEach(function() {
+                contour = makePoints([200, 100, 300, 100, 400, 200, 400, 300, 300, 400, 200, 400, 100, 300, 100, 200]);
+                hole = makePoints([250, 250, 280, 250, 280, 280, 250, 280]);
+            });
             it("should triangulate", function() {
                 var swctx = new p2t.SweepContext(contour, options);
                 swctx.addHole(hole);
                 swctx.triangulate();
-                t = swctx.getTriangles();
+                var t = swctx.getTriangles();
                 expect(t).toBeTruthy();
-            });
-            it("should return 12 triangles", function() {
+                // should return 12 triangles
                 expect(t.length).toBe(12);
-            });
-            it("should be in the contour and hole", function() {
+                // should be in the contour and hole
                 expect(t).toBeInPoints([contour, hole]);
-            });
-            it("should contain the contour and hole", function() {
+                // should contain the contour and hole
                 expect(t).toContainPoints([contour, hole]);
             });
         });
         describe("a polygon containing 1 hole", function() {
-            // not reset between tests
-            var contour, hole, t, swctx;
-            // same as issue #44
-            contour = makePoints([71, 161, 100, 66, 280, 97, 282, 223, 201, 238, 75, 243]);
-            hole = makePoints([101, 102, 103, 204, 205, 206, 207, 108]);
+            var contour, hole;
+            beforeEach(function() {
+                // same as issue #44
+                contour = makePoints([71, 161, 100, 66, 280, 97, 282, 223, 201, 238, 75, 243]);
+                hole = makePoints([101, 102, 103, 204, 205, 206, 207, 108]);
+            });
             it("should triangulate", function() {
-                swctx = new p2t.SweepContext(contour, options);
+                var swctx = new p2t.SweepContext(contour, options);
                 swctx.addHole(hole);
                 swctx.triangulate();
-                t = swctx.getTriangles();
+                var t = swctx.getTriangles();
                 expect(t).toBeTruthy();
-            });
-            it("should return 10 triangles", function() {
+                // should return 10 triangles
                 expect(t.length).toBe(10);
-            });
-            it("should have a bounding box", function() {
+                // should have a bounding box
                 expect(swctx.getBoundingBox().min).toEqualPoint({x: 71, y: 66});
                 expect(swctx.getBoundingBox().max).toEqualPoint({x: 282, y: 243});
-            });
-            it("should be in the contour and hole", function() {
+                // should be in the contour and hole
                 expect(t).toBeInPoints([contour, hole]);
-            });
-            it("should contain the contour and hole", function() {
+                // should contain the contour and hole
                 expect(t).toContainPoints([contour, hole]);
             });
         });
         describe("a polygon containing 1 hole and 2 Steiner points", function() {
-            // not reset between tests
-            var contour, hole, points, t;
-            contour = makePoints([256, 288, 339, 123, 174, 41, 8, 222]);
-            hole = makePoints([107, 233, 88, 221, 124, 233]);
-            points = makePoints([200, 200, 150, 150]);
-            describe("separate methods", function() {
-                it("should triangulate", function() {
-                    var swctx = new p2t.SweepContext(contour, options);
-                    swctx.addHole(hole);
-                    swctx.addPoints(points);
-                    swctx.triangulate();
-                    t = swctx.getTriangles();
-                    expect(t).toBeTruthy();
-                });
-                it("should return 11 triangles", function() {
-                    expect(t.length).toBe(11);
-                });
-                it("should be in the contour and hole and points", function() {
-                    expect(t).toBeInPoints([contour, hole, points]);
-                });
-                it("should contain the contour and hole and points", function() {
-                    expect(t).toContainPoints([contour, hole, points]);
-                });
+            var contour, hole, points;
+            beforeEach(function() {
+                contour = makePoints([256, 288, 339, 123, 174, 41, 8, 222]);
+                hole = makePoints([107, 233, 88, 221, 124, 233]);
+                points = makePoints([200, 200, 150, 150]);
             });
-            describe("chained methods", function() {
-                it("should triangulate", function() {
-                    var swctx = new p2t.SweepContext(contour, options);
-                    t = swctx.addHole(hole).addPoints(points).triangulate().getTriangles();
-                    expect(t).toBeTruthy();
-                });
-                it("should return 11 triangles", function() {
-                    expect(t.length).toBe(11);
-                });
-                it("should be in the contour and hole and points", function() {
-                    expect(t).toBeInPoints([contour, hole, points]);
-                });
-                it("should contain the contour and hole and points", function() {
-                    expect(t).toContainPoints([contour, hole, points]);
-                });
+            it("should triangulate (separate methods)", function() {
+                var swctx = new p2t.SweepContext(contour, options);
+                swctx.addHole(hole);
+                swctx.addPoints(points);
+                swctx.triangulate();
+                var t = swctx.getTriangles();
+                expect(t).toBeTruthy();
+                // should return 11 triangles
+                expect(t.length).toBe(11);
+                // should be in the contour and hole and points
+                expect(t).toBeInPoints([contour, hole, points]);
+                // should contain the contour and hole and points
+                expect(t).toContainPoints([contour, hole, points]);
             });
-            describe("backward compatibility methods", function() {
-                it("should triangulate", function() {
-                    var swctx = new p2t.SweepContext(contour, options);
-                    swctx.AddHole(hole);
-                    points.forEach(function(point) {
-                        swctx.AddPoint(point);
-                    });
-                    p2t.sweep.Triangulate(swctx);
-                    t = swctx.GetTriangles();
-                    expect(t).toBeTruthy();
+            it("should triangulate (chained methods)", function() {
+                var swctx = new p2t.SweepContext(contour, options);
+                var t = swctx.addHole(hole).addPoints(points).triangulate().getTriangles();
+                expect(t).toBeTruthy();
+                // should return 11 triangles
+                expect(t.length).toBe(11);
+                // should be in the contour and hole and points
+                expect(t).toBeInPoints([contour, hole, points]);
+                // should contain the contour and hole and points
+                expect(t).toContainPoints([contour, hole, points]);
+            });
+            it("should triangulate (backward compatibility methods)", function() {
+                var swctx = new p2t.SweepContext(contour, options);
+                swctx.AddHole(hole);
+                points.forEach(function(point) {
+                    swctx.AddPoint(point);
                 });
-                it("should return 11 triangles", function() {
-                    expect(t.length).toBe(11);
-                });
+                p2t.sweep.Triangulate(swctx);
+                var t = swctx.GetTriangles();
+                expect(t).toBeTruthy();
+                // should return 11 triangles
+                expect(t.length).toBe(11);
             });
         });
         describe("a polygon with 2 holes and points using custom Point class", function() {
-            // not reset between tests
-            var contour, hole1, hole2, points, t;
-            // same as issue #39
+            var contour, hole1, hole2, points;
             function makeCustomPoints(a) {
                 var i, len = a.length, points = [];
                 for (i = 0; i < len; i += 2) {
@@ -537,103 +512,99 @@ describe("poly2tri", function() {
                 }
                 return points;
             }
-            contour = makeCustomPoints([-311, 774, -216, 418, -48, 343, 23, 318, 44, 284, 59, 262, 84, 242, 92, 161, 131, 134, 140, 77, 134, 30, 118, 6, 115, -32, 67, -85, 213, -85, 211, -53, 198, -13, 182, 63, 165, 120, 194, 137, 238, 111, 265, 5, 243, -87, 502, -93, 446, 772]);
-            hole1 = makeCustomPoints([-276, 747, 421, 745, 473, -65, 276, -61, 291, 2, 291, 8, 262, 123, 256, 131, 201, 163, 186, 163, 155, 145, 150, 152, 118, 175, 110, 250, 105, 259, 78, 281, 66, 299, 43, 335, 36, 341, -37, 367, -37, 368, -193, 438]);
-            // mix classes
-            hole2 = makePoints([161, 32, 172, -19, 171, -20, 184, -58, 127, -58, 138, -46, 141, -38, 144, -2, 157, 17, 160, 23]);
-            points = makeCustomPoints([148, 127, 161, 70, 157, 82, 152, 98, 160, 35, 115, -58, 160, 65, 149, 117, -205, 428, -44, 356, 29, 330, 32, 326, 55, 292, 69, 271, 94, 251, 96, 245, 104, 169, 141, 143, 143, 138, 153, 78, 153, 75, 146, 26, 131, 2, 127, -35, 126, -39, 97, -72, 199, -72, 198, -57, 184, -16, 169, 59, 150, 120, 153, 129, 190, 150, 197, 150, 247, 121, 250, 116, 278, 6, 278, 3, 260, -74, 488, -80, 434, 759, -294, 761]);
+            beforeEach(function() {
+                // same as issue #39
+                // mixing poly2tri.Point and custom class
+                contour = makeCustomPoints([-311, 774, -216, 418, -48, 343, 23, 318, 44, 284, 59, 262, 84, 242, 92, 161, 131, 134, 140, 77, 134, 30, 118, 6, 115, -32, 67, -85, 213, -85, 211, -53, 198, -13, 182, 63, 165, 120, 194, 137, 238, 111, 265, 5, 243, -87, 502, -93, 446, 772]);
+                hole1 = makeCustomPoints([-276, 747, 421, 745, 473, -65, 276, -61, 291, 2, 291, 8, 262, 123, 256, 131, 201, 163, 186, 163, 155, 145, 150, 152, 118, 175, 110, 250, 105, 259, 78, 281, 66, 299, 43, 335, 36, 341, -37, 367, -37, 368, -193, 438]);
+                hole2 = makePoints([161, 32, 172, -19, 171, -20, 184, -58, 127, -58, 138, -46, 141, -38, 144, -2, 157, 17, 160, 23]);
+                points = makeCustomPoints([148, 127, 161, 70, 157, 82, 152, 98, 160, 35, 115, -58, 160, 65, 149, 117, -205, 428, -44, 356, 29, 330, 32, 326, 55, 292, 69, 271, 94, 251, 96, 245, 104, 169, 141, 143, 143, 138, 153, 78, 153, 75, 146, 26, 131, 2, 127, -35, 126, -39, 97, -72, 199, -72, 198, -57, 184, -16, 169, 59, 150, 120, 153, 129, 190, 150, 197, 150, 247, 121, 250, 116, 278, 6, 278, 3, 260, -74, 488, -80, 434, 759, -294, 761]);
+            });
             it("should triangulate", function() {
                 var swctx = new p2t.SweepContext(contour, options);
                 swctx.addHole(hole1);
                 swctx.addHole(hole2);
                 swctx.addPoints(points);
                 swctx.triangulate();
-                t = swctx.getTriangles();
+                var t = swctx.getTriangles();
                 expect(t).toBeTruthy();
-            });
-            it("should return 143 triangles", function() {
+                // should return 143 triangles
                 expect(t.length).toBe(143);
-            });
-            it("should be in the contour and holes and points", function() {
+                // should be in the contour and holes and points
                 expect(t).toBeInPoints([contour, hole1, hole2, points]);
-            });
-            it("should contain the contour and holes and points", function() {
+                // should contain the contour and holes and points
                 expect(t).toContainPoints([contour, hole1, hole2, points]);
             });
         });
         describe("a quadrilateral containing 1000 Steiner points", function() {
-            // not reset between tests
-            var contour, points, t, max = 1000;
-            var i;
-            // pseudo-random generator with known seed, so that test is repeatable
-            var m = new MersenneTwister(12899);
-            contour = makePoints([-1, -1, 1.5, -1, 2, 2, -1, 2]);
-            points = [];
-            for (i = 0; i < max * 2; i++) {
-                points.push(m.rnd());
-            }
-            points = makePoints(points);
+            var contour, points, max = 1000;
+            beforeEach(function() {
+                var i;
+                // pseudo-random generator with known seed, so that test is repeatable
+                var m = new MersenneTwister(12899);
+                contour = makePoints([-1, -1, 1.5, -1, 2, 2, -1, 2]);
+                points = [];
+                for (i = 0; i < max * 2; i++) {
+                    points.push(m.rnd());
+                }
+                points = makePoints(points);
+            });
             it("should triangulate", function() {
                 var swctx = new p2t.SweepContext(contour, options);
                 swctx.addPoints(points);
                 swctx.triangulate();
-                t = swctx.getTriangles();
+                var t = swctx.getTriangles();
                 expect(t).toBeTruthy();
-            });
-            it("should return 2002 triangles", function() {
+                // should return 2002 triangles
                 expect(t.length).toBe(2002);
-            });
-            it("should be in the contour and points", function() {
+                // should be in the contour and points
                 expect(t).toBeInPoints([contour, points]);
-            });
-            it("should contain the contour and points", function() {
+                // should contain the contour and points
                 expect(t).toContainPoints([contour, points]);
             });
         });
         describe("a polygon with 1000 vertices", function() {
-            // not reset between tests
-            var contour, t, max = 1000;
-            // pseudo-random generator with known seed, so that test is repeatable
-            var m = new MersenneTwister(3756);
-            contour = randomPolygon(function() {
-                return m.rnd();
-            }, max);
-            contour = makePoints(contour);
+            var contour, max = 1000;
+            beforeEach(function() {
+                // pseudo-random generator with known seed, so that test is repeatable
+                var m = new MersenneTwister(3756);
+                contour = randomPolygon(function() {
+                    return m.rnd();
+                }, max);
+                contour = makePoints(contour);
+            });
             it("should triangulate", function() {
                 var swctx = new p2t.SweepContext(contour, options);
                 swctx.triangulate();
-                t = swctx.getTriangles();
+                var t = swctx.getTriangles();
                 expect(t).toBeTruthy();
-            });
-            it("should return 998 triangles", function() {
+                // should return 998 triangles
                 expect(t.length).toBe(998);
-            });
-            it("should be in the contour", function() {
+                // should be in the contour
                 expect(t).toBeInPoints([contour]);
-            });
-            it("should contain the contour", function() {
+                // should contain the contour
                 expect(t).toContainPoints([contour]);
             });
         });
         describe("a polygon containing extra information in points", function() {
-            // not reset between tests
-            var contour, t, max = 100;
-            // pseudo-random generator with known seed, so that test is repeatable
-            var m = new MersenneTwister(235336);
-            contour = randomPolygon(function() {
-                return m.rnd();
-            }, max);
-            contour = makePoints(contour);
-            contour.forEach(function(point, index) {
-                point.myfield = "f" + index;
+            var contour, max = 100;
+            beforeEach(function() {
+                // pseudo-random generator with known seed, so that test is repeatable
+                var m = new MersenneTwister(235336);
+                contour = randomPolygon(function() {
+                    return m.rnd();
+                }, max);
+                contour = makePoints(contour);
+                contour.forEach(function(point, index) {
+                    point.myfield = "f" + index;
+                });
             });
             it("should triangulate", function() {
                 var swctx = new p2t.SweepContext(contour, options);
                 swctx.triangulate();
-                t = swctx.getTriangles();
+                var t = swctx.getTriangles();
                 expect(t).toBeTruthy();
-            });
-            it("should keep extra information", function() {
+                // should keep extra information
                 t.forEach(function(triangle) {
                     expect(triangle.getPoint(0).myfield).toMatch(/f\d+/);
                     expect(triangle.getPoint(1).myfield).toMatch(/f\d+/);
@@ -642,8 +613,10 @@ describe("poly2tri", function() {
             });
         });
         describe("a polygon with duplicate points", function() {
-            // not reset between tests
-            var contour = makePoints([100, 100, 100, 300, 300, 300, 300, 100, 100, 100]);
+            var contour;
+            beforeEach(function() {
+                contour = makePoints([100, 100, 100, 300, 300, 300, 300, 100, 100, 100]);
+            });
             it("should throw", function() {
                 expect(function() {
                     var swctx = new p2t.SweepContext(contour, options);
@@ -663,8 +636,10 @@ describe("poly2tri", function() {
             });
         });
         describe("a flat polygon", function() {
-            // not reset between tests
-            var contour = makePoints([100, 100, 200, 100, 300, 100]);
+            var contour;
+            beforeEach(function() {
+                contour = makePoints([100, 100, 200, 100, 300, 100]);
+            });
             it("should throw", function() {
                 expect(function() {
                     var swctx = new p2t.SweepContext(contour, options);
@@ -710,7 +685,7 @@ describe("poly2tri", function() {
                 }).forEach(function(file) {
                     describe('"' + file.name + '"', function() {
                         // not reset between tests : loaded once only
-                        var contour, holes = [], points = [], t, swctx;
+                        var contour, holes = [], points = [];
                         it("should load and parse contour", function() {
                             var data = readFileSync(file.name);
                             contour = parsePoints(data);
@@ -739,7 +714,7 @@ describe("poly2tri", function() {
                         if (file.throws) {
                             it("should fail to triangulate", function() {
                                 expect(function() {
-                                    swctx = new p2t.SweepContext(contour, options);
+                                    var swctx = new p2t.SweepContext(contour, options);
                                     holes.forEach(function(hole) {
                                         swctx.addHole(hole);
                                     });
@@ -748,31 +723,25 @@ describe("poly2tri", function() {
                             });
                         } else {
                             it("should triangulate", function() {
-                                swctx = new p2t.SweepContext(contour, options);
+                                var swctx = new p2t.SweepContext(contour, options);
                                 holes.forEach(function(hole) {
                                     swctx.addHole(hole);
                                 });
                                 swctx.addPoints(points).triangulate();
-                                t = swctx.getTriangles();
+                                var t = swctx.getTriangles();
                                 expect(t).toBeTruthy();
-                            });
-                            if (file.triangles) {
-                                it("should return " + file.triangles + " triangles", function() {
+                                // should return enough triangles
+                                if (file.triangles) {
                                     expect(t.length).toBe(file.triangles);
-                                });
-                            } else {
-                                it("should return enough triangles", function() {
+                                } else {
                                     expect(t.length).toBeGreaterThan(contour.length / 3);
-                                });
-                            }
-                            it("should have a bounding box", function() {
+                                }
+                                // should have a bounding box
                                 expect(swctx.getBoundingBox().min).toEqual(jasmine.any(p2t.Point));
                                 expect(swctx.getBoundingBox().max).toEqual(jasmine.any(p2t.Point));
-                            });
-                            it("should be in the constraints", function() {
+                                // should be in the constraints
                                 expect(t).toBeInPoints([contour, points].concat(holes));
-                            });
-                            it("should contain the constraints", function() {
+                                // should contain the constraints
                                 expect(t).toContainPoints([contour, points].concat(holes));
                             });
                         }
