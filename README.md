@@ -9,7 +9,7 @@ poly2tri.js
     Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
     http://code.google.com/p/poly2tri/
 
-    poly2tri.js (JavaScript port) (c) 2009-2013, Poly2Tri Contributors
+    poly2tri.js (JavaScript port) (c) 2009-2014, Poly2Tri Contributors
     https://github.com/r3mi/poly2tri.js
 
 [poly2tri]: http://code.google.com/p/poly2tri/

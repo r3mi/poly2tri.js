@@ -1,8 +1,14 @@
 [demo]: http://r3mi.github.io/poly2tri.js
 
+<a name="1.3.2"></a>
+# 1.3.2 (2014-01-11)
+
 - provide a minified build in `dist/poly2tri.min.js`, 
   using [UglifyJS 2](https://github.com/mishoo/UglifyJS2).
 - add a `poly2tri.VERSION` string
+- merge some code updates from C++ version
+- add more tests
+- improve code modularity
 
 <a name="1.3.1"></a>
 # 1.3.1 (2013-12-24)
