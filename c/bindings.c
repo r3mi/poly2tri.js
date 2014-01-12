@@ -18,7 +18,7 @@
 // Extra functions, not in glib. They can't be macros because they need
 // to be exported by emscripten.
 
-guint g_ptr_array_length(GPtrArray* array) {
+guint g_ptr_array_length(const GPtrArray* array) {
     return array->len;
 }
 
@@ -53,7 +53,7 @@ P2tPointWithId* p2t_point_with_id_from_point(P2tPoint* point) {
     return pid;
 }
 
-gint p2t_triangle_get_point_id(P2tTriangle* THIS, const int index) {
+gint p2t_triangle_get_point_id(const P2tTriangle* THIS, const int index) {
     P2tPoint* point = THIS->points_[index];
     return p2t_point_with_id_from_point(point)->id;
 }
