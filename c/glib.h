@@ -30,7 +30,7 @@ extern "C" {
 #   define FALSE false
 #endif
 #ifndef TRUE
-#   define TRUE false
+#   define TRUE true
 #endif
 
 typedef char            gchar;
