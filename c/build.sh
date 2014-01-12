@@ -18,27 +18,33 @@ mkdir -p ${build}
 FUNCS=`awk -F "'" -vORS="," -vOFS="" -vq="'" '/cwrap/{print q, "_", $2, q}' ${here}/*.js | sed "s/,$/\n/"`
 FUNCS="[${FUNCS}]"
 
-
 # emscripten shall be in PATH
 emcc \
+    -Wall \
     -I ${here} \
     -I ${src} \
-    -O0 \
+    -O2 \
+    --llvm-lto 3 \
+    -s ASM_JS=1 \
+    --closure 1 \
+    -s CLOSURE_ANNOTATIONS=1 \
+    -s FORCE_ALIGNED_MEMORY=1 \
     -s EXPORTED_FUNCTIONS="${FUNCS}" \
     ${here}/*.c ${src}/common/*.c ${src}/sweep/*.c  -o ${build}/c.js 
-
 
 
 exit
 
 
-    --closure 1 \
-    --llvm-lto 3 \
-    -s FORCE_ALIGNED_MEMORY=1 \
-    -s CLOSURE_ANNOTATIONS=1 \
+# break compilation -> investigate !!
+    -s CHECK_SIGNS=1 \
 
-# -s EXPORT_NAME='CDTModule';
-# -s LIBRARY_DEBUG=1 \
-# -s VERBOSE=1
 
+#debug
+    -s LIBRARY_DEBUG=1 \
+    -s VERBOSE=1 \
+    -v \
+    -s ASSERTIONS=2 \
+    -s DOUBLE_MODE=0 \
+    -s CHECK_HEAP_ALIGN=1 \
 

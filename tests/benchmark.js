@@ -44,6 +44,9 @@ var loaders = {
     },
     'current.cpp': function() {
         return require('../cpp/poly2tri');
+    },
+    'current.c': function() {
+        return require('../c/poly2tri');
     }
 };
 

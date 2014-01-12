@@ -54,7 +54,6 @@ static void ptr_array_ensure_room(GPtrArray* array, gint len) {
         array->pdata = g_realloc(array->pdata, sizeof (gpointer) * array->_allocated);
         assert(array->pdata != NULL);
     }
-    assert(array->_allocated >= array->len);
 }
 
 GPtrArray* g_ptr_array_new() {
@@ -104,9 +103,7 @@ void g_ptr_array_set_size(GPtrArray* array, gint length) {
     }
 }
 
-//XXX
-
-void xxxxg_ptr_array_sort(GPtrArray* array, GCompareFunc compare_func) {
+void g_ptr_array_sort(GPtrArray* array, GCompareFunc compare_func) {
     if (array && array->pdata) {
         qsort(array->pdata, array->len, sizeof (gpointer), compare_func);
     }

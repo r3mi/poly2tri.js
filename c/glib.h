@@ -68,7 +68,7 @@ void g_error(const gchar* msg);
 #define g_malloc            malloc
 #define g_realloc           realloc
 #define g_free              free
-#define g_new(type,num)     ((type *)g_malloc((sizeof(type)) * ((size_t)(num))))
+#define g_new(type,num)     ((type*)g_malloc((sizeof(type)) * ((size_t)(num))))
 
 
     /*
@@ -105,7 +105,7 @@ struct _GPtrArray {
     guint       _allocated;
 };
 
-#define G_PTR_ARRAY_INDEX_CHECK     1
+#define G_PTR_ARRAY_INDEX_CHECK     0
 
 #ifdef G_PTR_ARRAY_INDEX_CHECK
 gpointer g_ptr_array_index(GPtrArray* array, guint index_);
@@ -114,10 +114,10 @@ gpointer g_ptr_array_index(GPtrArray* array, guint index_);
 #endif
 
 GPtrArray* g_ptr_array_new();
-gpointer* g_ptr_array_free(GPtrArray *array, gboolean free_seg);
-void g_ptr_array_add(GPtrArray *array, gpointer data);
-void g_ptr_array_sort(GPtrArray *array, GCompareFunc compare_func);
-void g_ptr_array_set_size(GPtrArray *array, gint length);
+gpointer* g_ptr_array_free(GPtrArray* array, gboolean free_seg);
+void g_ptr_array_add(GPtrArray* array, gpointer data);
+void g_ptr_array_sort(GPtrArray* array, GCompareFunc compare_func);
+void g_ptr_array_set_size(GPtrArray* array, gint length);
 GPtrArray* g_ptr_array_sized_new(guint reserved_size);
 
 
@@ -134,12 +134,12 @@ struct _GList {
     GList*      prev;
 };
 
-void g_list_free(GList *list);
-GList* g_list_append(GList *list, gpointer data);
-GList* g_list_remove(GList *list, gconstpointer data);
-GList* g_list_first(GList *list);
+void g_list_free(GList* list);
+GList* g_list_append(GList* list, gpointer data);
+GList* g_list_remove(GList* list, gconstpointer data);
+GList* g_list_first(GList* list);
 #define g_list_next(list)	        ((list) ? (((GList *)(list))->next) : NULL)
-GList* g_list_last(GList *list);
+GList* g_list_last(GList* list);
 
 
     /*
@@ -156,9 +156,9 @@ struct _GQueue {
 };
 
 #define G_QUEUE_INIT    ((GQueue){.head = NULL, .tail = NULL, .length = 0})
-void g_queue_push_tail(GQueue *queue, gpointer data);
-gpointer g_queue_pop_tail(GQueue *queue);
-gboolean g_queue_is_empty(GQueue *queue);
+void g_queue_push_tail(GQueue* queue, gpointer data);
+gpointer g_queue_pop_tail(GQueue* queue);
+gboolean g_queue_is_empty(GQueue* queue);
 
 
 
