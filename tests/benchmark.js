@@ -80,7 +80,7 @@ var loaders = {
 
 function usage() {
     console.log("usage: " + process.argv[1] + " [--help] [version] [version] ...");
-    console.log("where [version] can be: " + Object.keys(loaders));
+    console.log("where [version] can be: " + Object.keys(loaders).join(" "));
     process.exit();
 }
 
