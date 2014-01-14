@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -44,21 +45,50 @@ var suite = new Benchmark.Suite();
 
 
 /*
- * Load various poly2tri versions
+ * Define the known poly2tri versions
  */
 
-// 1st version with Steiner points (and optionnal Namespace.js).
-// (use "load" to work around missing Node.js support)
-var v_1_1_1 = load('./versions/1.1.1/poly2tri').js.poly2tri;
+var loaders = {
+    // 1st version with Steiner points (and optionnal Namespace.js).
+    '1.1.1': function() {
+        // use "load" to work around missing Node.js support
+        return load('./versions/1.1.1/poly2tri').js.poly2tri;
+    },
+    '1.2.0': function() {
+        return require('./versions/1.2.0/poly2tri');
+    },
+    // Last version before browserify
+    '1.2.7': function() {
+        return require('./versions/1.2.7/poly2tri');
+    },
+    'current.src': function() {
+        return require('../src/poly2tri');
+    },
+    'current.dist': function() {
+        return require('../dist/poly2tri');
+    },
+    'current.dist.min': function() {
+        return require('../dist/poly2tri.min');
+    }
+};
 
-var v_1_2_0 = require('./versions/1.2.0/poly2tri');
 
-// Last version before browserify
-var v_1_2_7 = require('./versions/1.2.7/poly2tri');
+/*
+ * Get versions to test from the command line arguments
+ * (default to all versions)
+ */
 
-var v_current_src = require('../src/poly2tri');
-var v_current_dist = require('../dist/poly2tri');
-var v_current_dist_min = require('../dist/poly2tri.min');
+function usage() {
+    console.log("usage: " + process.argv[1] + " [--help] [version] [version] ...");
+    console.log("where [version] can be: " + Object.keys(loaders));
+    process.exit();
+}
+
+if (process.argv[2] === '--help') {
+    usage();
+}
+
+var versions = (process.argv.length > 2 ? process.argv.splice(2) : Object.keys(loaders));
 
 
 /*
@@ -98,30 +128,30 @@ function triangulate(P) {
 
 
 /*
- * Run tests
+ * Load the poly2tri versions and add to tests
  */
 
-// add tests
-suite
-        .add('v1.1.1', function() {
-    triangulate(v_1_1_1);
-})
-        .add('v1.2.0', function() {
-    triangulate(v_1_2_0);
-})
-        .add('v1.2.7', function() {
-    triangulate(v_1_2_7);
-})
-        .add('current.src', function() {
-    triangulate(v_current_src);
-})
-        .add('current.dist', function() {
-    triangulate(v_current_dist);
-})
-        .add('current.dist.min', function() {
-    triangulate(v_current_dist_min);
-})
+versions.forEach(function(v) {
+    try {
+        var poly2tri = loaders[v].call();
+        suite.add(v, function() {
+            triangulate(poly2tri);
+        });
+        console.log("Loaded version " + v);
+    } catch (e) {
+        console.log("*** can't load or unknown '" + v + "' version");
+        usage();
+    }
+});
+
+
+/*
+ * Run tests
+ */
+console.log("Benchmarking ...");
+
 // add listeners
+suite
         .on('cycle', function(event) {
     console.log(String(event.target));
 })
