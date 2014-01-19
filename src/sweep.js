@@ -133,17 +133,33 @@ function edgeEventByPoints(tcx, ep, eq, triangle, point) {
     var p1 = triangle.pointCCW(point);
     var o1 = orient2d(eq, p1, ep);
     if (o1 === Orientation.COLLINEAR) {
-        // TODO integrate here changes from C++ version
-        // (C++ repo revision 09880a869095 dated March 8, 2011)
-        throw new PointError('poly2tri EdgeEvent: Collinear not supported!', [eq, p1, ep]);
+        if (triangle.containsPoints(eq, p1)) {
+            triangle.markConstrainedEdgeByPoints(eq, p1);
+            // We are modifying the constraint maybe it would be better to
+            // not change the given constraint and just keep a variable for the new constraint
+            tcx.edge_event.constrained_edge.q = p1;
+            triangle = triangle.neighborAcross(point);
+            edgeEventByPoints(tcx, ep, p1, triangle, p1);
+        } else {
+            throw new PointError('poly2tri EdgeEvent: Collinear not supported!', [eq, p1, ep]);
+        }
+        return;
     }
 
     var p2 = triangle.pointCW(point);
     var o2 = orient2d(eq, p2, ep);
     if (o2 === Orientation.COLLINEAR) {
-        // TODO integrate here changes from C++ version
-        // (C++ repo revision 09880a869095 dated March 8, 2011)
-        throw new PointError('poly2tri EdgeEvent: Collinear not supported!', [eq, p2, ep]);
+        if (triangle.containsPoints(eq, p2)) {
+            triangle.markConstrainedEdgeByPoints(eq, p2);
+            // We are modifying the constraint maybe it would be better to
+            // not change the given constraint and just keep a variable for the new constraint
+            tcx.edge_event.constrained_edge.q = p2;
+            triangle = triangle.neighborAcross(point);
+            edgeEventByPoints(tcx, ep, p2, triangle, p2);
+        } else {
+            throw new PointError('poly2tri EdgeEvent: Collinear not supported!', [eq, p2, ep]);
+        }
+        return;
     }
 
     if (o1 === o2) {
