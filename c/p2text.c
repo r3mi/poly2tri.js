@@ -1,5 +1,5 @@
 /*
- * bindings.c
+ * p2text.c
  * Extra C functions to export into the emscripten C version of poly2tri.js.
  * 
  * (c) 2014, Rémi Turboult
@@ -12,19 +12,6 @@
 
 #include <stddef.h>
 #include <assert.h>
-
-/*
- * Extra functions, not in glib. They can't be macros because they need
- * to be exported by emscripten to the JS code.
- */
-
-guint ext_ptr_array_length(const GPtrArray* array) {
-    return array->len;
-}
-
-gpointer ext_ptr_array_get(GPtrArray* array, guint index_) {
-    return g_ptr_array_index(array, index_);
-}
 
 
 /*
@@ -49,37 +36,37 @@ struct _P2tPointWithId {
 
 _Static_assert(offsetof(P2tPointWithId, p) == 0, "P2tPoint* and P2tPointWithId* shall be equal");
 
-void ext_point_with_id_init_ddi(P2tPointWithId* THIS, double x, double y, gint id) {
+void p2text_point_with_id_init_ddi(P2tPointWithId* THIS, double x, double y, gint id) {
     p2t_point_init_dd(&THIS->p, x, y);
     THIS->id = id;
     THIS->canary = CANARY;
 }
 
-P2tPointWithId* ext_point_with_id_new_ddi(double x, double y, gint id) {
+P2tPointWithId* p2text_point_with_id_new_ddi(double x, double y, gint id) {
     P2tPointWithId* THIS = g_slice_new(P2tPointWithId);
-    ext_point_with_id_init_ddi(THIS, x, y, id);
+    p2text_point_with_id_init_ddi(THIS, x, y, id);
     return THIS;
 }
 
-void ext_point_with_id_destroy(P2tPointWithId* THIS) {
+void p2text_point_with_id_destroy(P2tPointWithId* THIS) {
     assert(THIS->canary == CANARY);
     p2t_point_destroy(&THIS->p);
 }
 
-void ext_point_with_id_free(P2tPointWithId* THIS) {
-    ext_point_with_id_destroy(THIS);
+void p2text_point_with_id_free(P2tPointWithId* THIS) {
+    p2text_point_with_id_destroy(THIS);
     g_slice_free(P2tPointWithId, THIS);
 }
 
-P2tPointWithId* ext_point_with_id_from_point(P2tPoint* point) {
+P2tPointWithId* p2text_point_with_id_from_point(P2tPoint* point) {
     P2tPointWithId* pid = (P2tPointWithId*) point;
     assert(pid->canary == CANARY);
     return pid;
 }
 
-gint ext_triangle_get_point_id(const P2tTriangle* THIS, const int index) {
+gint p2text_triangle_get_point_id(const P2tTriangle* THIS, const int index) {
     P2tPoint* point = THIS->points_[index];
-    return ext_point_with_id_from_point(point)->id;
+    return p2text_point_with_id_from_point(point)->id;
 }
 
 /**
@@ -88,10 +75,10 @@ gint ext_triangle_get_point_id(const P2tTriangle* THIS, const int index) {
  * are accumulated in the "struct SweepContext_.points_" g_ptr_array
  * (see the poly2tri-c code).
  */
-void ext_cdt_free_input_points(P2tCDT* THIS) {
+void p2text_cdt_free_input_points(P2tCDT* THIS) {
     P2tPointPtrArray points = THIS->sweep_context_->points_;
     gint i;
     for (i = 0; i < points->len; i++) {
-        ext_point_with_id_free(g_ptr_array_index(points, i));
+        p2text_point_with_id_free(g_ptr_array_index(points, i));
     }
 }

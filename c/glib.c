@@ -205,3 +205,17 @@ gboolean g_queue_is_empty(GQueue* queue) {
     return (queue ? (queue->head == NULL) : TRUE);
 }
 
+/*
+ * Extra
+ * -----
+ * Extra functions, not in glib. They can't be macros because they need
+ * to be exported by emscripten to the JS code.
+ */
+
+guint gext_ptr_array_length(const GPtrArray* array) {
+    return array->len;
+}
+
+gpointer gext_ptr_array_get(GPtrArray* array, guint index_) {
+    return g_ptr_array_index(array, index_);
+}

@@ -27,15 +27,15 @@ var p2t_cdt_add_hole = c.cwrap('p2t_cdt_add_hole', null, ['number', 'number']);
 var p2t_cdt_add_point = c.cwrap('p2t_cdt_add_point', null, ['number', 'number']);
 var p2t_cdt_triangulate = c.cwrap('p2t_cdt_triangulate', null, ['number']);
 var p2t_cdt_get_triangles = c.cwrap('p2t_cdt_get_triangles', 'number', ['number']);
-var ext_cdt_free_input_points = c.cwrap('ext_cdt_free_input_points', null, ['number']);
+var p2text_cdt_free_input_points = c.cwrap('p2text_cdt_free_input_points', null, ['number']);
 var p2t_cdt_free = c.cwrap('p2t_cdt_free', null, ['number']);
-var ext_point_with_id_new_ddi = c.cwrap('ext_point_with_id_new_ddi', 'number', ['number', 'number', 'number']);
-var ext_triangle_get_point_id = c.cwrap('ext_triangle_get_point_id', 'number', ['number', 'number']);
+var p2text_point_with_id_new_ddi = c.cwrap('p2text_point_with_id_new_ddi', 'number', ['number', 'number', 'number']);
+var p2text_triangle_get_point_id = c.cwrap('p2text_triangle_get_point_id', 'number', ['number', 'number']);
 var g_ptr_array_new = c.cwrap('g_ptr_array_new', 'number');
 var g_ptr_array_add = c.cwrap('g_ptr_array_add', null, ['number', 'number']);
 var g_ptr_array_free = c.cwrap('g_ptr_array_free', 'number', ['number', 'number']);
-var ext_ptr_array_length = c.cwrap('ext_ptr_array_length', 'number', ['number']);
-var ext_ptr_array_get = c.cwrap('ext_ptr_array_get', 'number', ['number', 'number']);
+var gext_ptr_array_length = c.cwrap('gext_ptr_array_length', 'number', ['number']);
+var gext_ptr_array_get = c.cwrap('gext_ptr_array_get', 'number', ['number', 'number']);
 
 
 
@@ -58,7 +58,7 @@ var SweepContext = function(contour /*, options */) {
  */
 SweepContext.prototype._makeCPoint = function(js_point) {
     var id = this.points_.length;
-    var cpoint = ext_point_with_id_new_ddi(js_point.x, js_point.y, id);
+    var cpoint = p2text_point_with_id_new_ddi(js_point.x, js_point.y, id);
     this.points_.push(js_point);
     return cpoint;
 };
@@ -147,12 +147,12 @@ SweepContext.prototype.getTriangles = function() {
         var i;
         var result = [];
         // TBD XXX not very efficient, is there a better way ?
-        var len = ext_ptr_array_length(ctriangles);
+        var len = gext_ptr_array_length(ctriangles);
         for (i = 0; i < len; i++) {
-            var ctriangle = ext_ptr_array_get(ctriangles, i);
-            var id0 = ext_triangle_get_point_id(ctriangle, 0);
-            var id1 = ext_triangle_get_point_id(ctriangle, 1);
-            var id2 = ext_triangle_get_point_id(ctriangle, 2);
+            var ctriangle = gext_ptr_array_get(ctriangles, i);
+            var id0 = p2text_triangle_get_point_id(ctriangle, 0);
+            var id1 = p2text_triangle_get_point_id(ctriangle, 1);
+            var id2 = p2text_triangle_get_point_id(ctriangle, 2);
             var t = new Triangle(points[id0], points[id1], points[id2]);
             result.push(t);
         }
@@ -168,7 +168,7 @@ SweepContext.prototype.GetTriangles = SweepContext.prototype.getTriangles;
 SweepContext.prototype.delete = function() {
     // Free all the points allocated in the "_makeCPoint" method for the calls
     // to "p2t_cdt_new", "p2t_cdt_add_hole" and "p2t_cdt_add_point".
-    ext_cdt_free_input_points(this.cdt);
+    p2text_cdt_free_input_points(this.cdt);
     // Free memory allocated by poly2tri
     p2t_cdt_free(this.cdt);
     delete this.cdt;
