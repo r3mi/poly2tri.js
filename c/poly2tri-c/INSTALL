@@ -1,0 +1,56 @@
+========================================================================
+=============== Poly2Tri-C Installation Instructions ===================
+========================================================================
+
+Prerequisites
+~~~~~~~~~~~~~
+In order to compile the library you should have at least the following:
+
+  - A working linux-like environment and tools, with the GNU C Compiler
+    (gcc).
+
+      - On Linux simply install gcc if it's not already installed, the
+        rest is probably already shipped with your distribution,
+
+      - On Windows you can install MSYS + MinGW from http://mingw.org,
+        and this should provide you with all the needed tools
+
+  - The development libraries and headers for GLib. You can get them
+    from http://www.gtk.org.
+
+Compiling from a source (tarball) distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Once all prerequisites are satisfied, open a shell window and enter
+the folder containing this distribution. You can now build this package
+like any other GNU package by executing the following steps:
+
+    ./configure
+    make
+    make install
+
+Compiling from a source tree snapshot (a Git checkout)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The steps are pretty similary, only that now you will also need to be
+able to generate the configure script. For that you will need to install
+the GNU autotools (autoconf, automake, etc.) and the GNU libtool.
+
+Once all set up, simply run the ./autogen.sh script with the same
+arguments you would pass to the ./configure script. Then proceed like
+a regular build to make and make install.
+
+Customizing the build
+~~~~~~~~~~~~~~~~~~~~~
+You can customize the build result by supplying the ./configure script
+with one or more of the following arguments:
+
+  --enable-debug
+    Enables generation of debugging information inside the built
+    binaries. Useful if you wish to debug programs using the library or
+    the library itself
+
+  --enable-cdt-validation
+    Forces the library to validate the triangulations it refines to
+    check that they remain Constrained Delaunay. This adds a massive
+    overhead and is not to be used by anyone other than people
+    experimenting with the internal library algorithms!
+

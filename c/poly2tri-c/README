@@ -1,0 +1,59 @@
+========================================================================
+====  Poly2Tri-C: A library for generating, refining and rendering  ====
+====        2-Dimensional Constrained Delaunay Triangulations       ====
+========================================================================
+
+Quick Start
+~~~~~~~~~~~
+In order to compile the library, you need the GLib development files.
+Then simply run ./configure, make and make install. More detailed
+instructions can be found in the INSTALL file.
+
+Direct Usage
+~~~~~~~~~~~~
+In order to specify the outline points, create a file with the following
+format:
+
+P pt1_x pt1_y
+P pt2_x pt2_y
+P pt3_x pt3_y
+...
+
+To specify a hole, start the line with H instead of P. All the points
+from that line and onward will belong to a hole. Each line begining with
+H will create a new hole. To specify a steiner point, start the line
+with S.
+
+A simple invocation would look like this:
+
+    p2tc -i mypoints.pts -o mymesh -s -m [-r N]
+
+Explanation:
+
+  -i Specifies the input file
+  -o Specifies the base name for output files
+  -s Would create an SVG output of the fine mesh as mymesh.svg
+  -m Would create a PPM (raster) output of the fine mesh as mymesh.ppm
+  -r N Specifies that at most N points shold be inserted to the mesh in
+       the refinement step. Invocation without this argument lets the
+       algorithm run until it converges.
+
+API Usage
+~~~~~~~~~
+The source code for the p2tc program is shipped inside the bin/
+directory. It should get you started very fast.
+
+Limitations
+~~~~~~~~~~~
+Like all software, this library has some limitations:
+
+ - There nustn't be any repetitions of points (it also means that the
+   first point shouldn't be repeated at the end of the file)
+ - The outline mustn't be self-intersecting
+ - All holes must lie inside the main outline and must not intersect in
+   pairs
+ - Nearly no input validation is done in order to speed up the
+   computation. This means you may get strange crashes on incorrect
+   usage. The most common such crashes are when specifying an input
+   outline or hole with either the last point repeating the first, or
+   with less than 3 input points.

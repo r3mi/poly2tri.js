@@ -1,0 +1,40 @@
+The Poly2Tri-C is a three-part library, where all parts are licensed
+under the same license - The BSD 3-Clause License (also known as "New
+BSD License" or "Modified BSD License"):
+
+  1. Constrained Delaunay Triangulation - Based on the code of Poly2Tri
+     (Poly2Tri is licensed under the same license)
+  2. Delaunay Refinement - New code implemented in this library
+  3. Mesh Rendering - New code implemented in this library
+
+The first part of the library is a port of the Poly2Tri library from C++
+to C (with GLib). This port can be found inside the poly2tri-c/p2t
+directory of this source code distribution.
+
+  Poly2Tri - A 2D constrained Delaunay triangulation library
+  Homepage: http://code.google.com/p/poly2tri/
+  Code License File: LICENSE-Poly2Tri.txt
+
+The second part of the library is an implementaiton of a Delaunay
+Refinement algorithm named "The Terminator" which appears in a paper
+written by Jonathan Richard Shewchuk.
+The implementation of the algorithm in C was done by Barak Itkin, and it
+can be found inside the poly2tri-c/refine directory of this source code
+distribution.
+
+  Algorithm Author:
+    Jonathan Richard Shewchuk
+    http://www.cs.berkeley.edu/~jrs/
+
+  Algorithm Paper:
+    Delaunay Refinement Algorithms for Triangular Mesh Generation
+    http://www.cs.berkeley.edu/~jrs/papers/2dj.pdf
+
+  Code License File: LICENSE-Poly2Tri-C.txt
+
+Finally, the third part of the library contains various techniques to
+render mesh objects as raster/vector images. This part is 'original' and
+is not based on any other reference. This code can be found inside the
+poly2tri-c/render directory of this source code distribution.
+
+  Code License File: LICENSE-Poly2Tri-C.txt
