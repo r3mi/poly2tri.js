@@ -136,11 +136,11 @@ Usage
         triangles.forEach(function(t) { 
             t.getPoints().forEach(function(p) { 
                 console.log(p.x, p.y); 
-            }) 
+            });
             // or t.getPoint(0), t.getPoint(1), t.getPoint(2)
-        })
+        });
 
-See [`index.html`](index.html) for a complete sample.
+See [`index.html`](index.html) for a complete example.
 
 Method calls can be chained:
     
