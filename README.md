@@ -90,17 +90,14 @@ Usage
    Thanks to [browserify](http://browserify.org/), the module is in 
    [UMD](https://github.com/umdjs/umd) format (Universal Module Definition), 
    compatible with the various module systems:
-   
     - CommonJS:
 
             var poly2tri = require('poly2tri');
-
     - RequireJS:
-   
+
             require('poly2tri', function (poly2tri) {
                 ...
             });
-    
     - If you are not using a module system at all, you can access the package
       as a global variable `poly2tri` (or `window.poly2tri` in a browser).
 
