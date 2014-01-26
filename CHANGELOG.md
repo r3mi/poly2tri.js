@@ -1,4 +1,13 @@
 [demo]: http://r3mi.github.io/poly2tri.js
+[Browserify]: http://browserify.org/
+
+<a name="1.3.3"></a>
+# 1.3.3 (2014-01-26)
+
+- upgrade [Browserify]. As a side effect, the generated bundle `dist/poly2tri.js` 
+  is more compatible with the buggy `ExtendScript` parser (who chokes on 
+  nested ternary operators `?:?:`).
+- internal : improve benchmark code to track performances
 
 <a name="1.3.2"></a>
 # 1.3.2 (2014-01-11)
@@ -22,7 +31,7 @@
 <a name="1.3.0"></a>
 # 1.3.0 (2013-12-15)
 
-- [Browserify](http://browserify.org/) is used to generate a UMD (universal module definition) 
+- [Browserify] is used to generate a UMD (universal module definition) 
   bundle, compatible with the various module systems. 
 - the released code for browsers is now in the `dist/` directory 
   (the `src/` directory contains the source code for Node.js).
