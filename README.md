@@ -134,6 +134,15 @@ Usage
         swctx.triangulate();
         var triangles = swctx.getTriangles();
 
+6. Use results
+
+        triangles.forEach(function(t) { 
+            t.getPoints().forEach(function(p) { 
+                console.log(p.x, p.y); 
+            }) 
+            // or t.getPoint(0), t.getPoint(1), t.getPoint(2)
+        })
+
 See [`index.html`](index.html) for a complete sample.
 
 Method calls can be chained:
