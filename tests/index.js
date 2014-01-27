@@ -38,6 +38,11 @@
 
 "use strict";
 
+if (typeof $ === 'undefined') {
+    alert("jQuery not found -- dependencies not installed ?");
+    throw new Error("jQuery not loaded -- bower dependencies not installed ?");
+}
+
 // Styles
 var TRIANGLE_FILL_COLOR = "#e0c4ef";
 var TRIANGLE_STROKE_COLOR = "#911ccd";
@@ -344,7 +349,7 @@ function loadPresetMenu() {
 
 $(document).ready(function() {
     $('#version').text(poly2tri.VERSION);
-    
+
     var $content = $('#content');
     var stage = new Kinetic.Stage({
         container: $content[0],
