@@ -109,7 +109,7 @@ void g_ptr_array_sort(GPtrArray* array, GCompareFunc compare_func) {
     }
 }
 
-#ifdef G_PTR_ARRAY_INDEX_CHECK
+#if GEXT_PTR_ARRAY_INDEX_CHECK
 
 gpointer g_ptr_array_index(GPtrArray* array, guint index_) {
     assert(index_ < array->len);

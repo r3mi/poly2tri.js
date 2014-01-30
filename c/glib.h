@@ -65,11 +65,19 @@ void g_error(const gchar* msg);
 
 #include <stdlib.h>
 
-#define g_malloc            malloc
-#define g_realloc           realloc
-#define g_free              free
-#define g_new(type,num)     ((type*)g_malloc((sizeof(type)) * ((size_t)(num))))
+#define GEXT_DEBUG_ALLOC    1     
 
+#if GEXT_DEBUG_ALLOC
+gpointer g_malloc(size_t size);
+gpointer g_realloc(gpointer ptr, size_t size);
+gpointer _gext_new(size_t size, const char* typname);
+#   define g_new(type,num)     ((type*)_gext_new((sizeof(type))*((size_t)(num)), (#type)))
+#else
+#   define g_malloc            malloc
+#   define g_realloc           realloc
+#   define g_new(type,num)     ((type*)g_malloc((sizeof(type))*((size_t)(num))))
+#endif
+#define g_free                  free
 
     /*
      * "gslice.h" 
@@ -78,7 +86,11 @@ void g_error(const gchar* msg);
      */
 
 #define g_slice_alloc(size)                 g_malloc(size)
-#define g_slice_new(type)                   ((type*)g_slice_alloc(sizeof(type)))
+#if GEXT_DEBUG_ALLOC
+#   define g_slice_new(type)                ((type*)_gext_new(sizeof(type), (#type)))
+#else
+#   define g_slice_new(type)                ((type*)g_slice_alloc(sizeof(type)))
+#endif
 #define g_slice_free1(mem_size,mem_block)   g_free(mem_block)
 
     // TBD XXX code copied from gslice.h ??
@@ -105,9 +117,9 @@ struct _GPtrArray {
     guint       _allocated;
 };
 
-#define G_PTR_ARRAY_INDEX_CHECK     0
+#define GEXT_PTR_ARRAY_INDEX_CHECK     0
 
-#ifdef G_PTR_ARRAY_INDEX_CHECK
+#if GEXT_PTR_ARRAY_INDEX_CHECK
 gpointer g_ptr_array_index(GPtrArray* array, guint index_);
 #else
 #define g_ptr_array_index(array,index_)     ((array)->pdata)[index_]

@@ -59,6 +59,12 @@ exports.Point = require('../src/point');
 exports.Triangle = require('../src/triangle');
 exports.SweepContext = require('./sweepcontext-c');
 
+// Additional method to free allocated memory by emscripten
+var c = require('../build/c');
+var gext_print_alloc_debug = c.cwrap('gext_print_alloc_debug');
+exports.delete = function() {
+    gext_print_alloc_debug();
+};
 
 // Backward compatibility
 function triangulate(tcx) {
