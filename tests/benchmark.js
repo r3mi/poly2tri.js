@@ -60,7 +60,7 @@ if (process.argv[2] === '--help') {
     usage();
 }
 
-var versions = (process.argv.length > 2 ? process.argv.splice(2) : Object.keys(loaders));
+var versions = (process.argv.length > 2 ? process.argv.slice(2) : Object.keys(loaders));
 
 
 /*
