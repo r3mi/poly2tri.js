@@ -65,7 +65,7 @@ SweepContext.prototype._makeCPoint = function(js_point) {
 
 
 /**
- * Allocate a new array of C points. These points, and the arrary, are allocated 
+ * Allocate a new array of C points. These points, and the array, are allocated 
  * on the emscripten heap and shall be de-allocated when finished.
  * @param {Arrray<{x:number, y:number}>} js_points arrray of {x,y} objects
  * @returns {number} pointer to the C "g_ptr_array" of points
