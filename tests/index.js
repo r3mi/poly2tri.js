@@ -39,7 +39,7 @@
 "use strict";
 
 if (typeof $ === 'undefined') {
-    alert("jQuery not found -- dependencies not installed ?");
+    window.alert("jQuery not found -- dependencies not installed ?");
     throw new Error("jQuery not loaded -- bower dependencies not installed ?");
 }
 
