@@ -13,10 +13,8 @@ build=${here}/../build
 
 mkdir -p ${build}
 
-
 # Extract C functions to export
-FUNCS=`awk -F "'" -vORS="," -vOFS="" -vq="'" '/cwrap/{print q, "_", $2, q}' ${here}/*.js | sed "s/,$/\n/"`
-FUNCS="[${FUNCS}]"
+FUNCS=`${here}/exported_functions.js ${here}/*.js`
 
 # emscripten shall be in PATH
 emcc \
