@@ -104,22 +104,20 @@ function triangulate(P) {
  */
 
 versions.forEach(function(v) {
+    var spin = new Linespin(v);
     try {
         var poly2tri = loaders[v].call();
-        var spin;
         suite.add(v, function() {
             triangulate(poly2tri);
         }, {
             onStart: function() {
-                spin = new Linespin(v);
                 spin.start();
             },
             onError: function(event) {
-                spin.error(event.message);
+                spin.error(v + ": " + event.message);
             },
             onComplete: function(event) {
-                spin.doneMessage = String(event.target);
-                spin.stop();
+                spin.stop(String(event.target));
             }
         });
         console.log("Loaded version " + v);
@@ -137,31 +135,31 @@ versions.forEach(function(v) {
 // add listeners
 suite
         .on('complete', function() {
-    console.log("");
-    console.log('Fastest is ' + this.filter('fastest').pluck('name'));
+            console.log("");
+            console.log('Fastest is ' + this.filter('fastest').pluck('name'));
 
-    // Sort results
-    var sorted = this.filter('successful').sort(function(a, b) {
-        a = a.stats;
-        b = b.stats;
-        return (a.mean + a.moe > b.mean + b.moe ? 1 : -1);
-    });
+            // Sort results
+            var sorted = this.filter('successful').sort(function(a, b) {
+                a = a.stats;
+                b = b.stats;
+                return (a.mean + a.moe > b.mean + b.moe ? 1 : -1);
+            });
 
-    // Output results with ranks (ties get the same rank)
-    var results = [sorted[0].name + " "];
-    for (var i = 1; i < sorted.length; i++) {
-        var a = sorted[i - 1];
-        var b = sorted[i];
-        if (a.compare(b) !== 0) {
-            results.push("");
-        }
-        results[results.length - 1] += b.name + " ";
-    }
-    results.forEach(function(val, index) {
-        console.log((index + 1) + ": " + val);
-    });
+            // Output results with ranks (ties get the same rank)
+            var results = [sorted[0].name + " "];
+            for (var i = 1; i < sorted.length; i++) {
+                var a = sorted[i - 1];
+                var b = sorted[i];
+                if (a.compare(b) !== 0) {
+                    results.push("");
+                }
+                results[results.length - 1] += b.name + " ";
+            }
+            results.forEach(function(val, index) {
+                console.log((index + 1) + ": " + val);
+            });
 
-})
+        })
 // run async
         .run({'async': true});
 
