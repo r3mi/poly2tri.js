@@ -18,7 +18,7 @@
         "test.browsers": "./node_modules/karma/bin/karma start tests/karma.browsers.js",
         "jshint": "jshint *.js src/*.js tests/*.js tests/spec/*.js",
         "build": "npm run jshint && npm run build.nocheck",
-        "build.nocheck": "mkdir -p dist && node ./build.js",
+        "build.nocheck": "gulp build",
         "bench": "node ./tests/benchmark.js"
     },
     "keywords": [
@@ -50,6 +50,7 @@
         "gulp-bytediff": "~0.1.8",
         "gulp-header": "~1.0.2",
         "gulp-rename": "~0.2.2",
+        "gulp-template": "~0.1.1",
         "vinyl-source-stream": "~0.0.0",
         "mersennetwister": "~0.1.1",
         "jasmine-node": "~1.12.0",
@@ -68,7 +69,6 @@
         "benchmark": "~1.0.0",
         "load": "~1.0.0",
         "xhr": "~1.3.1",
-        "uglify-js": "~2.4.8",
         "linespin": "0.0.4"
     }
 }

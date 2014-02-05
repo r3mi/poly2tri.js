@@ -51,6 +51,7 @@ exports.noConflict = function() {
     return exports;
 };
 
+// This file is generated from "./templates/version.json" during build
 exports.VERSION = require('../dist/version.json').version;
 
 exports.PointError = require('./pointerror');

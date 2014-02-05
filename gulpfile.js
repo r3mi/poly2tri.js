@@ -9,21 +9,33 @@
 "use strict";
 
 var gulp = require('gulp');
-var pkg = require('./package.json');
-var fs = require('fs');
 var uglify = require('gulp-uglify');
 var bytediff = require('gulp-bytediff');
 var header = require('gulp-header');
-var rename = require("gulp-rename");
+var rename = require('gulp-rename');
+var template = require('gulp-template');
 var sourceStream = require('vinyl-source-stream');
 var browserify = require('browserify');
 
+var pkg = require('./package.json');
 
-var TODAY = new Date().toJSON().slice(0, 10);
-var MINI_BANNER = '/*! <%= pkg.name %> v<%= pkg.version %> | built ' + TODAY +
-        ' | (c) Poly2Tri Contributors */\n';
+var MINI_BANNER = '/*! <%= pkg.name %> v<%= pkg.version %> | (c) 2009-2014 Poly2Tri Contributors */\n';
 
-gulp.task('build', function() {
+gulp.task('default', ['build', 'watch']);
+gulp.task('build', ['templates', 'browserify', 'minify']);
+
+gulp.task('watch', function() {
+    gulp.watch(["src/*.js", "src/templates/*"], ['build']);
+});
+
+gulp.task('templates', function() {
+    return gulp.src('src/templates/*')
+            .pipe(template({pkg: pkg}))
+            .pipe(gulp.dest('dist'))
+            ;
+});
+
+gulp.task('browserify', ['templates'], function() {
     // Use vinyl-source-stream + browserify instead of gulp-browserify because
     // - I won't to control the version of browserify I am using
     // - gulp-browserify with 'standalone' option is currently buggy
@@ -34,12 +46,7 @@ gulp.task('build', function() {
             ;
 });
 
-gulp.task('version', function() {
-    // Update version file (require'd by main poly2tri.js for VERSION string)
-    fs.writeFileSync('./dist/version.json', '{"version": "' + pkg.version + '"}');
-});
-
-gulp.task('compress', ['build'], function() {
+gulp.task('minify', ['browserify'], function() {
     return gulp.src('dist/poly2tri.js')
             // rename via function instead of object because bug
             // https://github.com/hparra/gulp-rename/issues/13
@@ -52,8 +59,4 @@ gulp.task('compress', ['build'], function() {
             .pipe(bytediff.stop())
             .pipe(gulp.dest('dist'))
             ;
-});
-
-gulp.task('watch', function() {
-    gulp.watch("src/*.js", ['build', 'compress']);
 });

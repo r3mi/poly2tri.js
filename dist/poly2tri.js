@@ -478,6 +478,7 @@ exports.noConflict = function() {
     return exports;
 };
 
+// This file is generated from "./templates/version.json" during build
 exports.VERSION = _dereq_('../dist/version.json').version;
 
 exports.PointError = _dereq_('./pointerror');
