@@ -18,7 +18,7 @@
         "test.browsers": "./node_modules/karma/bin/karma start tests/karma.browsers.js",
         "jshint": "jshint *.js src/*.js tests/*.js tests/spec/*.js",
         "build": "npm run jshint && npm run build.nocheck",
-        "build.nocheck": "mkdir -p dist && node ./build.js",
+        "build.nocheck": "jake",
         "bench": "node ./tests/benchmark.js"
     },
     "keywords": [
@@ -45,6 +45,7 @@
     "license": "BSD-3-Clause",
     "bugs": "https://code.google.com/p/poly2tri/issues/list",
     "devDependencies": {
+        "jake": "~0.7.6",
         "mersennetwister": "~0.1.1",
         "jasmine-node": "~1.12.0",
         "karma": "~0.11.12",
