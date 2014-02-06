@@ -9,54 +9,57 @@
 "use strict";
 
 var gulp = require('gulp');
-var uglify = require('gulp-uglify');
-var bytediff = require('gulp-bytediff');
-var header = require('gulp-header');
-var rename = require('gulp-rename');
-var template = require('gulp-template');
-var sourceStream = require('vinyl-source-stream');
-var browserify = require('browserify');
+var plug = require('gulp-load-plugins')();
 
 var pkg = require('./package.json');
 
 var MINI_BANNER = '/*! <%= pkg.name %> v<%= pkg.version %> | (c) 2009-2014 Poly2Tri Contributors */\n';
 
-gulp.task('default', ['build', 'watch']);
-gulp.task('build', ['templates', 'browserify', 'minify']);
+var JS_SRC = 'src/*.js';
+var JS_ALL = ['*.js', JS_SRC, 'tests/*.js', 'tests/spec/*.js'];
 
-gulp.task('watch', function() {
-    gulp.watch(["src/*.js", "src/templates/*"], ['build']);
+gulp.task('default', ['watch']);
+gulp.task('build', ['jshint', 'templates', 'scripts']);
+
+var watching = false;
+gulp.task('watch', ['build'], function() {
+    watching = true;
+    gulp.watch(JS_ALL, ['jshint']);
+    gulp.watch([JS_SRC, "src/templates/*"], ['templates', 'scripts']);
+});
+
+gulp.task('clean', function() {
+    return gulp.src('dist/', {read: false}).pipe(plug.clean());
+});
+
+gulp.task('jshint', function() {
+    return gulp.src(JS_ALL)
+            .pipe(watching ? plug.plumber() : plug.util.noop())
+            .pipe(plug.jshint('.jshintrc'))
+            .pipe(plug.jshint.reporter('jshint-stylish'))
+            .pipe(watching ? plug.util.noop() : plug.jshint.reporter('fail'));
 });
 
 gulp.task('templates', function() {
     return gulp.src('src/templates/*')
-            .pipe(template({pkg: pkg}))
+            .pipe(watching ? plug.plumber() : plug.util.noop())
+            .pipe(plug.template({pkg: pkg}))
+            .pipe(gulp.dest('dist'));
+});
+
+gulp.task('scripts', ['templates'], function() {
+    return gulp.src('src/poly2tri.js', {read: false})
+            .pipe(watching ? plug.plumber() : plug.util.noop())
+            .pipe(plug.browserify({standalone: 'poly2tri'}))
             .pipe(gulp.dest('dist'))
-            ;
-});
-
-gulp.task('browserify', ['templates'], function() {
-    // Use vinyl-source-stream + browserify instead of gulp-browserify because
-    // - I won't to control the version of browserify I am using
-    // - gulp-browserify with 'standalone' option is currently buggy
-    //   https://github.com/deepak1556/gulp-browserify/issues/9
-    return browserify('./src/poly2tri.js').bundle({standalone: 'poly2tri'})
-            .pipe(sourceStream('poly2tri.js'))
-            .pipe(gulp.dest('dist/poly2tri.js'))
-            ;
-});
-
-gulp.task('minify', ['browserify'], function() {
-    return gulp.src('dist/poly2tri.js')
-            // rename via function instead of object because bug
-            // https://github.com/hparra/gulp-rename/issues/13
-            .pipe(rename(function(dir, base, ext) {
+            // XXX rename via function instead of object because bug
+            // XXX https://github.com/hparra/gulp-rename/issues/13
+            .pipe(plug.rename(function(dir, base, ext) {
                 return base + ".min" + ext;
             }))
-            .pipe(bytediff.start())
-            .pipe(uglify())
-            .pipe(header(MINI_BANNER, {pkg: pkg}))
-            .pipe(bytediff.stop())
-            .pipe(gulp.dest('dist'))
-            ;
+            .pipe(plug.bytediff.start())
+            .pipe(plug.uglify())
+            .pipe(plug.header(MINI_BANNER, {pkg: pkg}))
+            .pipe(plug.bytediff.stop())
+            .pipe(gulp.dest('dist'));
 });
