@@ -51,7 +51,7 @@
         "gulp-uglify": "~0.2.0",
         "gulp-bytediff": "~0.1.8",
         "gulp-header": "~1.0.2",
-        "gulp-rename": "~0.2.2",
+        "gulp-rename": "~1.0.0",
         "gulp-template": "~0.1.1",
         "gulp-clean": "~0.2.4",
         "gulp-browserify": "r3mi/gulp-browserify",

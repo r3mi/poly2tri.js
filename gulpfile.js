@@ -52,11 +52,7 @@ gulp.task('scripts', ['templates'], function() {
             .pipe(watching ? plug.plumber() : plug.util.noop())
             .pipe(plug.browserify({standalone: 'poly2tri'}))
             .pipe(gulp.dest('dist'))
-            // XXX rename via function instead of object because bug
-            // XXX https://github.com/hparra/gulp-rename/issues/13
-            .pipe(plug.rename(function(dir, base, ext) {
-                return base + ".min" + ext;
-            }))
+            .pipe(plug.rename({suffix: ".min"}))
             .pipe(plug.bytediff.start())
             .pipe(plug.uglify())
             .pipe(plug.header(MINI_BANNER, {pkg: pkg}))
