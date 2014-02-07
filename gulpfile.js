@@ -33,7 +33,8 @@ gulp.task('clean', function() {
 });
 
 gulp.task('jshint', function() {
-    return gulp.src(JS_ALL)
+    // XXX synchroneous task, else jshint.reporter.fail doesn't fail the pipeline
+    gulp.src(JS_ALL)
             .pipe(watching ? plug.plumber() : plug.util.noop())
             .pipe(plug.jshint('.jshintrc'))
             .pipe(plug.jshint.reporter('jshint-stylish'))
