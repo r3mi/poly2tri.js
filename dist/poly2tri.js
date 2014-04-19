@@ -2,10 +2,10 @@
 module.exports={"version": "1.3.3"}
 },{}],2:[function(_dereq_,module,exports){
 /*
- * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
+ * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  * 
- * poly2tri.js (JavaScript port) (c) 2009-2013, Poly2Tri Contributors
+ * poly2tri.js (JavaScript port) (c) 2009-2014, Poly2Tri Contributors
  * https://github.com/r3mi/poly2tri.js
  * 
  * All rights reserved.
@@ -149,10 +149,10 @@ module.exports.Node = Node;
 
 },{}],3:[function(_dereq_,module,exports){
 /*
- * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
+ * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  * 
- * poly2tri.js (JavaScript port) (c) 2009-2013, Poly2Tri Contributors
+ * poly2tri.js (JavaScript port) (c) 2009-2014, Poly2Tri Contributors
  * https://github.com/r3mi/poly2tri.js
  * 
  * All rights reserved.
@@ -386,10 +386,10 @@ module.exports = Point;
 
 },{"./xy":10}],4:[function(_dereq_,module,exports){
 /*
- * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
+ * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  * 
- * poly2tri.js (JavaScript port) (c) 2009-2013, Poly2Tri Contributors
+ * poly2tri.js (JavaScript port) (c) 2009-2014, Poly2Tri Contributors
  * https://github.com/r3mi/poly2tri.js
  * 
  * All rights reserved.
@@ -427,10 +427,10 @@ module.exports = PointError;
 },{"./xy":10}],5:[function(_dereq_,module,exports){
 (function (global){
 /*
- * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
+ * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  * 
- * poly2tri.js (JavaScript port) (c) 2009-2013, Poly2Tri Contributors
+ * poly2tri.js (JavaScript port) (c) 2009-2014, Poly2Tri Contributors
  * https://github.com/r3mi/poly2tri.js
  *
  * All rights reserved.
@@ -495,10 +495,10 @@ exports.sweep = {Triangulate: sweep.triangulate};
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../dist/version.json":1,"./point":3,"./pointerror":4,"./sweep":6,"./sweepcontext":7,"./triangle":8}],6:[function(_dereq_,module,exports){
 /*
- * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
+ * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  * 
- * poly2tri.js (JavaScript port) (c) 2009-2013, Poly2Tri Contributors
+ * poly2tri.js (JavaScript port) (c) 2009-2014, Poly2Tri Contributors
  * https://github.com/r3mi/poly2tri.js
  * 
  * All rights reserved.
@@ -1348,10 +1348,10 @@ exports.triangulate = triangulate;
 
 },{"./advancingfront":2,"./pointerror":4,"./triangle":8,"./utils":9}],7:[function(_dereq_,module,exports){
 /*
- * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
+ * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  * 
- * poly2tri.js (JavaScript port) (c) 2009-2013, Poly2Tri Contributors
+ * poly2tri.js (JavaScript port) (c) 2009-2014, Poly2Tri Contributors
  * https://github.com/r3mi/poly2tri.js
  * 
  * All rights reserved.
@@ -1708,10 +1708,10 @@ module.exports = SweepContext;
 
 },{"./advancingfront":2,"./point":3,"./pointerror":4,"./sweep":6,"./triangle":8}],8:[function(_dereq_,module,exports){
 /*
- * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
+ * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  * 
- * poly2tri.js (JavaScript port) (c) 2009-2013, Poly2Tri Contributors
+ * poly2tri.js (JavaScript port) (c) 2009-2014, Poly2Tri Contributors
  * https://github.com/r3mi/poly2tri.js
  *
  * All rights reserved.
@@ -2147,10 +2147,10 @@ module.exports = Triangle;
 
 },{"./xy":10}],9:[function(_dereq_,module,exports){
 /*
- * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
+ * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  * 
- * poly2tri.js (JavaScript port) (c) 2009-2013, Poly2Tri Contributors
+ * poly2tri.js (JavaScript port) (c) 2009-2014, Poly2Tri Contributors
  * https://github.com/r3mi/poly2tri.js
  * 
  * All rights reserved.
@@ -2230,10 +2230,10 @@ module.exports = {
 
 },{}],10:[function(_dereq_,module,exports){
 /*
- * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
+ * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  * 
- * poly2tri.js (JavaScript port) (c) 2009-2013, Poly2Tri Contributors
+ * poly2tri.js (JavaScript port) (c) 2009-2014, Poly2Tri Contributors
  * https://github.com/r3mi/poly2tri.js
  * 
  * All rights reserved.

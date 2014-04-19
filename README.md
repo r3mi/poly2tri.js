@@ -6,7 +6,7 @@ poly2tri.js
 
 **Based on the paper "Sweep-line algorithm for constrained Delaunay triangulation" by V. Domiter and and B. Zalik**
 
-    Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
+    Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
     http://code.google.com/p/poly2tri/
 
     poly2tri.js (JavaScript port) (c) 2009-2014, Poly2Tri Contributors

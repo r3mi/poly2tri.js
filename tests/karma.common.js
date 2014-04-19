@@ -2,7 +2,7 @@
  * Karma configuration for unit tests, common part.
  * New configuration file syntax : Karma >= 0.10
  * 
- * (c) 2013-014, Rémi Turboult
+ * (c) 2013-2014, Rémi Turboult
  * All rights reserved.
  * Distributed under the 3-clause BSD License, see LICENSE.txt
  */

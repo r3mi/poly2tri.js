@@ -1,7 +1,7 @@
 /*
  * Karma configuration for unit tests : run all browsers.
  * 
- * (c) 2013-014, Rémi Turboult
+ * (c) 2013-2014, Rémi Turboult
  * All rights reserved.
  * Distributed under the 3-clause BSD License, see LICENSE.txt
  */
