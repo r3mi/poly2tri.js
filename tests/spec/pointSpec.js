@@ -100,5 +100,9 @@ describe("Point", function() {
             }
         })).toBe("56");
     });
+    it("should stringify only coordinates into JSON", function() {
+        var point = new Point(1, 2);
+        expect(JSON.stringify(point)).toEqual('{"x":1,"y":2}');
+    });
 });
 

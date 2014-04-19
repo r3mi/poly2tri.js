@@ -48,6 +48,14 @@ Point.prototype.toString = function() {
 };
 
 /**
+ * JSON output, only coordinates, eg
+ *      JSON.stringify(new Point(1,2)) == '{"x":1,"y":2}'
+ */
+Point.prototype.toJSON = function() {
+    return { x: this.x, y: this.y };
+};
+
+/**
  * Creates a copy of this Point object.
  * @returns Point
  */
