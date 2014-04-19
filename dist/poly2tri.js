@@ -425,7 +425,8 @@ PointError.prototype.constructor = PointError;
 module.exports = PointError;
 
 },{"./xy":10}],5:[function(_dereq_,module,exports){
-(function (global){/*
+(function (global){
+/*
  * Poly2Tri Copyright (c) 2009-2013, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  * 
@@ -490,6 +491,7 @@ exports.SweepContext = _dereq_('./sweepcontext');
 var sweep = _dereq_('./sweep');
 exports.triangulate = sweep.triangulate;
 exports.sweep = {Triangulate: sweep.triangulate};
+
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../dist/version.json":1,"./point":3,"./pointerror":4,"./sweep":6,"./sweepcontext":7,"./triangle":8}],6:[function(_dereq_,module,exports){
 /*
