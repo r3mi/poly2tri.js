@@ -35,7 +35,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* global describe, it, expect, beforeEach  */
+/* global describe, describe, it, expect, beforeEach  */
 
 "use strict";
 
@@ -43,68 +43,108 @@
 var utils = require('../../src/utils');
 
 
-describe("utils", function() {
-    var ε = utils.EPSILON;
+describe("utils", function () {
+    var ε1 = 1E-1;          // precision
+    var ε2 = ε1 * ε1;       // precision squared
+    var ε3 = ε1 * ε1 * ε1;  // negligible compared to precision
     var Orientation = utils.Orientation;
     var orient2d = utils.orient2d;
 
-    it("should export EPSILON", function() {
-        expect(ε).toBeGreaterThan(0.0);
-        expect(ε).toBeLessThan(0.001);
-    });
-
-    describe("orient2d", function() {
-        it("should compute CW", function() {
-            expect(orient2d({x: 1, y: 1}, {x: 2, y: 2}, {x: 2, y: 1})).toBe(Orientation.CW);
+    describe("orient2d", function () {
+        it("should compute CW", function () {
+            expect(orient2d({x: 1, y: 1}, {x: 2, y: 2}, {x: 2, y: 1}, ε2)).toBe(Orientation.CW);
         });
-        it("should compute CCW", function() {
-            expect(orient2d({x: 1, y: 1}, {x: 2, y: 2}, {x: 1, y: 2})).toBe(Orientation.CCW);
+        it("should compute CCW", function () {
+            expect(orient2d({x: 1, y: 1}, {x: 2, y: 2}, {x: 1, y: 2}, ε2)).toBe(Orientation.CCW);
         });
-        it("should compute COLLINEAR", function() {
-            expect(orient2d({x: 1, y: 1}, {x: 2, y: 2}, {x: 3, y: 3})).toBe(Orientation.COLLINEAR);
+        it("should compute COLLINEAR", function () {
+            expect(orient2d({x: 1, y: 1}, {x: 2, y: 2}, {x: 3, y: 3}, ε2)).toBe(Orientation.COLLINEAR);
         });
-        it("should compute COLLINEAR if less than epsilon", function() {
-            expect(orient2d({x: 1 - ε / 10, y: 1}, {x: 2 + ε / 10, y: 2}, {x: 3, y: 3 + ε / 10})).toBe(Orientation.COLLINEAR);
+        it("should not compute COLLINEAR if delta equal to precision", function () {
+            expect(orient2d({x: 1 - ε1, y: 1}, {x: 2 + ε1, y: 2}, {x: 3, y: 3 + ε1}, ε2)).not.toBe(Orientation.COLLINEAR);
+        });
+        it("should compute COLLINEAR if delta of lot less than precision", function () {
+            expect(orient2d({x: 1 - ε3, y: 1}, {x: 2 + ε3, y: 2}, {x: 3, y: 3 + ε3}, ε2)).toBe(Orientation.COLLINEAR);
         });
     });
 
-    describe("inScanArea", function() {
+    describe("inScanArea", function () {
         var inScanArea = utils.inScanArea;
         var pa, pb, pc;
-        beforeEach(function() {
+        beforeEach(function () {
+            /*
+             * Disposition of the test points below
+             * (reference triangle is ABC).
+             *
+             * 9     I
+             * 8
+             * 7
+             * 6
+             * 5   C                     J
+             * 4F      D E
+             * 3             B
+             * 2         G
+             * 1 A
+             * H 1 2 3 4 5 6 7 8 9 0 1 2 3
+             */
             pa = {x: 1, y: 1};
             pb = {x: 7, y: 3};
             pc = {x: 2, y: 5};
         });
-        it("should use CCW points", function() {
-            expect(orient2d(pa, pb, pc)).toBe(Orientation.CCW);
+        it("should use CCW points", function () {
+            expect(orient2d(pa, pb, pc, ε2)).toBe(Orientation.CCW);
         });
-        it("should be true if inside triangle (abc)", function() {
-            expect(inScanArea(pa, pb, pc, {x: 4, y: 4})).toBeTruthy();
+        it("should be true if inside triangle (abc)", function () {
+            var pd = {x: 4, y: 4};
+            expect(inScanArea(pa, pb, pc, pd, ε2)).toBeTruthy();
         });
-        it("should be true if in front of triangle (edge bc)", function() {
-            expect(inScanArea(pa, pb, pc, {x: 5, y: 4})).toBeTruthy();
+        it("should be true if in front of triangle (edge bc)", function () {
+            var pe = {x: 5, y: 4};
+            expect(inScanArea(pa, pb, pc, pe, ε2)).toBeTruthy();
         });
-        it("should be false if above/left of triangle (edge ac)", function() {
-            expect(inScanArea(pa, pb, pc, {x: 0.5, y: 4})).toBeFalsy();
+        it("should be false if above/left of triangle (edge ac)", function () {
+            var pf = {x: 0.5, y: 4};
+            expect(inScanArea(pa, pb, pc, pf, ε2)).toBeFalsy();
         });
-        it("should be false if below/right of triangle (edge ab)", function() {
-            expect(inScanArea(pa, pb, pc, {x: 4, y: 1.5})).toBeFalsy();
+        it("should be false if below/right of triangle (edge ab)", function () {
+            var pg = {x: 5, y: 2};
+            expect(inScanArea(pa, pb, pc, pg, ε2)).toBeFalsy();
         });
-        it("should be false if behind triangle", function() {
-            expect(inScanArea(pa, pb, pc, {x: 0, y: 0})).toBeFalsy();
+        it("should be false if behind triangle", function () {
+            var ph = {x: 0, y: 0};
+            expect(inScanArea(pa, pb, pc, ph, ε2)).toBeFalsy();
         });
-        it("should be false if collinear (edge ac)", function() {
-            expect(inScanArea(pa, pb, pc, {x: 3, y: 9})).toBeFalsy();
+        it("should be false if collinear (edge ac)", function () {
+            var pi = {x: 3, y: 9};
+            expect(inScanArea(pa, pb, pc, pi, ε2)).toBeFalsy();
         });
-        it("should be false if collinear (edge ab)", function() {
-            expect(inScanArea(pa, pb, pc, {x: 13, y: 5})).toBeFalsy();
+        it("should be true if almost collinear (edge ac) but in front of triangle", function () {
+            var pi = {x: 3 + ε1, y: 9};
+            expect(inScanArea(pa, pb, pc, pi, ε2)).toBeTruthy();
         });
-        it("should be false if collinear within epsilon (edge ac)", function() {
-            expect(inScanArea(pa, pb, pc, {x: 3 + ε / 10, y: 9})).toBeFalsy();
+        it("should be false if almost collinear (edge ac) but in front of triangle less then precision", function () {
+            var pi = {x: 3 + ε3, y: 9};
+            expect(inScanArea(pa, pb, pc, pi, ε2)).toBeFalsy();
         });
-        it("should be false if collinear within epsilon (edge ab)", function() {
-            expect(inScanArea(pa, pb, pc, {x: 13, y: 5 + ε / 10})).toBeFalsy();
+        it("should be false if almost collinear (edge ac) but left of triangle", function () {
+            var pi = {x: 3 - ε1, y: 9};
+            expect(inScanArea(pa, pb, pc, pi, ε2)).toBeFalsy();
+        });
+        it("should be false if collinear (edge ab)", function () {
+            var pj = {x: 13, y: 5};
+            expect(inScanArea(pa, pb, pc, pj, ε2)).toBeFalsy();
+        });
+        it("should be true if almost collinear (edge ab) but in front of triangle", function () {
+            var pj = {x: 13, y: 5 + ε1};
+            expect(inScanArea(pa, pb, pc, pj, ε2)).toBeTruthy();
+        });
+        it("should be false if almost collinear (edge ab) but in front of triangle less than precision", function () {
+            var pj = {x: 13, y: 5 + ε3};
+            expect(inScanArea(pa, pb, pc, pj, ε2)).toBeFalsy();
+        });
+        it("should be false if almost collinear (edge ab) but right of triangle", function () {
+            var pj = {x: 13, y: 5 - ε1};
+            expect(inScanArea(pa, pb, pc, pj, ε2)).toBeFalsy();
         });
     });
 

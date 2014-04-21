@@ -36,10 +36,11 @@ Before using
 ------------
 
 Since there are no input validation of the data given for triangulation you need to think about this. 
-poly2tri does not support repeated points within _epsilon_.
+poly2tri does not support repeated points within the library _precision_
+(see [Floating point precision](#precision) below).
 
 * If you have a cyclic function that generates random points make sure you
-  don't  add the same coordinate twice,
+  don't add the same coordinate twice,
 * If you are given input and aren't sure same point exist twice you need to 
   check for this yourself,
 * Only simple polygons are supported. You may add holes or interior Steiner
@@ -185,6 +186,24 @@ initial points can be retrieved in the output triangles.
         var triangles = swctx.getTriangles();
         typeof triangles[0].getPoint(0).id
         // → "number"
+
+
+### <a name="precision"></a>Floating point precision
+
+Like all computer mathematical libraries, poly2tri.js must cope with the limits of the binary representation
+of floating point values (see
+[What Every JavaScript Developer Should Know About Floating Points](http://flippinawesome.org/2014/02/17/what-every-javascript-developer-should-know-about-floating-points/)
+for more details).
+It is possible to set the _precision_ used by the library to handle the floating point
+coordinates : use the `precision` option in the `SweepContext` constructor. It is an integer specifying the number
+of significant digits in the dataset coordinates.
+Default is `6`, ie good for coordinates precise to 1E-6.
+Note that using an incorrect value (too high or too low for the dataset) might affect the result e.g. when detecting
+repeated points or collinear edges.
+
+        var contour = [{x:0.01, y:0.01}, {x:0.01, y:0.03}, {x:0.03, y:0.03}];
+        var swctx = new poly2tri.SweepContext(contour, {precision:2});
+        swctx.triangulate();
 
 
 ### poly2tri.noConflict

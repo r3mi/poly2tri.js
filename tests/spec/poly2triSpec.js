@@ -564,6 +564,41 @@ describe("poly2tri", function() {
                 expect(exception.points[2].y).toBe(100);
             });
         });
+        describe("precision", function() {
+            var contour;
+            beforeEach(function() {
+                // "almost flat" triangle
+                contour = makePoints([1, 1, 2, 1.0001, 3, 1]);
+            });
+            it("should reject a negative precision", function() {
+                expect(function() {
+                    new p2t.SweepContext(contour, {precision: -1});
+                }).toThrow("poly2tri SweepContext: precision not a positive integer: -1");
+            });
+            it("should reject a non-integer precision", function() {
+                expect(function() {
+                    new p2t.SweepContext(contour, {precision: 1.11});
+                }).toThrow("poly2tri SweepContext: precision not a positive integer: 1.11");
+            });
+            it("should triangulate with default precision", function() {
+                var swctx = new p2t.SweepContext(contour, {});
+                swctx.triangulate();
+                var t = swctx.getTriangles();
+                expect(t.length).toBe(1);
+            });
+            it("should triangulate with precision of input points", function() {
+                var swctx = new p2t.SweepContext(contour, {precision: 4});
+                swctx.triangulate();
+                var t = swctx.getTriangles();
+                expect(t.length).toBe(1);
+            });
+            it("should fail to triangulate with reduced precision", function() {
+                expect(function() {
+                    var swctx = new p2t.SweepContext(contour, {precision: 1});
+                    swctx.triangulate();
+                }).toThrow();
+            });
+        });
     });
 
 // -------------------------------------------------------------------data files

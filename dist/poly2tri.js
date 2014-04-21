@@ -575,8 +575,6 @@ var Node = _dereq_('./advancingfront').Node;
 
 var utils = _dereq_('./utils');
 
-var EPSILON = utils.EPSILON;
-
 var Orientation = utils.Orientation;
 var orient2d = utils.orient2d;
 var inScanArea = utils.inScanArea;
@@ -638,7 +636,10 @@ function pointEvent(tcx, point) {
 
     // Only need to check +epsilon since point never have smaller
     // x value than node due to how we fetch nodes from the front
-    if (point.x <= node.point.x + (EPSILON)) {
+
+    // XXX TODO SHOULD BE EPSILON1 ????
+
+    if (point.x <= node.point.x + tcx.epsilon2) {
         fill(tcx, node);
     }
 
@@ -669,7 +670,7 @@ function edgeEventByPoints(tcx, ep, eq, triangle, point) {
     }
 
     var p1 = triangle.pointCCW(point);
-    var o1 = orient2d(eq, p1, ep);
+    var o1 = orient2d(eq, p1, ep, tcx.epsilon2);
     if (o1 === Orientation.COLLINEAR) {
         // TODO integrate here changes from C++ version
         // (C++ repo revision 09880a869095 dated March 8, 2011)
@@ -677,7 +678,7 @@ function edgeEventByPoints(tcx, ep, eq, triangle, point) {
     }
 
     var p2 = triangle.pointCW(point);
-    var o2 = orient2d(eq, p2, ep);
+    var o2 = orient2d(eq, p2, ep, tcx.epsilon2);
     if (o2 === Orientation.COLLINEAR) {
         // TODO integrate here changes from C++ version
         // (C++ repo revision 09880a869095 dated March 8, 2011)
@@ -1008,7 +1009,7 @@ function rotateTrianglePair(t, p, ot, op) {
  * @param node - starting node, this or next node will be left node
  */
 function fillBasin(tcx, node) {
-    if (orient2d(node.point, node.next.point, node.next.next.point) === Orientation.CCW) {
+    if (orient2d(node.point, node.next.point, node.next.next.point, tcx.epsilon2) === Orientation.CCW) {
         tcx.basin.left_node = node.next.next;
     } else {
         tcx.basin.left_node = node.next;
@@ -1057,13 +1058,13 @@ function fillBasinReq(tcx, node) {
     if (node.prev === tcx.basin.left_node && node.next === tcx.basin.right_node) {
         return;
     } else if (node.prev === tcx.basin.left_node) {
-        o = orient2d(node.point, node.next.point, node.next.next.point);
+        o = orient2d(node.point, node.next.point, node.next.next.point, tcx.epsilon2);
         if (o === Orientation.CW) {
             return;
         }
         node = node.next;
     } else if (node.next === tcx.basin.right_node) {
-        o = orient2d(node.point, node.prev.point, node.prev.prev.point);
+        o = orient2d(node.point, node.prev.point, node.prev.prev.point, tcx.epsilon2);
         if (o === Orientation.CCW) {
             return;
         }
@@ -1106,7 +1107,7 @@ function fillEdgeEvent(tcx, edge, node) {
 function fillRightAboveEdgeEvent(tcx, edge, node) {
     while (node.next.point.x < edge.p.x) {
         // Check if next node is below the edge
-        if (orient2d(edge.q, node.next.point, edge.p) === Orientation.CCW) {
+        if (orient2d(edge.q, node.next.point, edge.p, tcx.epsilon2) === Orientation.CCW) {
             fillRightBelowEdgeEvent(tcx, edge, node);
         } else {
             node = node.next;
@@ -1116,7 +1117,7 @@ function fillRightAboveEdgeEvent(tcx, edge, node) {
 
 function fillRightBelowEdgeEvent(tcx, edge, node) {
     if (node.point.x < edge.p.x) {
-        if (orient2d(node.point, node.next.point, node.next.next.point) === Orientation.CCW) {
+        if (orient2d(node.point, node.next.point, node.next.next.point, tcx.epsilon2) === Orientation.CCW) {
             // Concave
             fillRightConcaveEdgeEvent(tcx, edge, node);
         } else {
@@ -1132,9 +1133,9 @@ function fillRightConcaveEdgeEvent(tcx, edge, node) {
     fill(tcx, node.next);
     if (node.next.point !== edge.p) {
         // Next above or below edge?
-        if (orient2d(edge.q, node.next.point, edge.p) === Orientation.CCW) {
+        if (orient2d(edge.q, node.next.point, edge.p, tcx.epsilon2) === Orientation.CCW) {
             // Below
-            if (orient2d(node.point, node.next.point, node.next.next.point) === Orientation.CCW) {
+            if (orient2d(node.point, node.next.point, node.next.next.point, tcx.epsilon2) === Orientation.CCW) {
                 // Next is concave
                 fillRightConcaveEdgeEvent(tcx, edge, node);
             } else {
@@ -1147,13 +1148,13 @@ function fillRightConcaveEdgeEvent(tcx, edge, node) {
 
 function fillRightConvexEdgeEvent(tcx, edge, node) {
     // Next concave or convex?
-    if (orient2d(node.next.point, node.next.next.point, node.next.next.next.point) === Orientation.CCW) {
+    if (orient2d(node.next.point, node.next.next.point, node.next.next.next.point, tcx.epsilon2) === Orientation.CCW) {
         // Concave
         fillRightConcaveEdgeEvent(tcx, edge, node.next);
     } else {
         // Convex
         // Next above or below edge?
-        if (orient2d(edge.q, node.next.next.point, edge.p) === Orientation.CCW) {
+        if (orient2d(edge.q, node.next.next.point, edge.p, tcx.epsilon2) === Orientation.CCW) {
             // Below
             fillRightConvexEdgeEvent(tcx, edge, node.next);
         } else {
@@ -1166,7 +1167,7 @@ function fillRightConvexEdgeEvent(tcx, edge, node) {
 function fillLeftAboveEdgeEvent(tcx, edge, node) {
     while (node.prev.point.x > edge.p.x) {
         // Check if next node is below the edge
-        if (orient2d(edge.q, node.prev.point, edge.p) === Orientation.CW) {
+        if (orient2d(edge.q, node.prev.point, edge.p, tcx.epsilon2) === Orientation.CW) {
             fillLeftBelowEdgeEvent(tcx, edge, node);
         } else {
             node = node.prev;
@@ -1176,7 +1177,7 @@ function fillLeftAboveEdgeEvent(tcx, edge, node) {
 
 function fillLeftBelowEdgeEvent(tcx, edge, node) {
     if (node.point.x > edge.p.x) {
-        if (orient2d(node.point, node.prev.point, node.prev.prev.point) === Orientation.CW) {
+        if (orient2d(node.point, node.prev.point, node.prev.prev.point, tcx.epsilon2) === Orientation.CW) {
             // Concave
             fillLeftConcaveEdgeEvent(tcx, edge, node);
         } else {
@@ -1190,13 +1191,13 @@ function fillLeftBelowEdgeEvent(tcx, edge, node) {
 
 function fillLeftConvexEdgeEvent(tcx, edge, node) {
     // Next concave or convex?
-    if (orient2d(node.prev.point, node.prev.prev.point, node.prev.prev.prev.point) === Orientation.CW) {
+    if (orient2d(node.prev.point, node.prev.prev.point, node.prev.prev.prev.point, tcx.epsilon2) === Orientation.CW) {
         // Concave
         fillLeftConcaveEdgeEvent(tcx, edge, node.prev);
     } else {
         // Convex
         // Next above or below edge?
-        if (orient2d(edge.q, node.prev.prev.point, edge.p) === Orientation.CW) {
+        if (orient2d(edge.q, node.prev.prev.point, edge.p, tcx.epsilon2) === Orientation.CW) {
             // Below
             fillLeftConvexEdgeEvent(tcx, edge, node.prev);
         } else {
@@ -1210,9 +1211,9 @@ function fillLeftConcaveEdgeEvent(tcx, edge, node) {
     fill(tcx, node.prev);
     if (node.prev.point !== edge.p) {
         // Next above or below edge?
-        if (orient2d(edge.q, node.prev.point, edge.p) === Orientation.CW) {
+        if (orient2d(edge.q, node.prev.point, edge.p, tcx.epsilon2) === Orientation.CW) {
             // Below
-            if (orient2d(node.point, node.prev.point, node.prev.prev.point) === Orientation.CW) {
+            if (orient2d(node.point, node.prev.point, node.prev.prev.point, tcx.epsilon2) === Orientation.CW) {
                 // Next is concave
                 fillLeftConcaveEdgeEvent(tcx, edge, node);
             } else {
@@ -1236,7 +1237,7 @@ function flipEdgeEvent(tcx, ep, eq, t, p) {
                 [p, op, t.getPoint((index + 1) % 3), t.getPoint((index + 2) % 3)]);
     }
 
-    if (inScanArea(p, t.pointCCW(p), t.pointCW(p), op)) {
+    if (inScanArea(p, t.pointCCW(p), t.pointCW(p), op, tcx.epsilon2)) {
         // Lets rotate shared edge one vertex CW
         rotateTrianglePair(t, p, ot, op);
         tcx.mapTriangleToNodes(t);
@@ -1258,12 +1259,12 @@ function flipEdgeEvent(tcx, ep, eq, t, p) {
                 /* jshint noempty:false */
             }
         } else {
-            var o = orient2d(eq, op, ep);
+            var o = orient2d(eq, op, ep, tcx.epsilon2);
             t = nextFlipTriangle(tcx, o, t, ot, p, op);
             flipEdgeEvent(tcx, ep, eq, t, p);
         }
     } else {
-        var newP = nextFlipPoint(ep, eq, ot, op);
+        var newP = nextFlipPoint(tcx, ep, eq, ot, op);
         flipScanEdgeEvent(tcx, ep, eq, t, ot, newP);
         edgeEventByPoints(tcx, ep, eq, t, p);
     }
@@ -1306,8 +1307,8 @@ function nextFlipTriangle(tcx, o, t, ot, p, op) {
  * the point in current triangle that is the opposite point to the next
  * triangle.
  */
-function nextFlipPoint(ep, eq, ot, op) {
-    var o2d = orient2d(eq, op, ep);
+function nextFlipPoint(tcx, ep, eq, ot, op) {
+    var o2d = orient2d(eq, op, ep, tcx.epsilon2);
     if (o2d === Orientation.CW) {
         // Right
         return ot.pointCCW(op);
@@ -1338,11 +1339,11 @@ function flipScanEdgeEvent(tcx, ep, eq, flip_triangle, t, p) {
 
     var op = ot.oppositePoint(t, p);
 
-    if (inScanArea(eq, flip_triangle.pointCCW(eq), flip_triangle.pointCW(eq), op)) {
+    if (inScanArea(eq, flip_triangle.pointCCW(eq), flip_triangle.pointCW(eq), op, tcx.epsilon2)) {
         // flip with new edge op.eq
         flipEdgeEvent(tcx, eq, op, ot, op);
     } else {
-        var newP = nextFlipPoint(ep, eq, ot, op);
+        var newP = nextFlipPoint(tcx, ep, eq, ot, op);
         flipScanEdgeEvent(tcx, ep, eq, flip_triangle, ot, newP);
     }
 }
@@ -1393,6 +1394,11 @@ var Node = AdvancingFront.Node;
  * PointSet width to both left and right.
  */
 var kAlpha = 0.3;
+
+/*
+ * Default number of significant digits of the input coordinates.
+ */
+var DEFAULT_PRECISION = 6;
 
 
 // -------------------------------------------------------------------------Edge
@@ -1457,6 +1463,8 @@ var EdgeEvent = function() {
  *                  (contour, holes). Points inside arrays are never copied.
  *                  Default is false : keep a reference to the array arguments,
  *                  who will be modified in place.
+ *    precision:    an integer specifying the number of significant digits of the input coordinates.
+ *                  Defaults to 6, ie good for coordinates precise up to 1E-6, usually in the range [-1.0, 1.0].
  * @param {Array} contour  array of "Point like" objects with {x,y} (duck typing)
  * @param {Object} options  constructor options
  */
@@ -1466,6 +1474,13 @@ var SweepContext = function(contour, options) {
     this.map_ = [];
     this.points_ = (options.cloneArrays ? contour.slice(0) : contour);
     this.edge_list = [];
+
+    var precision = +(options.precision || DEFAULT_PRECISION);
+    if (precision <= 0 || (precision % 1)) {
+        throw new RangeError("poly2tri SweepContext: precision not a positive integer: " + precision);
+    }
+    this.epsilon1 = Math.pow(10, -precision);
+    this.epsilon2 = Math.pow(10, -2 * precision); // squared
 
     // Bounding box of all points. Computed at the start of the triangulation, 
     // it is stored in case it is needed by the caller.
@@ -2167,9 +2182,6 @@ module.exports = Triangle;
 "use strict";
 
 
-var EPSILON = 1e-12;
-exports.EPSILON = EPSILON;
-
 var Orientation = {
     "CW": 1,
     "CCW": -1,
@@ -2189,12 +2201,14 @@ exports.Orientation = Orientation;
  * </pre>
  *
  * @param   pa,pb,pc   any "Point like" objects with {x,y} (duck typing)
+ * @param   {number} epsilon2   delta value for float comparisons. Coordinates are multiplied, so epsilon2
+ *                              should be the square of the coordinates precision.
  */
-function orient2d(pa, pb, pc) {
+function orient2d(pa, pb, pc, epsilon2) {
     var detleft = (pa.x - pc.x) * (pb.y - pc.y);
     var detright = (pa.y - pc.y) * (pb.x - pc.x);
     var val = detleft - detright;
-    if (val > -(EPSILON) && val < (EPSILON)) {
+    if (val > -epsilon2 && val < epsilon2) {
         return Orientation.COLLINEAR;
     } else if (val > 0) {
         return Orientation.CCW;
@@ -2208,15 +2222,17 @@ exports.orient2d = orient2d;
 /**
  *
  * @param   pa,pb,pc,pd   any "Point like" objects with {x,y} (duck typing)
+ * @param   {number} epsilon2   delta value for float comparisons. Coordinates are multiplied, so epsilon2
+ *                              should be the square of the coordinates precision.
  */
-function inScanArea(pa, pb, pc, pd) {
+function inScanArea(pa, pb, pc, pd, epsilon2) {
     var oadb = (pa.x - pb.x) * (pd.y - pb.y) - (pd.x - pb.x) * (pa.y - pb.y);
-    if (oadb >= -EPSILON) {
+    if (oadb >= -epsilon2) {
         return false;
     }
 
     var oadc = (pa.x - pc.x) * (pd.y - pc.y) - (pd.x - pc.x) * (pa.y - pc.y);
-    if (oadc <= EPSILON) {
+    if (oadc <= epsilon2) {
         return false;
     }
     return true;

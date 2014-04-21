@@ -13,9 +13,6 @@
 "use strict";
 
 
-var EPSILON = 1e-12;
-exports.EPSILON = EPSILON;
-
 var Orientation = {
     "CW": 1,
     "CCW": -1,
@@ -35,12 +32,14 @@ exports.Orientation = Orientation;
  * </pre>
  *
  * @param   pa,pb,pc   any "Point like" objects with {x,y} (duck typing)
+ * @param   {number} epsilon2   delta value for float comparisons. Coordinates are multiplied, so epsilon2
+ *                              should be the square of the coordinates precision.
  */
-function orient2d(pa, pb, pc) {
+function orient2d(pa, pb, pc, epsilon2) {
     var detleft = (pa.x - pc.x) * (pb.y - pc.y);
     var detright = (pa.y - pc.y) * (pb.x - pc.x);
     var val = detleft - detright;
-    if (val > -(EPSILON) && val < (EPSILON)) {
+    if (val > -epsilon2 && val < epsilon2) {
         return Orientation.COLLINEAR;
     } else if (val > 0) {
         return Orientation.CCW;
@@ -54,15 +53,17 @@ exports.orient2d = orient2d;
 /**
  *
  * @param   pa,pb,pc,pd   any "Point like" objects with {x,y} (duck typing)
+ * @param   {number} epsilon2   delta value for float comparisons. Coordinates are multiplied, so epsilon2
+ *                              should be the square of the coordinates precision.
  */
-function inScanArea(pa, pb, pc, pd) {
+function inScanArea(pa, pb, pc, pd, epsilon2) {
     var oadb = (pa.x - pb.x) * (pd.y - pb.y) - (pd.x - pb.x) * (pa.y - pb.y);
-    if (oadb >= -EPSILON) {
+    if (oadb >= -epsilon2) {
         return false;
     }
 
     var oadc = (pa.x - pc.x) * (pd.y - pc.y) - (pd.x - pc.x) * (pa.y - pc.y);
-    if (oadc <= EPSILON) {
+    if (oadc <= epsilon2) {
         return false;
     }
     return true;

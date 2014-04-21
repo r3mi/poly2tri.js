@@ -39,6 +39,11 @@ var Node = AdvancingFront.Node;
  */
 var kAlpha = 0.3;
 
+/*
+ * Default number of significant digits of the input coordinates.
+ */
+var DEFAULT_PRECISION = 6;
+
 
 // -------------------------------------------------------------------------Edge
 /**
@@ -102,6 +107,8 @@ var EdgeEvent = function() {
  *                  (contour, holes). Points inside arrays are never copied.
  *                  Default is false : keep a reference to the array arguments,
  *                  who will be modified in place.
+ *    precision:    an integer specifying the number of significant digits of the input coordinates.
+ *                  Defaults to 6, ie good for coordinates precise up to 1E-6, usually in the range [-1.0, 1.0].
  * @param {Array} contour  array of "Point like" objects with {x,y} (duck typing)
  * @param {Object} options  constructor options
  */
@@ -111,6 +118,13 @@ var SweepContext = function(contour, options) {
     this.map_ = [];
     this.points_ = (options.cloneArrays ? contour.slice(0) : contour);
     this.edge_list = [];
+
+    var precision = +(options.precision || DEFAULT_PRECISION);
+    if (precision <= 0 || (precision % 1)) {
+        throw new RangeError("poly2tri SweepContext: precision not a positive integer: " + precision);
+    }
+    this.epsilon1 = Math.pow(10, -precision);
+    this.epsilon2 = Math.pow(10, -2 * precision); // squared
 
     // Bounding box of all points. Computed at the start of the triangulation, 
     // it is stored in case it is needed by the caller.
