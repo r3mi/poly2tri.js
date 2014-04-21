@@ -133,6 +133,14 @@
         ]
     },
     {
+        "title": "Data extracted from poly2tri github issue #2",
+        "source": "https://github.com/r3mi/poly2tri.js/issues/2",
+        "files": [
+            {"name": "github_issue2/canada.dat", "content": "Canada (part)", "throws": "intersecting constraints ? XXX"},
+            {"name": "github_issue2/canada2.dat", "content": "Canada (another part)", "triangles": 177}
+        ]
+    },
+    {
         "title": "Misc test data",
         "files": [
             {"name": "intersecting.dat", "content": "Intersecting edges", "throws": "intersecting constraints: polygon with crossing paths"}
