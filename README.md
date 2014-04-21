@@ -22,7 +22,7 @@ poly2tri.js
 
 
 This document describes the JavaScript version of [poly2tri]. 
-Officially supported langages are C++ and Java : 
+Officially supported languages are C++ and Java :
 [poly2tri.js] is a community based port, currently based on 
 the "May 1, 2013" C++ version, with patches and JavaScript specificities.
 You can ask support in the [forum].
@@ -153,7 +153,7 @@ Advanced Options
 ### Error handling
 
 The library methods throw an exception for invalid input data,
-such as duplicated or colinear points.
+such as duplicated or collinear points.
 The exception object will contain a `points` array attribute with the
 faulty data, if available.
 
