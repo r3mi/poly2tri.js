@@ -710,11 +710,6 @@ function fillLeftConcaveEdgeEvent(tcx, edge, node) {
 
 function flipEdgeEvent(tcx, ep, eq, t, p) {
     var ot = t.neighborAcross(p);
-    if (!ot) {
-        // If we want to integrate the fillEdgeEvent do it here
-        // With current implementation we should never get here
-        throw new Error('poly2tri [BUG:FIXME] FLIP failed due to missing triangle!');
-    }
     var op = ot.oppositePoint(t, p);
 
     // Additional check from Java version (see issue #88)
@@ -822,23 +817,11 @@ function nextFlipPoint(ep, eq, ot, op) {
  */
 function flipScanEdgeEvent(tcx, ep, eq, flip_triangle, t, p) {
     var ot = t.neighborAcross(p);
-    if (!ot) {
-        // If we want to integrate the fillEdgeEvent do it here
-        // With current implementation we should never get here
-        throw new Error('poly2tri [BUG:FIXME] FLIP failed due to missing triangle');
-    }
     var op = ot.oppositePoint(t, p);
 
     if (inScanArea(eq, flip_triangle.pointCCW(eq), flip_triangle.pointCW(eq), op)) {
         // flip with new edge op.eq
         flipEdgeEvent(tcx, eq, op, ot, op);
-        // TODO: Actually I just figured out that it should be possible to
-        //       improve this by getting the next ot and op before the the above
-        //       flip and continue the flipScanEdgeEvent here
-        // set new ot and op here and loop back to inScanArea test
-        // also need to set a new flip_triangle first
-        // Turns out at first glance that this is somewhat complicated
-        // so it will have to wait.
     } else {
         var newP = nextFlipPoint(ep, eq, ot, op);
         flipScanEdgeEvent(tcx, ep, eq, flip_triangle, ot, newP);
