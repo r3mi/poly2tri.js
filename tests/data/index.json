@@ -131,5 +131,11 @@
             {"name": "issue1/t.dat", "content": "Letter t", "triangles": 19},
             {"name": "issue1/x.dat", "content": "Letter x", "triangles": 13}
         ]
+    },
+    {
+        "title": "Misc test data",
+        "files": [
+            {"name": "intersecting.dat", "content": "Intersecting edges", "throws": "intersecting constraints: polygon with crossing paths"}
+        ]
     }
 ]
