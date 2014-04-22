@@ -137,7 +137,7 @@
         "title": "Data extracted from poly2tri github issue #2",
         "source": "https://github.com/r3mi/poly2tri.js/issues/2",
         "files": [
-            {"name": "github_issue2/canada.dat", "content": "Canada (part)", "throws": "intersecting constraints ? XXX"},
+            {"name": "github_issue2/canada.dat", "content": "Canada (part)", "throws": "intersecting constraints (in Nova Scotia)"},
             {"name": "github_issue2/canada2.dat", "content": "Canada (another part)", "triangles": 177}
         ]
     },
