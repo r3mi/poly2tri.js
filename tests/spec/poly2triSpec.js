@@ -434,30 +434,6 @@ describe("poly2tri", function() {
                 expect(t).toContainPoints([contour, hole]);
             });
         });
-        describe("a polygon containing 1 hole", function() {
-            var contour, hole;
-            beforeEach(function() {
-                // same as issue #44
-                contour = makePoints([71, 161, 100, 66, 280, 97, 282, 223, 201, 238, 75, 243]);
-                hole = makePoints([101, 102, 103, 204, 205, 206, 207, 108]);
-            });
-            it("should triangulate", function() {
-                var swctx = new p2t.SweepContext(contour, options);
-                swctx.addHole(hole);
-                swctx.triangulate();
-                var t = swctx.getTriangles();
-                expect(t).toBeTruthy();
-                // should return 10 triangles
-                expect(t.length).toBe(10);
-                // should have a bounding box
-                expect(swctx.getBoundingBox().min).toEqualPoint({x: 71, y: 66});
-                expect(swctx.getBoundingBox().max).toEqualPoint({x: 282, y: 243});
-                // should be in the contour and hole
-                expect(t).toBeInPoints([contour, hole]);
-                // should contain the contour and hole
-                expect(t).toContainPoints([contour, hole]);
-            });
-        });
         describe("a polygon containing 1 hole and 2 Steiner points", function() {
             var contour, hole, points;
             beforeEach(function() {

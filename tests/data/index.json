@@ -38,6 +38,7 @@
                 "holes": "issue39_holes.dat", "steiner": "issue39_steiner.dat",
                 "triangles": 143
             },
+            {"name": "issue44.dat", "holes": "issue44_hole.dat", "triangles": 10},
             {"name": "issue49.dat", "content": "Approximated circle", "triangles": 22},
             {"name": "issue53.dat", "holes": "issue53_hole.dat", "triangles": 10},
             {"name": "issue58.dat", "content": "Long losange", "triangles": 4},
