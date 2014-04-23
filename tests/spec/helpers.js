@@ -37,6 +37,98 @@
 
 "use strict";
 
+
+/**
+ * Parse a string of floats, ignoring any separators between values
+ * @param {String} str
+ * @returns {Array<number>} parsed floats
+ */
+exports.parseFloats = function (str) {
+    var floats = str.split(/[^-+eE\.\d]+/).map(parseFloat).filter(function (val) {
+        return !isNaN(val);
+    });
+    return floats;
+};
+
+
+/**
+ * Simple polygon generation (star shaped)
+ * See http://stackoverflow.com/questions/8997099/algorithm-to-generate-random-2d-polygon
+ *
+ * @param {Function} rnd    generate a random float in the interval [0;1[
+ * @param {number} n        number of vertices
+ * @returns {Array<number>} array of vertices (x then y)
+ */
+exports.randomPolygon = function (rnd, n) {
+    var i, theta = [], rho, x, y, points = [];
+    for (i = 0; i < n; i++) {
+        theta.push(rnd() * Math.PI * 2);
+    }
+    theta.sort();
+    for (i = 0; i < n; i++) {
+        rho = rnd() * 200;
+        // pol2cart
+        x = rho * Math.cos(theta[i]);
+        y = rho * Math.sin(theta[i]);
+        points.push(500 + x, 500 + y);
+    }
+    return points;
+};
+
+
+/**
+ * Checks that all the triangles vertices are in the list of points
+ * @param {Array<Triangle>} triangles       array of triangles
+ * @param {Array<Array{x,y}>} pointsLists   array of array of Points
+ * @returns {Triangle} a triangle failing the test, or null if success
+ */
+exports.testTrianglesToBeInPoints = function (triangles, pointsLists) {
+    var i, tlen = triangles.length, failed = null;
+    for (i = 0; i < tlen && !failed; i++) {
+        var triangle = triangles[i], found0 = false, found1 = false, found2 = false;
+        /* jshint loopfunc:true */
+        pointsLists.forEach(function (points) {
+            var j, plen = points.length;
+            for (j = 0; j < plen && !(found0 && found1 && found2); j++) {
+                var point = points[j];
+                // Here we are comparing point references, not values
+                found0 = found0 || (triangle.getPoint(0) === point);
+                found1 = found1 || (triangle.getPoint(1) === point);
+                found2 = found2 || (triangle.getPoint(2) === point);
+            }
+        });
+        if (!(found0 && found1 && found2)) {
+            failed = triangle;
+        }
+    }
+    return failed;
+};
+
+
+/**
+ * Checks that all the points are in at least one triangle
+ * @param {Array<Triangle>} triangles       array of triangles
+ * @param {Array<Array{x,y}>} pointsLists   array of array of Points
+ * @returns {Point} a point failing the test, or null if success
+ */
+exports.testTrianglesToContainPoints = function (triangles, pointsLists) {
+    var failed = null;
+    pointsLists.forEach(function (points) {
+        var i, plen = points.length;
+        for (i = 0; i < plen && !failed; i++) {
+            var point = points[i], found = false, j, tlen = triangles.length;
+            for (j = 0; j < tlen && !found; j++) {
+                found = found || triangles[j].containsPoint(point);
+            }
+            if (!found) {
+                failed = point;
+            }
+        }
+    });
+    return failed;
+};
+
+
 /**
  * Compute the number of expected triangles for a triangulation.
  * For Steiner points, works only if all the points are inside the polygon.
@@ -47,7 +139,7 @@
  */
 exports.computeExpectedNumberOfTriangles = function (contour, holes, steiner) {
     contour = contour || [];
-    holes   = holes   || [];
+    holes = holes || [];
     steiner = steiner || [];
     //
     // Every triangulation of an n-sided polygon (without holes or steiner points)

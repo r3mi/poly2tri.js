@@ -107,89 +107,13 @@ describe("poly2tri", function() {
         return points;
     }
 
-    // Simple polygon generation (star shaped)
-    // http://stackoverflow.com/questions/8997099/algorithm-to-generate-random-2d-polygon
-    //
-    // @param {Function} generator  generate a random float in the interval [0;1[
-    function randomPolygon(generator, n) {
-        var i, theta = [], rho, x, y, points = [];
-        for (i = 0; i < n; i++) {
-            theta.push(generator() * Math.PI * 2);
-        }
-        theta.sort();
-        for (i = 0; i < n; i++) {
-            rho = generator() * 200;
-            // pol2cart
-            x = rho * Math.cos(theta[i]);
-            y = rho * Math.sin(theta[i]);
-            points.push(500 + x, 500 + y);
-        }
-        return points;
-    }
-
-
-    /**
-     * Checks that all the triangles vertices are in the list of points
-     * @param   triangles   array of triangles
-     * @param   pointslists array of array of Points
-     * @returns a triangle failing the test, or null if success
-     */
-    function testTrianglesToBeInPoints(triangles, pointslists) {
-        var i, tlen = triangles.length, failed = null;
-        for (i = 0; i < tlen && !failed; i++) {
-            var triangle = triangles[i], found0 = false, found1 = false, found2 = false;
-            /* jshint loopfunc:true */
-            pointslists.forEach(function(points) {
-                var j, plen = points.length;
-                for (j = 0; j < plen && !(found0 && found1 && found2); j++) {
-                    var point = points[j];
-                    // Here we are comparing point references, not values
-                    found0 = found0 || (triangle.getPoint(0) === point);
-                    found1 = found1 || (triangle.getPoint(1) === point);
-                    found2 = found2 || (triangle.getPoint(2) === point);
-                }
-            });
-            if (!(found0 && found1 && found2)) {
-                failed = triangle;
-            }
-        }
-        return failed;
-    }
-
-    /**
-     * Checks that all the points are in at least one triangle
-     * @param   triangles   array of triangles
-     * @param   pointslists array of array of Points
-     * @returns a point failing the test, or null if success
-     */
-    function testTrianglesToContainPoints(triangles, pointslists) {
-        var failed = null;
-        pointslists.forEach(function(points) {
-            var i, plen = points.length;
-            for (i = 0; i < plen && !failed; i++) {
-                var point = points[i], found = false, j, tlen = triangles.length;
-                for (j = 0; j < tlen && !found; j++) {
-                    found = found || triangles[j].containsPoint(point);
-                }
-                if (!found) {
-                    failed = point;
-                }
-            }
-        });
-        return failed;
-    }
-
-
     /**
      * Parse points coordinates : pairs of x y, with any separator between coordinates
      * @param {String} str
-     * @returns {Array<Point>}  points 
+     * @returns {Array<Point>}  points
      */
     function parsePoints(str) {
-        var floats = str.split(/[^-+eE\.\d]+/).map(parseFloat).filter(function(val) {
-            return !isNaN(val);
-        });
-        return makePoints(floats);
+        return makePoints(helpers.parseFloats(str));
     }
 
 
@@ -248,7 +172,7 @@ describe("poly2tri", function() {
             // Checks that all the triangles vertices are in the list of points
             toBeInPoints: function(pointslists) {
                 var triangles = this.actual, failed;
-                failed = testTrianglesToBeInPoints(triangles, pointslists);
+                failed = helpers.testTrianglesToBeInPoints(triangles, pointslists);
                 // Customize message for easier debugging
                 // (because of isNot, message might be printed event if !failed)
                 this.message = function() {
@@ -260,7 +184,7 @@ describe("poly2tri", function() {
             // Checks that all the points are in at least one triangle
             toContainPoints: function(pointslists) {
                 var triangles = this.actual, failed;
-                failed = testTrianglesToContainPoints(triangles, pointslists);
+                failed = helpers.testTrianglesToContainPoints(triangles, pointslists);
                 // Customize message for easier debugging
                 // (because of isNot, message might be printed event if !failed)
                 this.message = function() {
@@ -548,7 +472,7 @@ describe("poly2tri", function() {
             beforeEach(function() {
                 // pseudo-random generator with known seed, so that test is repeatable
                 var m = new MersenneTwister(3756);
-                contour = randomPolygon(function() {
+                contour = helpers.randomPolygon(function() {
                     return m.rnd();
                 }, max);
                 contour = makePoints(contour);
@@ -571,7 +495,7 @@ describe("poly2tri", function() {
             beforeEach(function() {
                 // pseudo-random generator with known seed, so that test is repeatable
                 var m = new MersenneTwister(235336);
-                contour = randomPolygon(function() {
+                contour = helpers.randomPolygon(function() {
                     return m.rnd();
                 }, max);
                 contour = makePoints(contour);
