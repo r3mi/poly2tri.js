@@ -466,8 +466,8 @@ function rotateTrianglePair(t, p, ot, op) {
     //      what side should be assigned to what neighbor after the
     //      rotation. Now mark neighbor does lots of testing to find
     //      the right side.
-    t.clearNeigbors();
-    ot.clearNeigbors();
+    t.clearNeighbors();
+    ot.clearNeighbors();
     if (n1) {
         ot.markNeighbor(n1);
     }
@@ -771,7 +771,7 @@ function nextFlipTriangle(tcx, o, t, ot, p, op) {
         edge_index = ot.edgeIndex(p, op);
         ot.delaunay_edge[edge_index] = true;
         legalize(tcx, ot);
-        ot.clearDelunayEdges();
+        ot.clearDelaunayEdges();
         return t;
     }
 
@@ -780,7 +780,7 @@ function nextFlipTriangle(tcx, o, t, ot, p, op) {
 
     t.delaunay_edge[edge_index] = true;
     legalize(tcx, t);
-    t.clearDelunayEdges();
+    t.clearDelaunayEdges();
     return ot;
 }
 

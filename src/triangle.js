@@ -145,13 +145,13 @@ Triangle.prototype.markNeighbor = function(t) {
 };
 
 
-Triangle.prototype.clearNeigbors = function() {
+Triangle.prototype.clearNeighbors = function() {
     this.neighbors_[0] = null;
     this.neighbors_[1] = null;
     this.neighbors_[2] = null;
 };
 
-Triangle.prototype.clearDelunayEdges = function() {
+Triangle.prototype.clearDelaunayEdges = function() {
     this.delaunay_edge[0] = false;
     this.delaunay_edge[1] = false;
     this.delaunay_edge[2] = false;
