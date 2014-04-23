@@ -59,7 +59,7 @@ var readFileSync;
 if (process.browser) {
     /**
      * Read an external data file.
-     * Done synchroneously, to simplify and avoid using jasmine's waitsFor/runs
+     * Done synchronously, to simplify and avoid using jasmine's waitsFor/runs
      * @param {String} filename
      * @param {String} dataType     see jQuery.Ajax dataType (default: Intelligent Guess)
      * @returns {String}    file content, undefined if problem
@@ -107,6 +107,8 @@ describe("poly2tri", function() {
 
     // Simple polygon generation (star shaped)
     // http://stackoverflow.com/questions/8997099/algorithm-to-generate-random-2d-polygon
+    //
+    // @param {Function} generator  generate a random float in the interval [0;1[
     function randomPolygon(generator, n) {
         var i, theta = [], rho, x, y, points = [];
         for (i = 0; i < n; i++) {
