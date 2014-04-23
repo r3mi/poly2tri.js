@@ -96,6 +96,8 @@ describe("poly2tri", function() {
      */
     var MersenneTwister = require('mersennetwister');
 
+    var helpers = require('./helpers');
+
     // Creates list of Point from list of coordinates [ x1, y1, x2, y2 ...]
     function makePoints(a) {
         var i, len = a.length, points = [];
@@ -708,12 +710,11 @@ describe("poly2tri", function() {
                                 swctx.addPoints(points).triangulate();
                                 var t = swctx.getTriangles();
                                 expect(t).toBeTruthy();
-                                // should return enough triangles
-                                if (file.triangles) {
-                                    expect(t.length).toBe(file.triangles);
-                                } else {
-                                    expect(t.length).toBeGreaterThan(contour.length / 3);
-                                }
+                                // Should return the expected number of triangles
+                                // (the theoretical expected number of triangles can be overwritten in the data file
+                                // for special cases i.e. Steiner points outside the contour).
+                                var nb_triangles = file.triangles || helpers.computeExpectedNumberOfTriangles(contour, holes, points);
+                                expect(t.length).toBe(nb_triangles);
                                 // should have a bounding box
                                 expect(swctx.getBoundingBox().min).toEqual(jasmine.any(p2t.Point));
                                 expect(swctx.getBoundingBox().max).toEqual(jasmine.any(p2t.Point));

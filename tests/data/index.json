@@ -3,26 +3,23 @@
         "title": "Data copied from poly2tri c++ testbed",
         "source": "https://code.google.com/p/poly2tri/source/browse/#hg%2Ftestbed%2Fdata",
         "files": [
-            {"name": "2.dat", "demo": true, "content": "2", "triangles": 58},
-            {"name": "bird.dat", "demo": true, "content": "Bird", "triangles": 273},
+            {"name": "2.dat", "demo": true, "content": "2"},
+            {"name": "bird.dat", "demo": true, "content": "Bird"},
             {"name": "custom.dat", "throws": "intersecting constraints: polygon with crossing paths"},
-            {"name": "debug.dat", "demo": true, "content": "Butterfly-like polygon", "triangles": 198},
-            {"name": "diamond.dat", "demo": true, "content": "Diamond", "triangles": 8},
-            {"name": "dude.dat", "demo": true, "content": "Dude shape", "triangles": 92},
-            {
-                "name": "dude.dat", "demo": true, "holes": "dude_holes.dat",
-                "content": "Dude with 2 holes", "triangles": 106
-            },
-            {"name": "funny.dat", "demo": false, "content": "Funny polygon", "triangles": 98},
-            {"name": "kzer-za.dat", "demo": true, "content": "Kzer-Za Dreadnought", "triangles": 206},
-            {"name": "nazca_heron.dat", "demo": true, "content": "Nazca heron", "triangles": 1034},
-            {"name": "nazca_monkey.dat", "demo": true, "content": "Nazca monkey", "triangles": 1202},
+            {"name": "debug.dat", "demo": true, "content": "Butterfly-like polygon"},
+            {"name": "diamond.dat", "demo": true, "content": "Diamond"},
+            {"name": "dude.dat", "demo": true, "content": "Dude shape"},
+            {"name": "dude.dat", "demo": true, "holes": "dude_holes.dat", "content": "Dude with 2 holes"},
+            {"name": "funny.dat", "demo": false, "content": "Funny polygon"},
+            {"name": "kzer-za.dat", "demo": true, "content": "Kzer-Za Dreadnought"},
+            {"name": "nazca_heron.dat", "demo": true, "content": "Nazca heron"},
+            {"name": "nazca_monkey.dat", "demo": true, "content": "Nazca monkey"},
             {"name": "sketchup.dat", "throws": "repeated points"},
-            {"name": "star.dat", "demo": true, "content": "Star", "triangles": 8},
-            {"name": "strange.dat", "content": "origami ?", "triangles": 14},
-            {"name": "tank.dat", "demo": true, "content": "Tank", "triangles": 53},
-            {"name": "test.dat", "triangles": 4},
-            {"name": "debug2.dat", "demo": true, "content": "10000 vertices", "triangles": 9998}
+            {"name": "star.dat", "demo": true, "content": "Star"},
+            {"name": "strange.dat", "content": "origami ?"},
+            {"name": "tank.dat", "demo": true, "content": "Tank"},
+            {"name": "test.dat"},
+            {"name": "debug2.dat", "demo": true, "content": "10000 vertices"}
         ]
     },
     {
@@ -35,15 +32,14 @@
             },
             {
                 "name": "issue39.dat", "demo": true, "content": "Brokepolygon with points",
-                "holes": "issue39_holes.dat", "steiner": "issue39_steiner.dat",
-                "triangles": 143
+                "holes": "issue39_holes.dat", "steiner": "issue39_steiner.dat"
             },
-            {"name": "issue44.dat", "holes": "issue44_hole.dat", "triangles": 10},
-            {"name": "issue49.dat", "content": "Approximated circle", "triangles": 22},
-            {"name": "issue53.dat", "holes": "issue53_hole.dat", "triangles": 10},
-            {"name": "issue58.dat", "content": "Long losange", "triangles": 4},
-            {"name": "issue79.dat", "triangles": 45},
-            {"name": "issue79_1.dat", "triangles": 513},
+            {"name": "issue44.dat", "holes": "issue44_hole.dat"},
+            {"name": "issue49.dat", "content": "Approximated circle"},
+            {"name": "issue53.dat", "holes": "issue53_hole.dat"},
+            {"name": "issue58.dat", "content": "Long losange"},
+            {"name": "issue79.dat"},
+            {"name": "issue79_1.dat"},
             {"name": "issue88.dat", "holes": "issue88_hole.dat", "throws": "intersecting constraints"}
         ]
     },
@@ -56,25 +52,25 @@
             {"name": "issue34/assertion.dat", "throws": "NextFlipPoint: opposing point on constrained edge!"},
             {"name": "issue34/overflow2.dat", "throws": "RangeError: Maximum call stack size exceeded"},
             {"name": "issue34/dump.dat", "throws": "RangeError: Maximum call stack size exceeded"},
-            {"name": "issue34/dump_.dat", "triangles": 354},
-            {"name": "issue34/dump157.dat", "triangles": 87},
-            {"name": "issue34/dump438.dat", "triangles": 262},
-            {"name": "issue34/dump495.dat", "triangles": 243},
-            {"name": "issue34/dump542.dat", "triangles": 256},
-            {"name": "issue34/dump591.dat", "triangles": 223},
-            {"name": "issue34/dump594.dat", "triangles": 292},
-            {"name": "issue34/dump621.dat", "triangles": 291},
-            {"name": "issue34/dump627.dat", "triangles": 214},
-            {"name": "issue34/dump640.dat", "triangles": 255},
-            {"name": "issue34/dump675.dat", "triangles": 283},
-            {"name": "issue34/dump690.dat", "triangles": 261},
-            {"name": "issue34/dump720.dat", "triangles": 360},
-            {"name": "issue34/dump737.dat", "triangles": 340},
-            {"name": "issue34/dump805.dat", "demo": true, "content": "Long polygon", "triangles": 446},
-            {"name": "issue34/dump857.dat", "triangles": 343},
-            {"name": "issue34/dump862.dat", "triangles": 312},
-            {"name": "issue34/dump910.dat", "triangles": 359},
-            {"name": "issue34/dump1208.dat", "demo": true, "content": "Big roundish polygon", "triangles": 380},
+            {"name": "issue34/dump_.dat"},
+            {"name": "issue34/dump157.dat"},
+            {"name": "issue34/dump438.dat"},
+            {"name": "issue34/dump495.dat"},
+            {"name": "issue34/dump542.dat"},
+            {"name": "issue34/dump591.dat"},
+            {"name": "issue34/dump594.dat"},
+            {"name": "issue34/dump621.dat"},
+            {"name": "issue34/dump627.dat"},
+            {"name": "issue34/dump640.dat"},
+            {"name": "issue34/dump675.dat"},
+            {"name": "issue34/dump690.dat"},
+            {"name": "issue34/dump720.dat"},
+            {"name": "issue34/dump737.dat"},
+            {"name": "issue34/dump805.dat", "demo": true, "content": "Long polygon"},
+            {"name": "issue34/dump857.dat"},
+            {"name": "issue34/dump862.dat"},
+            {"name": "issue34/dump910.dat"},
+            {"name": "issue34/dump1208.dat", "demo": true, "content": "Big roundish polygon"},
             {
                 "name": "issue34/square_1e-14.dat", "holes": "issue34/square_1e-14_holes.dat",
                 "content": "Square with 2 holes whose edge differs < ε",
@@ -87,14 +83,14 @@
         "source": "https://groups.google.com/forum/?fromgroups=#!topic/poly2tri/H1OzouuOZ_s",
         "files": [
             {"name": "map_invalid.dat", "content": "Map indoor", "throws": "weak polygon with touching edges"},
-            {"name": "map_fixed.dat", "demo": true, "content": "Map indoor", "triangles": 121}
+            {"name": "map_fixed.dat", "demo": true, "content": "Map indoor"}
         ]
     },
     {
         "title": "Data extracted from poly2tri forum 'Allow touching holes within the polygon'",
         "source": "https://groups.google.com/forum/#!topic/poly2tri/Lep0ajMp_T8",
         "files": [
-            {"name": "forum_2013-08-01.dat", "holes": "forum_2013-08-01_hole.dat", "triangles": 129}
+            {"name": "forum_2013-08-01.dat", "holes": "forum_2013-08-01_hole.dat"}
         ]
     },
     {
@@ -103,8 +99,7 @@
         "files": [
             {
                 "name": "road_on_grid.dat", "content": "road hole on regular grid [XXX BAD]",
-                "holes": "road_on_grid_hole.dat", "steiner": "road_on_grid_steiner.dat",
-                "triangles": 1040
+                "holes": "road_on_grid_hole.dat", "steiner": "road_on_grid_steiner.dat"
             }
         ]
     },
@@ -112,25 +107,25 @@
         "title": "France borders",
         "source": "http://commons.wikimedia.org/wiki/File:Blank_France_map,_no_Departments.svg",
         "files": [
-            {"name": "France.dat", "demo": true, "content": "France", "triangles": 768}
+            {"name": "France.dat", "demo": true, "content": "France"}
         ]
     },
     {
         "title": "Berkeley CS 274 tests",
         "source": "http://www.cs.berkeley.edu/~jrs/274s03/proj.html",
         "files": [
-            {"name": "spiral.dat", "demo": true, "content": "Spiral", "triangles": 13}
+            {"name": "spiral.dat", "demo": true, "content": "Spiral"}
         ]
     },
     {
         "title": "Data extracted from poly2tri issue #1",
         "source": "https://code.google.com/p/poly2tri/issues/detail?id=1",
         "files": [
-            {"name": "issue1/T_uppercase.dat", "content": "Letter T", "triangles": 6},
-            {"name": "issue1/a.dat", "content": "Letter a", "holes": "issue1/a_hole.dat", "triangles": 61},
-            {"name": "issue1/e.dat", "demo": true, "content": "Letter e", "holes": "issue1/e_hole.dat", "triangles": 49},
-            {"name": "issue1/t.dat", "content": "Letter t", "triangles": 19},
-            {"name": "issue1/x.dat", "content": "Letter x", "triangles": 13}
+            {"name": "issue1/T_uppercase.dat", "content": "Letter T"},
+            {"name": "issue1/a.dat", "content": "Letter a", "holes": "issue1/a_hole.dat"},
+            {"name": "issue1/e.dat", "demo": true, "content": "Letter e", "holes": "issue1/e_hole.dat"},
+            {"name": "issue1/t.dat", "content": "Letter t"},
+            {"name": "issue1/x.dat", "content": "Letter x"}
         ]
     },
     {
@@ -138,7 +133,7 @@
         "source": "https://github.com/r3mi/poly2tri.js/issues/2",
         "files": [
             {"name": "github_issue2/canada.dat", "content": "Canada (part)", "throws": "intersecting constraints (in Nova Scotia)"},
-            {"name": "github_issue2/canada2.dat", "content": "Canada (another part)", "triangles": 177}
+            {"name": "github_issue2/canada2.dat", "content": "Canada (another part)"}
         ]
     },
     {
