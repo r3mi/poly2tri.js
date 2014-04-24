@@ -35,6 +35,7 @@
                 "holes": "issue39_holes.dat", "steiner": "issue39_steiner.dat"
             },
             {"name": "issue44.dat", "holes": "issue44_hole.dat"},
+            {"name": "issue48_square.dat", "TODO" : "XXX FIXME triangulation is not a cdt"},
             {"name": "issue49.dat", "content": "Approximated circle"},
             {"name": "issue53.dat", "holes": "issue53_hole.dat"},
             {"name": "issue58.dat", "content": "Long losange"},
@@ -94,12 +95,13 @@
         ]
     },
     {
-        "title": "Data extracted from poly2tri forum 'Strange results'",
+        "title": "Data extracted from poly2tri forum 'Strange results'. Also issue #48",
         "source": "https://groups.google.com/forum/#!topic/poly2tri/5cgj8241Qwo",
         "files": [
             {
-                "name": "road_on_grid.dat", "content": "road hole on regular grid [XXX BAD]",
-                "holes": "road_on_grid_hole.dat", "steiner": "road_on_grid_steiner.dat"
+                "name": "road_on_grid.dat", "content": "road hole on regular grid",
+                "holes": "road_on_grid_hole.dat", "steiner": "road_on_grid_steiner.dat",
+                "TODO": "XXX FIXME strange result / fix issue #48"
             }
         ]
     },
