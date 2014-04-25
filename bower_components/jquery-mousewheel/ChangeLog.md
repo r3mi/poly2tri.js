@@ -1,5 +1,15 @@
 # Mouse Wheel ChangeLog
 
+## 3.1.11
+
+* Fix version number for package managers...
+
+## 3.1.10
+
+* Fix issue with calculating line height when using older versions of jQuery
+* Add offsetX/Y normalization with setting to turn it off
+* Cleans up data on teardown
+
 ## 3.1.9
 
 * Fix bower.json file
