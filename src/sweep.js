@@ -27,6 +27,7 @@
  * functions could be declared as methods on the SweepContext object.
  */
 
+var assert = require('./assert');
 var PointError = require('./pointerror');
 var Triangle = require('./triangle');
 var Node = require('./advancingfront').Node;
@@ -710,6 +711,8 @@ function fillLeftConcaveEdgeEvent(tcx, edge, node) {
 
 function flipEdgeEvent(tcx, ep, eq, t, p) {
     var ot = t.neighborAcross(p);
+    assert(ot, "FLIP failed due to missing triangle!");
+
     var op = ot.oppositePoint(t, p);
 
     // Additional check from Java version (see issue #88)
@@ -817,6 +820,8 @@ function nextFlipPoint(ep, eq, ot, op) {
  */
 function flipScanEdgeEvent(tcx, ep, eq, flip_triangle, t, p) {
     var ot = t.neighborAcross(p);
+    assert(ot, "FLIP failed due to missing triangle");
+
     var op = ot.oppositePoint(t, p);
 
     if (inScanArea(eq, flip_triangle.pointCCW(eq), flip_triangle.pointCW(eq), op)) {

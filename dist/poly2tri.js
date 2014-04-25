@@ -151,6 +151,40 @@ module.exports.Node = Node;
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
+ *
+ * poly2tri.js (JavaScript port) (c) 2009-2014, Poly2Tri Contributors
+ * https://github.com/r3mi/poly2tri.js
+ *
+ * All rights reserved.
+ *
+ * Distributed under the 3-clause BSD License, see LICENSE.txt
+ */
+
+"use strict";
+
+/*
+ * Function added in the JavaScript version (was not present in the c++ version)
+ */
+
+/**
+ * assert and throw an exception.
+ *
+ * @param {boolean} condition   the condition which is asserted
+ * @param {string} message      the message which is display is condition is falsy
+ */
+function assert(condition, message) {
+    if (!condition) {
+        throw new Error(message || "Assert Failed");
+    }
+}
+module.exports = assert;
+
+
+
+},{}],4:[function(_dereq_,module,exports){
+/*
+ * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
+ * http://code.google.com/p/poly2tri/
  * 
  * poly2tri.js (JavaScript port) (c) 2009-2014, Poly2Tri Contributors
  * https://github.com/r3mi/poly2tri.js
@@ -392,7 +426,7 @@ Point.dot = function(a, b) {
 
 module.exports = Point;
 
-},{"./xy":10}],4:[function(_dereq_,module,exports){
+},{"./xy":11}],5:[function(_dereq_,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -432,7 +466,7 @@ PointError.prototype.constructor = PointError;
 
 module.exports = PointError;
 
-},{"./xy":10}],5:[function(_dereq_,module,exports){
+},{"./xy":11}],6:[function(_dereq_,module,exports){
 (function (global){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
@@ -501,7 +535,7 @@ exports.triangulate = sweep.triangulate;
 exports.sweep = {Triangulate: sweep.triangulate};
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../dist/version.json":1,"./point":3,"./pointerror":4,"./sweep":6,"./sweepcontext":7,"./triangle":8}],6:[function(_dereq_,module,exports){
+},{"../dist/version.json":1,"./point":4,"./pointerror":5,"./sweep":7,"./sweepcontext":8,"./triangle":9}],7:[function(_dereq_,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -531,6 +565,7 @@ exports.sweep = {Triangulate: sweep.triangulate};
  * functions could be declared as methods on the SweepContext object.
  */
 
+var assert = _dereq_('./assert');
 var PointError = _dereq_('./pointerror');
 var Triangle = _dereq_('./triangle');
 var Node = _dereq_('./advancingfront').Node;
@@ -1214,6 +1249,8 @@ function fillLeftConcaveEdgeEvent(tcx, edge, node) {
 
 function flipEdgeEvent(tcx, ep, eq, t, p) {
     var ot = t.neighborAcross(p);
+    assert(ot, "FLIP failed due to missing triangle!");
+
     var op = ot.oppositePoint(t, p);
 
     // Additional check from Java version (see issue #88)
@@ -1321,6 +1358,8 @@ function nextFlipPoint(ep, eq, ot, op) {
  */
 function flipScanEdgeEvent(tcx, ep, eq, flip_triangle, t, p) {
     var ot = t.neighborAcross(p);
+    assert(ot, "FLIP failed due to missing triangle");
+
     var op = ot.oppositePoint(t, p);
 
     if (inScanArea(eq, flip_triangle.pointCCW(eq), flip_triangle.pointCW(eq), op)) {
@@ -1337,7 +1376,7 @@ function flipScanEdgeEvent(tcx, ep, eq, flip_triangle, t, p) {
 
 exports.triangulate = triangulate;
 
-},{"./advancingfront":2,"./pointerror":4,"./triangle":8,"./utils":9}],7:[function(_dereq_,module,exports){
+},{"./advancingfront":2,"./assert":3,"./pointerror":5,"./triangle":9,"./utils":10}],8:[function(_dereq_,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -1697,7 +1736,7 @@ SweepContext.prototype.meshClean = function(triangle) {
 
 module.exports = SweepContext;
 
-},{"./advancingfront":2,"./point":3,"./pointerror":4,"./sweep":6,"./triangle":8}],8:[function(_dereq_,module,exports){
+},{"./advancingfront":2,"./point":4,"./pointerror":5,"./sweep":7,"./triangle":9}],9:[function(_dereq_,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -2136,7 +2175,7 @@ Triangle.prototype.markConstrainedEdgeByPoints = function(p, q) {
 
 module.exports = Triangle;
 
-},{"./xy":10}],9:[function(_dereq_,module,exports){
+},{"./xy":11}],10:[function(_dereq_,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -2219,7 +2258,7 @@ module.exports = {
     inScanArea: inScanArea
 };
 
-},{}],10:[function(_dereq_,module,exports){
+},{}],11:[function(_dereq_,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -2286,6 +2325,6 @@ module.exports = {
     equals: equals
 };
 
-},{}]},{},[5])
-(5)
+},{}]},{},[6])
+(6)
 });
