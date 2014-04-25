@@ -37,13 +37,12 @@ var Node = require('./advancingfront').Node;
 
 var utils = require('./utils');
 
-var PI_3div4 = 3 * Math.PI / 4;
-var PI_div2 = Math.PI / 2;
 var EPSILON = utils.EPSILON;
 
 var Orientation = utils.Orientation;
 var orient2d = utils.orient2d;
 var inScanArea = utils.inScanArea;
+var isAngleObtuse = utils.isAngleObtuse;
 
 
 // ------------------------------------------------------------------------Sweep
@@ -231,12 +230,10 @@ function fill(tcx, node) {
 function fillAdvancingFront(tcx, n) {
     // Fill right holes
     var node = n.next;
-    var angle;
     while (node.next) {
         // TODO integrate here changes from C++ version
         // (C++ repo revision acf81f1f1764 dated April 7, 2012)
-        angle = holeAngle(node);
-        if (angle > PI_div2 || angle < -(PI_div2)) {
+        if (isAngleObtuse(node.point, node.next.point, node.prev.point)) {
             break;
         }
         fill(tcx, node);
@@ -248,8 +245,7 @@ function fillAdvancingFront(tcx, n) {
     while (node.prev) {
         // TODO integrate here changes from C++ version
         // (C++ repo revision acf81f1f1764 dated April 7, 2012)
-        angle = holeAngle(node);
-        if (angle > PI_div2 || angle < -(PI_div2)) {
+        if (isAngleObtuse(node.point, node.next.point, node.prev.point)) {
             break;
         }
         fill(tcx, node);
@@ -258,41 +254,21 @@ function fillAdvancingFront(tcx, n) {
 
     // Fill right basins
     if (n.next && n.next.next) {
-        angle = basinAngle(n);
-        if (angle < PI_3div4) {
+        if (isBasinAngleRight(n)) {
             fillBasin(tcx, n);
         }
     }
 }
 
 /**
- * The basin angle is decided against the horizontal line [1,0]
+ * The basin angle is decided against the horizontal line [1,0].
+ * @return {boolean} true if angle < 3*π/4
  */
-function basinAngle(node) {
+function isBasinAngleRight(node) {
     var ax = node.point.x - node.next.next.point.x;
     var ay = node.point.y - node.next.next.point.y;
-    return Math.atan2(ay, ax);
-}
-
-/**
- *
- * @param node - middle node
- * @return the angle between 3 front nodes
- */
-function holeAngle(node) {
-    /* Complex plane
-     * ab = cosA +i*sinA
-     * ab = (ax + ay*i)(bx + by*i) = (ax*bx + ay*by) + i(ax*by-ay*bx)
-     * atan2(y,x) computes the principal value of the argument function
-     * applied to the complex number x+iy
-     * Where x = ax*bx + ay*by
-     *       y = ax*by - ay*bx
-     */
-    var ax = node.next.point.x - node.point.x;
-    var ay = node.next.point.y - node.point.y;
-    var bx = node.prev.point.x - node.point.x;
-    var by = node.prev.point.y - node.point.y;
-    return Math.atan2(ax * by - ay * bx, ax * bx + ay * by);
+    assert(ay >= 0, "unordered y");
+    return (ax >= 0 || Math.abs(ax) < ay);
 }
 
 /**

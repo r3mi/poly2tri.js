@@ -107,5 +107,30 @@ describe("utils", function() {
             expect(inScanArea(pa, pb, pc, {x: 13, y: 5 + ε / 10})).toBeFalsy();
         });
     });
+
+    describe("isAngleObtuse", function () {
+        var isAngleObtuse = utils.isAngleObtuse;
+        it("should be false for nul angle", function() {
+            expect(isAngleObtuse({x: 5, y: 7}, {x: 2, y: 3}, {x: 2, y: 3})).toBeFalsy();
+        });
+        it("should be false for acute angle", function() {
+            var pa = {x: 1, y: 1}, pb = {x: 3, y: 2}, pc = {x: 2, y: 4};
+            expect(isAngleObtuse(pa, pb, pc)).toBeFalsy();
+            expect(isAngleObtuse(pa, pc, pb)).toBeFalsy();
+        });
+        it("should be false for right angle", function() {
+            var pa = {x: 1, y: 1}, pb = {x: 3, y: 2}, pc = {x: -1, y: 5};
+            expect(isAngleObtuse(pa, pb, pc)).toBeFalsy();
+            expect(isAngleObtuse(pa, pc, pb)).toBeFalsy();
+        });
+        it("should be true for obtuse angle", function() {
+            var pa = {x: 1, y: 1}, pb = {x: 3, y: 2}, pc = {x: -2, y: 3};
+            expect(isAngleObtuse(pa, pb, pc)).toBeTruthy();
+            expect(isAngleObtuse(pa, pc, pb)).toBeTruthy();
+        });
+        it("should be false for nul vector", function() {
+            expect(isAngleObtuse({x: 1, y: 1}, {x: 1, y: 1}, {x: 2, y: 3})).toBeFalsy();
+        });
+    });
 });
 

@@ -575,13 +575,12 @@ var Node = _dereq_('./advancingfront').Node;
 
 var utils = _dereq_('./utils');
 
-var PI_3div4 = 3 * Math.PI / 4;
-var PI_div2 = Math.PI / 2;
 var EPSILON = utils.EPSILON;
 
 var Orientation = utils.Orientation;
 var orient2d = utils.orient2d;
 var inScanArea = utils.inScanArea;
+var isAngleObtuse = utils.isAngleObtuse;
 
 
 // ------------------------------------------------------------------------Sweep
@@ -769,12 +768,10 @@ function fill(tcx, node) {
 function fillAdvancingFront(tcx, n) {
     // Fill right holes
     var node = n.next;
-    var angle;
     while (node.next) {
         // TODO integrate here changes from C++ version
         // (C++ repo revision acf81f1f1764 dated April 7, 2012)
-        angle = holeAngle(node);
-        if (angle > PI_div2 || angle < -(PI_div2)) {
+        if (isAngleObtuse(node.point, node.next.point, node.prev.point)) {
             break;
         }
         fill(tcx, node);
@@ -786,8 +783,7 @@ function fillAdvancingFront(tcx, n) {
     while (node.prev) {
         // TODO integrate here changes from C++ version
         // (C++ repo revision acf81f1f1764 dated April 7, 2012)
-        angle = holeAngle(node);
-        if (angle > PI_div2 || angle < -(PI_div2)) {
+        if (isAngleObtuse(node.point, node.next.point, node.prev.point)) {
             break;
         }
         fill(tcx, node);
@@ -796,41 +792,21 @@ function fillAdvancingFront(tcx, n) {
 
     // Fill right basins
     if (n.next && n.next.next) {
-        angle = basinAngle(n);
-        if (angle < PI_3div4) {
+        if (isBasinAngleRight(n)) {
             fillBasin(tcx, n);
         }
     }
 }
 
 /**
- * The basin angle is decided against the horizontal line [1,0]
+ * The basin angle is decided against the horizontal line [1,0].
+ * @return {boolean} true if angle < 3*π/4
  */
-function basinAngle(node) {
+function isBasinAngleRight(node) {
     var ax = node.point.x - node.next.next.point.x;
     var ay = node.point.y - node.next.next.point.y;
-    return Math.atan2(ay, ax);
-}
-
-/**
- *
- * @param node - middle node
- * @return the angle between 3 front nodes
- */
-function holeAngle(node) {
-    /* Complex plane
-     * ab = cosA +i*sinA
-     * ab = (ax + ay*i)(bx + by*i) = (ax*bx + ay*by) + i(ax*by-ay*bx)
-     * atan2(y,x) computes the principal value of the argument function
-     * applied to the complex number x+iy
-     * Where x = ax*bx + ay*by
-     *       y = ax*by - ay*bx
-     */
-    var ax = node.next.point.x - node.point.x;
-    var ay = node.next.point.y - node.point.y;
-    var bx = node.prev.point.x - node.point.x;
-    var by = node.prev.point.y - node.point.y;
-    return Math.atan2(ax * by - ay * bx, ax * bx + ay * by);
+    assert(ay >= 0, "unordered y");
+    return (ax >= 0 || Math.abs(ax) < ay);
 }
 
 /**
@@ -2190,24 +2166,20 @@ module.exports = Triangle;
 
 "use strict";
 
-/*
- * Note
- * ====
- * the structure of this JavaScript version of poly2tri intentionally follows
- * as closely as possible the structure of the reference C++ version, to make it 
- * easier to keep the 2 versions in sync.
- */
 
 var EPSILON = 1e-12;
+exports.EPSILON = EPSILON;
 
 var Orientation = {
     "CW": 1,
     "CCW": -1,
     "COLLINEAR": 0
 };
+exports.Orientation = Orientation;
+
 
 /**
- * Forumla to calculate signed area<br>
+ * Formula to calculate signed area<br>
  * Positive if CCW<br>
  * Negative if CW<br>
  * 0 if collinear<br>
@@ -2215,7 +2187,7 @@ var Orientation = {
  * A[P1,P2,P3]  =  (x1*y2 - y1*x2) + (x2*y3 - y2*x3) + (x3*y1 - y3*x1)
  *              =  (x1-x3)*(y2-y3) - (y1-y3)*(x2-x3)
  * </pre>
- * 
+ *
  * @param   pa,pb,pc   any "Point like" objects with {x,y} (duck typing)
  */
 function orient2d(pa, pb, pc) {
@@ -2230,9 +2202,11 @@ function orient2d(pa, pb, pc) {
         return Orientation.CW;
     }
 }
+exports.orient2d = orient2d;
+
 
 /**
- *  
+ *
  * @param   pa,pb,pc,pd   any "Point like" objects with {x,y} (duck typing)
  */
 function inScanArea(pa, pb, pc, pd) {
@@ -2247,16 +2221,26 @@ function inScanArea(pa, pb, pc, pd) {
     }
     return true;
 }
+exports.inScanArea = inScanArea;
 
 
-// ----------------------------------------------------------------------Exports
+/**
+ * Check if the angle between (pa,pb) and (pa,pc) is obtuse i.e. (angle > π/2 || angle < -π/2)
+ *
+ * @param {{x:number,y:number}} pa  Point
+ * @param {{x:number,y:number}} pb  Point
+ * @param {{x:number,y:number}} pc  Point
+ * @return {boolean} true if angle is obtuse
+ */
+function isAngleObtuse(pa, pb, pc) {
+    var ax = pb.x - pa.x;
+    var ay = pb.y - pa.y;
+    var bx = pc.x - pa.x;
+    var by = pc.y - pa.y;
+    return (ax * bx + ay * by) < 0;
+}
+exports.isAngleObtuse = isAngleObtuse;
 
-module.exports = {
-    EPSILON: EPSILON,
-    Orientation: Orientation,
-    orient2d: orient2d,
-    inScanArea: inScanArea
-};
 
 },{}],11:[function(_dereq_,module,exports){
 /*

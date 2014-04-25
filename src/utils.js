@@ -12,24 +12,20 @@
 
 "use strict";
 
-/*
- * Note
- * ====
- * the structure of this JavaScript version of poly2tri intentionally follows
- * as closely as possible the structure of the reference C++ version, to make it 
- * easier to keep the 2 versions in sync.
- */
 
 var EPSILON = 1e-12;
+exports.EPSILON = EPSILON;
 
 var Orientation = {
     "CW": 1,
     "CCW": -1,
     "COLLINEAR": 0
 };
+exports.Orientation = Orientation;
+
 
 /**
- * Forumla to calculate signed area<br>
+ * Formula to calculate signed area<br>
  * Positive if CCW<br>
  * Negative if CW<br>
  * 0 if collinear<br>
@@ -37,7 +33,7 @@ var Orientation = {
  * A[P1,P2,P3]  =  (x1*y2 - y1*x2) + (x2*y3 - y2*x3) + (x3*y1 - y3*x1)
  *              =  (x1-x3)*(y2-y3) - (y1-y3)*(x2-x3)
  * </pre>
- * 
+ *
  * @param   pa,pb,pc   any "Point like" objects with {x,y} (duck typing)
  */
 function orient2d(pa, pb, pc) {
@@ -52,9 +48,11 @@ function orient2d(pa, pb, pc) {
         return Orientation.CW;
     }
 }
+exports.orient2d = orient2d;
+
 
 /**
- *  
+ *
  * @param   pa,pb,pc,pd   any "Point like" objects with {x,y} (duck typing)
  */
 function inScanArea(pa, pb, pc, pd) {
@@ -69,13 +67,23 @@ function inScanArea(pa, pb, pc, pd) {
     }
     return true;
 }
+exports.inScanArea = inScanArea;
 
 
-// ----------------------------------------------------------------------Exports
+/**
+ * Check if the angle between (pa,pb) and (pa,pc) is obtuse i.e. (angle > π/2 || angle < -π/2)
+ *
+ * @param {{x:number,y:number}} pa  Point
+ * @param {{x:number,y:number}} pb  Point
+ * @param {{x:number,y:number}} pc  Point
+ * @return {boolean} true if angle is obtuse
+ */
+function isAngleObtuse(pa, pb, pc) {
+    var ax = pb.x - pa.x;
+    var ay = pb.y - pa.y;
+    var bx = pc.x - pa.x;
+    var by = pc.y - pa.y;
+    return (ax * bx + ay * by) < 0;
+}
+exports.isAngleObtuse = isAngleObtuse;
 
-module.exports = {
-    EPSILON: EPSILON,
-    Orientation: Orientation,
-    orient2d: orient2d,
-    inScanArea: inScanArea
-};

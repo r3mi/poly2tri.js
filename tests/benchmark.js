@@ -21,7 +21,7 @@ var suite = new Benchmark.Suite();
  */
 
 var loaders = {
-    // 1st version with Steiner points (and optionnal Namespace.js).
+    // 1st version with Steiner points (and optional Namespace.js).
     '1.1.1': function() {
         // use "load" to work around missing Node.js support
         return load('./versions/1.1.1/poly2tri').js.poly2tri;
@@ -32,6 +32,10 @@ var loaders = {
     // Last version before browserify
     '1.2.7': function() {
         return require('./versions/1.2.7/poly2tri');
+    },
+    // Last version before atan2 improvements
+    '1.3.3': function() {
+        return require('./versions/1.3.3/poly2tri.min');
     },
     'current.src': function() {
         return require('../src/poly2tri');
