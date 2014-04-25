@@ -1,6 +1,14 @@
 [demo]: http://r3mi.github.io/poly2tri.js
 [Browserify]: http://browserify.org/
 
+<a name="1.3.4"></a>
+# 1.3.4 (2014-04-25)
+
+- performance improvement. Replace all `Math.atan2` calls by dot vectors computations, producing about
+  5 to 10% performance improvement on the benchmark.
+  [Idea by Andrey Diduh](https://groups.google.com/forum/#!topic/poly2tri/gDpr3lj3p0I)
+- add additional test cases
+
 <a name="1.3.3"></a>
 # 1.3.3 (2014-01-26)
 
