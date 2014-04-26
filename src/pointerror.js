@@ -20,8 +20,11 @@ var xy = require('./xy');
 
 /**
  * Custom exception class to indicate invalid Point values
- * @param {String} message          error message
- * @param {array<Point>} points     invalid points
+ * @constructor
+ * @extends Error
+ * @struct
+ * @param {string=} message     error message
+ * @param {Array.<{x:number,y:number}>=} points     invalid points
  */
 var PointError = function(message, points) {
     this.name = "PointError";

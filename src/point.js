@@ -26,11 +26,21 @@ var xy = require('./xy');
 // ------------------------------------------------------------------------Point
 /**
  * Construct a point
- * @param {Number} x    coordinate (0 if undefined)
- * @param {Number} y    coordinate (0 if undefined)
+ * @constructor
+ * @struct
+ * @param {number=} x    coordinate (0 if undefined)
+ * @param {number=} y    coordinate (0 if undefined)
  */
 var Point = function(x, y) {
+    /**
+     * @type {number}
+     * @expose
+     */
     this.x = +x || 0;
+    /**
+     * @type {number}
+     * @expose
+     */
     this.y = +y || 0;
 
     // All extra fields added to Point are prefixed with _p2t_
@@ -42,6 +52,7 @@ var Point = function(x, y) {
 
 /**
  * For pretty printing ex. <i>"(5;42)"</i>)
+ * @return {string} "(x,y)"
  */
 Point.prototype.toString = function() {
     return xy.toStringBase(this);
@@ -57,7 +68,7 @@ Point.prototype.toJSON = function() {
 
 /**
  * Creates a copy of this Point object.
- * @returns Point
+ * @return {Point}
  */
 Point.prototype.clone = function() {
     return new Point(this.x, this.y);
@@ -65,6 +76,7 @@ Point.prototype.clone = function() {
 
 /**
  * Set this Point instance to the origo. <code>(0; 0)</code>
+ * @return {Point}
  */
 Point.prototype.set_zero = function() {
     this.x = 0.0;
@@ -74,8 +86,9 @@ Point.prototype.set_zero = function() {
 
 /**
  * Set the coordinates of this instance.
- * @param   x   number.
- * @param   y   number;
+ * @param {number} x   coordinate
+ * @param {number} y   coordinate
+ * @return {Point}
  */
 Point.prototype.set = function(x, y) {
     this.x = +x || 0;
@@ -85,6 +98,7 @@ Point.prototype.set = function(x, y) {
 
 /**
  * Negate this Point instance. (component-wise)
+ * @return {Point}
  */
 Point.prototype.negate = function() {
     this.x = -this.x;
@@ -94,7 +108,8 @@ Point.prototype.negate = function() {
 
 /**
  * Add another Point object to this instance. (component-wise)
- * @param   n   Point object.
+ * @param {Point} n   Point object.
+ * @return {Point}
  */
 Point.prototype.add = function(n) {
     this.x += n.x;
@@ -104,7 +119,8 @@ Point.prototype.add = function(n) {
 
 /**
  * Subtract this Point instance with another point given. (component-wise)
- * @param   n   Point object.
+ * @param {Point} n   Point object.
+ * @return {Point}
  */
 Point.prototype.sub = function(n) {
     this.x -= n.x;
@@ -114,7 +130,8 @@ Point.prototype.sub = function(n) {
 
 /**
  * Multiply this Point instance by a scalar. (component-wise)
- * @param   s   scalar.
+ * @param {number} s   scalar.
+ * @return {Point}
  */
 Point.prototype.mul = function(s) {
     this.x *= s;
@@ -124,6 +141,7 @@ Point.prototype.mul = function(s) {
 
 /**
  * Return the distance of this Point instance from the origo.
+ * @return {number} distance
  */
 Point.prototype.length = function() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
@@ -131,7 +149,7 @@ Point.prototype.length = function() {
 
 /**
  * Normalize this Point instance (as a vector).
- * @return The original distance of this instance from the origo.
+ * @return {number} The original distance of this instance from the origo.
  */
 Point.prototype.normalize = function() {
     var len = this.length();
@@ -142,8 +160,8 @@ Point.prototype.normalize = function() {
 
 /**
  * Test this Point object with another for equality.
- * @param   p   any "Point like" object with {x,y} (duck typing)
- * @return <code>True</code> if <code>this == p</code>, <code>false</code> otherwise.
+ * @param {!{x:number,y:number}} p   any "Point like" object with {x,y}
+ * @return {boolean} <code>True</code> if <code>this == p</code>, <code>false</code> otherwise.
  */
 Point.prototype.equals = function(p) {
     return this.x === p.x && this.y === p.y;
@@ -154,8 +172,8 @@ Point.prototype.equals = function(p) {
 
 /**
  * Negate a point component-wise and return the result as a new Point object.
- * @param   p   Point object.
- * @return the resulting Point object.
+ * @param {!{x:number,y:number}} p   any "Point like" object with {x,y}
+ * @return {Point} the resulting Point object.
  */
 Point.negate = function(p) {
     return new Point(-p.x, -p.y);
@@ -163,9 +181,9 @@ Point.negate = function(p) {
 
 /**
  * Add two points component-wise and return the result as a new Point object.
- * @param   a   Point object.
- * @param   b   Point object.
- * @return the resulting Point object.
+ * @param {!{x:number,y:number}} a   any "Point like" object with {x,y}
+ * @param {!{x:number,y:number}} b   any "Point like" object with {x,y}
+ * @return {Point} the resulting Point object.
  */
 Point.add = function(a, b) {
     return new Point(a.x + b.x, a.y + b.y);
@@ -173,9 +191,9 @@ Point.add = function(a, b) {
 
 /**
  * Subtract two points component-wise and return the result as a new Point object.
- * @param   a   Point object.
- * @param   b   Point object.
- * @return the resulting Point object.
+ * @param {!{x:number,y:number}} a   any "Point like" object with {x,y}
+ * @param {!{x:number,y:number}} b   any "Point like" object with {x,y}
+ * @return {Point} the resulting Point object.
  */
 Point.sub = function(a, b) {
     return new Point(a.x - b.x, a.y - b.y);
@@ -183,9 +201,9 @@ Point.sub = function(a, b) {
 
 /**
  * Multiply a point by a scalar and return the result as a new Point object.
- * @param   s   the scalar (a number).
- * @param   p   Point object.
- * @return the resulting Point object.
+ * @param {number}  s   the scalar
+ * @param {!{x:number,y:number}} p   any "Point like" object with {x,y}
+ * @return {Point} the resulting Point object.
  */
 Point.mul = function(s, p) {
     return new Point(s * p.x, s * p.y);
@@ -196,9 +214,9 @@ Point.mul = function(s, p) {
  * or a point and a scalar (this produces a point).
  * This function requires two parameters, either may be a Point object or a
  * number.
- * @param   a   Point object or scalar.
- * @param   b   Point object or scalar.
- * @return  a   Point object or a number, depending on the parameters.
+ * @param  {Point|number} a  Point object or scalar.
+ * @param  {Point|number} b  Point object or scalar.
+ * @return {Point|number} a Point object or a number, depending on the parameters.
  */
 Point.cross = function(a, b) {
     if (typeof(a) === 'number') {
@@ -230,8 +248,9 @@ Point.equals = xy.equals;
 
 /**
  * Peform the dot product on two vectors.
- * @param   a,b   any "Point like" objects with {x,y} 
- * @return The dot product (as a number).
+ * @param {!{x:number,y:number}} a   any "Point like" object with {x,y}
+ * @param {!{x:number,y:number}} b   any "Point like" object with {x,y}
+ * @return {number} The dot product
  */
 Point.dot = function(a, b) {
     return a.x * b.x + a.y * b.y;

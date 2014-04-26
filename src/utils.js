@@ -12,10 +12,13 @@
 
 "use strict";
 
-
+/** @const */
 var EPSILON = 1e-12;
 exports.EPSILON = EPSILON;
 
+/**
+ * @enum {number}
+ */
 var Orientation = {
     "CW": 1,
     "CCW": -1,
@@ -34,7 +37,10 @@ exports.Orientation = Orientation;
  *              =  (x1-x3)*(y2-y3) - (y1-y3)*(x2-x3)
  * </pre>
  *
- * @param   pa,pb,pc   any "Point like" objects with {x,y} (duck typing)
+ * @param {{x:number,y:number}} pa  Point
+ * @param {{x:number,y:number}} pb  Point
+ * @param {{x:number,y:number}} pc  Point
+ * @return {Orientation}
  */
 function orient2d(pa, pb, pc) {
     var detleft = (pa.x - pc.x) * (pb.y - pc.y);
@@ -53,7 +59,11 @@ exports.orient2d = orient2d;
 
 /**
  *
- * @param   pa,pb,pc,pd   any "Point like" objects with {x,y} (duck typing)
+ * @param {{x:number,y:number}} pa  Point
+ * @param {{x:number,y:number}} pb  Point
+ * @param {{x:number,y:number}} pc  Point
+ * @param {{x:number,y:number}} pd  Point
+ * @return {boolean}
  */
 function inScanArea(pa, pb, pc, pd) {
     var oadb = (pa.x - pb.x) * (pd.y - pb.y) - (pd.x - pb.x) * (pa.y - pb.y);

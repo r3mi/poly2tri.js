@@ -37,11 +37,16 @@ var Node = require('./advancingfront').Node;
 
 var utils = require('./utils');
 
+/** @const */
 var EPSILON = utils.EPSILON;
 
+/** @const */
 var Orientation = utils.Orientation;
+/** @const */
 var orient2d = utils.orient2d;
+/** @const */
 var inScanArea = utils.inScanArea;
+/** @const */
 var isAngleObtuse = utils.isAngleObtuse;
 
 
@@ -50,7 +55,7 @@ var isAngleObtuse = utils.isAngleObtuse;
 /**
  * Triangulate the polygon with holes and Steiner points.
  * Do this AFTER you've added the polyline, holes, and Steiner points
- * @param   tcx SweepContext object.
+ * @param {!SweepContext}  tcx SweepContext object.
  */
 function triangulate(tcx) {
     tcx.initTriangulation();
@@ -63,7 +68,7 @@ function triangulate(tcx) {
 
 /**
  * Start sweeping the Y-sorted point set from bottom to top
- * @param   tcx SweepContext object.
+ * @param {!SweepContext}  tcx SweepContext object.
  */
 function sweepPoints(tcx) {
     var i, len = tcx.pointCount();
@@ -77,6 +82,9 @@ function sweepPoints(tcx) {
     }
 }
 
+/**
+ * @param {!SweepContext}  tcx SweepContext object.
+ */
 function finalizationPolygon(tcx) {
     // Get an Internal triangle to start with
     var t = tcx.front().head().next.triangle;
@@ -93,6 +101,8 @@ function finalizationPolygon(tcx) {
  * Find closes node to the left of the new point and
  * create a new triangle. If needed new holes and basins
  * will be filled to.
+ * @param {!SweepContext}  tcx SweepContext object.
+ * @param {!{x:number,y:number}} point   Point
  */
 function pointEvent(tcx, point) {
     var node = tcx.locateNode(point);
@@ -176,6 +186,7 @@ function isEdgeSideOfTriangle(triangle, ep, eq) {
 
 /**
  * Creates a new front triangle and legalize it
+ * @param {!SweepContext}  tcx SweepContext object.
  */
 function newFrontTriangle(tcx, point, node) {
     var triangle = new Triangle(point, node.point, node.next.point);
@@ -198,7 +209,7 @@ function newFrontTriangle(tcx, point, node) {
 
 /**
  * Adds a triangle to the advancing front to fill a hole.
- * @param tcx
+ * @param {!SweepContext}  tcx SweepContext object.
  * @param node - middle node, that is the bottom of the hole
  */
 function fill(tcx, node) {
@@ -226,6 +237,7 @@ function fill(tcx, node) {
 
 /**
  * Fills holes in the Advancing Front
+ * @param {!SweepContext}  tcx SweepContext object.
  */
 function fillAdvancingFront(tcx, n) {
     // Fill right holes
@@ -262,6 +274,7 @@ function fillAdvancingFront(tcx, n) {
 
 /**
  * The basin angle is decided against the horizontal line [1,0].
+ * @param {Node} node
  * @return {boolean} true if angle < 3*π/4
  */
 function isBasinAngleRight(node) {
@@ -273,6 +286,8 @@ function isBasinAngleRight(node) {
 
 /**
  * Returns true if triangle was legalized
+ * @param {!SweepContext}  tcx SweepContext object.
+ * @return {boolean}
  */
 function legalize(tcx, t) {
     // To legalize a triangle we start by finding if any of the three edges
@@ -354,7 +369,7 @@ function legalize(tcx, t) {
  * @param pb - triangle point
  * @param pc - triangle point
  * @param pd - point opposite a
- * @return true if d is inside circle, false if on circle edge
+ * @return {boolean} true if d is inside circle, false if on circle edge
  */
 function inCircle(pa, pb, pc, pd) {
     var adx = pa.x - pd.x;
@@ -466,7 +481,7 @@ function rotateTrianglePair(t, p, ot, op) {
  * First we decide a left,bottom and right node that forms the
  * boundaries of the basin. Then we do a reqursive fill.
  *
- * @param tcx
+ * @param {!SweepContext}  tcx SweepContext object.
  * @param node - starting node, this or next node will be left node
  */
 function fillBasin(tcx, node) {
@@ -504,7 +519,7 @@ function fillBasin(tcx, node) {
 /**
  * Recursive algorithm to fill a Basin with triangles
  *
- * @param tcx
+ * @param {!SweepContext}  tcx SweepContext object.
  * @param node - bottom_node
  */
 function fillBasinReq(tcx, node) {
@@ -735,7 +750,7 @@ function flipEdgeEvent(tcx, ep, eq, t, p) {
  * After a flip we have two triangles and know that only one will still be
  * intersecting the edge. So decide which to contiune with and legalize the other
  *
- * @param tcx
+ * @param {!SweepContext}  tcx SweepContext object.
  * @param o - should be the result of an orient2d( eq, op, ep )
  * @param t - triangle 1
  * @param ot - triangle 2
@@ -787,10 +802,10 @@ function nextFlipPoint(ep, eq, ot, op) {
  * point that is inside the flip triangle scan area. When found
  * we generate a new flipEdgeEvent
  *
- * @param tcx
+ * @param {!SweepContext}  tcx SweepContext object.
  * @param ep - last point on the edge we are traversing
  * @param eq - first point on the edge we are traversing
- * @param flipTriangle - the current triangle sharing the point eq with edge
+ * @param {!Triangle} flip_triangle - the current triangle sharing the point eq with edge
  * @param t
  * @param p
  */

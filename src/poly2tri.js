@@ -61,5 +61,7 @@ exports.SweepContext = require('./sweepcontext');
 
 // Backward compatibility
 var sweep = require('./sweep');
+/** @deprecated use SweepContext.prototype.triangulate instead */
 exports.triangulate = sweep.triangulate;
+/** @deprecated use SweepContext.prototype.triangulate instead */
 exports.sweep = {Triangulate: sweep.triangulate};

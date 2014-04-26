@@ -33,9 +33,10 @@ var Node = AdvancingFront.Node;
 
 // ------------------------------------------------------------------------utils
 
-/* 
+/**
  * Initial triangle factor, seed triangle will extend 30% of
  * PointSet width to both left and right.
+ * @const
  */
 var kAlpha = 0.3;
 
@@ -43,8 +44,11 @@ var kAlpha = 0.3;
 // -------------------------------------------------------------------------Edge
 /**
  * Represents a simple polygon's edge
+ * @constructor
+ * @struct
  * @param {Point} p1
  * @param {Point} p2
+ * @throw {PointError} if p1 is same as p2
  */
 var Edge = function(p1, p2) {
     this.p = p1;
@@ -70,11 +74,21 @@ var Edge = function(p1, p2) {
 
 
 // ------------------------------------------------------------------------Basin
+/**
+ * @constructor
+ * @struct
+ * @private
+ */
 var Basin = function() {
-    this.left_node = null; // Node
-    this.bottom_node = null; // Node
-    this.right_node = null; // Node
-    this.width = 0.0; // number
+    /** @type {Node} */
+    this.left_node = null;
+    /** @type {Node} */
+    this.bottom_node = null;
+    /** @type {Node} */
+    this.right_node = null;
+    /** @type {number} */
+    this.width = 0.0;
+    /** @type {boolean} */
     this.left_highest = false;
 };
 
@@ -87,8 +101,15 @@ Basin.prototype.clear = function() {
 };
 
 // --------------------------------------------------------------------EdgeEvent
+/**
+ * @constructor
+ * @struct
+ * @private
+ */
 var EdgeEvent = function() {
-    this.constrained_edge = null; // Edge
+    /** @type {Edge} */
+    this.constrained_edge = null;
+    /** @type {boolean} */
     this.right = false;
 };
 
@@ -102,8 +123,10 @@ var EdgeEvent = function() {
  *                  (contour, holes). Points inside arrays are never copied.
  *                  Default is false : keep a reference to the array arguments,
  *                  who will be modified in place.
- * @param {Array} contour  array of "Point like" objects with {x,y} (duck typing)
- * @param {Object} options  constructor options
+ * @constructor
+ * @struct
+ * @param {Array.<{x:number,y:number}>} contour  array of "Point like" objects with {x,y} (duck typing)
+ * @param {{cloneArrays:boolean|undefined}=} options  constructor options
  */
 var SweepContext = function(contour, options) {
     options = options || {};
@@ -116,16 +139,30 @@ var SweepContext = function(contour, options) {
     // it is stored in case it is needed by the caller.
     this.pmin_ = this.pmax_ = null;
 
-    // Advancing front
-    this.front_ = null; // AdvancingFront
-    // head point used with advancing front
-    this.head_ = null; // Point
-    // tail point used with advancing front
-    this.tail_ = null; // Point
+    /**
+     * Advancing front
+     * @type {AdvancingFront}
+     */
+    this.front_ = null;
 
-    this.af_head_ = null; // Node
-    this.af_middle_ = null; // Node
-    this.af_tail_ = null; // Node
+    /**
+     * head point used with advancing front
+     * @type {Point}
+     */
+    this.head_ = null;
+
+    /**
+     * tail point used with advancing front
+     * @type {Point}
+     */
+    this.tail_ = null;
+
+    /** @type {Node} */
+    this.af_head_ = null;
+    /** @type {Node} */
+    this.af_middle_ = null;
+    /** @type {Node} */
+    this.af_tail_ = null;
 
     this.basin = new Basin();
     this.edge_event = new EdgeEvent();
@@ -136,7 +173,7 @@ var SweepContext = function(contour, options) {
 
 /**
  * Add a hole to the constraints
- * @param {Array} polyline  array of "Point like" objects with {x,y} (duck typing)
+ * @param {Array.<{x:number,y:number}>} polyline  array of "Point like" objects with {x,y} (duck typing)
  */
 SweepContext.prototype.addHole = function(polyline) {
     this.initEdges(polyline);
@@ -146,25 +183,33 @@ SweepContext.prototype.addHole = function(polyline) {
     }
     return this; // for chaining
 };
-// Backward compatibility
+
+/**
+ * For backward compatibility
+ * @deprecated use addHole instead
+ */
 SweepContext.prototype.AddHole = SweepContext.prototype.addHole;
 
 
 /**
  * Add a Steiner point to the constraints
- * @param {Point} point     any "Point like" object with {x,y} (duck typing)
+ * @param {{x:number,y:number}} point     any "Point like" object with {x,y} (duck typing)
  */
 SweepContext.prototype.addPoint = function(point) {
     this.points_.push(point);
     return this; // for chaining
 };
-// Backward compatibility
+
+/**
+ * For backward compatibility
+ * @deprecated use addPoint instead
+ */
 SweepContext.prototype.AddPoint = SweepContext.prototype.addPoint;
 
 
 /**
  * Add several Steiner points to the constraints
- * @param {array<Point>} points     array of "Point like" object with {x,y} 
+ * @param {Array.<{x:number,y:number}>} points     array of "Point like" object with {x,y}
  */
 // Method added in the JavaScript version (was not present in the c++ version)
 SweepContext.prototype.addPoints = function(points) {
@@ -203,40 +248,52 @@ SweepContext.prototype.getBoundingBox = function() {
 SweepContext.prototype.getTriangles = function() {
     return this.triangles_;
 };
-// Backward compatibility
+
+/**
+ * For backward compatibility
+ * @deprecated use getTriangles instead
+ */
 SweepContext.prototype.GetTriangles = SweepContext.prototype.getTriangles;
 
 
 // ---------------------------------------------------SweepContext (private API)
 
+/** @private */
 SweepContext.prototype.front = function() {
     return this.front_;
 };
 
+/** @private */
 SweepContext.prototype.pointCount = function() {
     return this.points_.length;
 };
 
+/** @private */
 SweepContext.prototype.head = function() {
     return this.head_;
 };
 
+/** @private */
 SweepContext.prototype.setHead = function(p1) {
     this.head_ = p1;
 };
 
+/** @private */
 SweepContext.prototype.tail = function() {
     return this.tail_;
 };
 
+/** @private */
 SweepContext.prototype.setTail = function(p1) {
     this.tail_ = p1;
 };
 
+/** @private */
 SweepContext.prototype.getMap = function() {
     return this.map_;
 };
 
+/** @private */
 SweepContext.prototype.initTriangulation = function() {
     var xmax = this.points_[0].x;
     var xmin = this.points_[0].x;
@@ -265,6 +322,7 @@ SweepContext.prototype.initTriangulation = function() {
     this.points_.sort(Point.compare);
 };
 
+/** @private */
 SweepContext.prototype.initEdges = function(polyline) {
     var i, len = polyline.length;
     for (i = 0; i < len; ++i) {
@@ -272,18 +330,22 @@ SweepContext.prototype.initEdges = function(polyline) {
     }
 };
 
+/** @private */
 SweepContext.prototype.getPoint = function(index) {
     return this.points_[index];
 };
 
+/** @private */
 SweepContext.prototype.addToMap = function(triangle) {
     this.map_.push(triangle);
 };
 
+/** @private */
 SweepContext.prototype.locateNode = function(point) {
     return this.front_.locateNode(point.x);
 };
 
+/** @private */
 SweepContext.prototype.createAdvancingFront = function() {
     var head;
     var middle;
@@ -305,11 +367,13 @@ SweepContext.prototype.createAdvancingFront = function() {
     tail.prev = middle;
 };
 
+/** @private */
 SweepContext.prototype.removeNode = function(node) {
     // do nothing
     /* jshint unused:false */
 };
 
+/** @private */
 SweepContext.prototype.mapTriangleToNodes = function(t) {
     for (var i = 0; i < 3; ++i) {
         if (!t.getNeighbor(i)) {
@@ -321,6 +385,7 @@ SweepContext.prototype.mapTriangleToNodes = function(t) {
     }
 };
 
+/** @private */
 SweepContext.prototype.removeFromMap = function(triangle) {
     var i, map = this.map_, len = map.length;
     for (i = 0; i < len; i++) {
@@ -333,6 +398,7 @@ SweepContext.prototype.removeFromMap = function(triangle) {
 
 /**
  * Do a depth first traversal to collect triangles
+ * @private
  * @param {Triangle} triangle start
  */
 SweepContext.prototype.meshClean = function(triangle) {

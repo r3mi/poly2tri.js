@@ -28,55 +28,83 @@
 
 /**
  * Advancing front node
- * @param {Point} p any "Point like" object with {x,y} (duck typing)
- * @param {Triangle} t triangle (optionnal)
+ * @constructor
+ * @struct
+ * @param {{x:number, y:number}} p Point
+ * @param {Triangle=} t triangle (optional)
  */
 var Node = function(p, t) {
+    /** @type {{x:number, y:number}} */
     this.point = p;
+
+    /** @type {Triangle|null} */
     this.triangle = t || null;
 
-    this.next = null; // Node
-    this.prev = null; // Node
+    /** @type {Node|null} */
+    this.next = null;
+    /** @type {Node|null} */
+    this.prev = null;
 
+    /** @type {number} */
     this.value = p.x;
 };
 
 // ---------------------------------------------------------------AdvancingFront
+/**
+ * @constructor
+ * @struct
+ * @param {Node} head
+ * @param {Node} tail
+ */
 var AdvancingFront = function(head, tail) {
-    this.head_ = head; // Node
-    this.tail_ = tail; // Node
-    this.search_node_ = head; // Node
+    /** @type {Node} */
+    this.head_ = head;
+    /** @type {Node} */
+    this.tail_ = tail;
+    /** @type {Node} */
+    this.search_node_ = head;
 };
 
+/** @return {Node} */
 AdvancingFront.prototype.head = function() {
     return this.head_;
 };
 
+/** @param {Node} node */
 AdvancingFront.prototype.setHead = function(node) {
     this.head_ = node;
 };
 
+/** @return {Node} */
 AdvancingFront.prototype.tail = function() {
     return this.tail_;
 };
 
+/** @param {Node} node */
 AdvancingFront.prototype.setTail = function(node) {
     this.tail_ = node;
 };
 
+/** @return {Node} */
 AdvancingFront.prototype.search = function() {
     return this.search_node_;
 };
 
+/** @param {Node} node */
 AdvancingFront.prototype.setSearch = function(node) {
     this.search_node_ = node;
 };
 
+/** @return {Node} */
 AdvancingFront.prototype.findSearchNode = function(/*x*/) {
     // TODO: implement BST index
     return this.search_node_;
 };
 
+/**
+ * @param {number} x value
+ * @return {Node}
+ */
 AdvancingFront.prototype.locateNode = function(x) {
     var node = this.search_node_;
 
@@ -99,6 +127,10 @@ AdvancingFront.prototype.locateNode = function(x) {
     return null;
 };
 
+/**
+ * @param {{x:number, y:number}} point Point
+ * @return {Node}
+ */
 AdvancingFront.prototype.locatePoint = function(point) {
     var px = point.x;
     var node = this.findSearchNode(px);
