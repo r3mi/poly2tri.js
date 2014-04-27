@@ -33,57 +33,75 @@ var xy = require("./xy");
  * quad-edge structures.
  * See: J. Shewchuk, "Triangle: Engineering a 2D Quality Mesh Generator and
  * Delaunay Triangulator", "Triangulations in CGAL"
- * 
+ *
  * @constructor
  * @struct
- * @param {{x:number,y:number}} a   Point
- * @param {{x:number,y:number}} b   Point
- * @param {{x:number,y:number}} c   Point
+ * @param {!XY} pa  point object with {x,y}
+ * @param {!XY} pb  point object with {x,y}
+ * @param {!XY} pc  point object with {x,y}
  */
 var Triangle = function(a, b, c) {
     /**
      * Triangle points
-     * @type {Array.<{x:number,y:number}>}
+     * @private
+     * @type {Array.<XY>}
      */
     this.points_ = [a, b, c];
 
     /**
      * Neighbor list
+     * @private
      * @type {Array.<Triangle>}
      */
     this.neighbors_ = [null, null, null];
 
     /**
      * Has this triangle been marked as an interior triangle?
+     * @private
      * @type {boolean}
      */
     this.interior_ = false;
 
     /**
      * Flags to determine if an edge is a Constrained edge
+     * @private
      * @type {Array.<boolean>}
      */
     this.constrained_edge = [false, false, false];
 
     /**
      * Flags to determine if an edge is a Delauney edge
+     * @private
      * @type {Array.<boolean>}
      */
     this.delaunay_edge = [false, false, false];
 };
 
+var p2s = xy.toString;
 /**
- * For pretty printing ex. <i>"[(5;42)(10;20)(21;30)]"</i>)
+ * For pretty printing ex. <code>"[(5;42)(10;20)(21;30)]"</code>.
+ * @public
  * @return {string}
  */
-var p2s = xy.toString;
 Triangle.prototype.toString = function() {
     return ("[" + p2s(this.points_[0]) + p2s(this.points_[1]) + p2s(this.points_[2]) + "]");
 };
 
 /**
+ * Get one vertice of the triangle.
+ * The output triangles of a triangulation have vertices which are references
+ * to the initial input points (not copies): any custom fields in the
+ * initial points can be retrieved in the output triangles.
+ * @example
+ *      var contour = [{x:100, y:100, id:1}, {x:100, y:300, id:2}, {x:300, y:300, id:3}];
+ *      var swctx = new poly2tri.SweepContext(contour);
+ *      swctx.triangulate();
+ *      var triangles = swctx.getTriangles();
+ *      typeof triangles[0].getPoint(0).id
+ *      // → "number"
  * @param {number} index
- * @returns {{x:number,y:number}}
+ * @public
+ * @returns {XY}
  */
 Triangle.prototype.getPoint = function(index) {
     return this.points_[index];
@@ -91,12 +109,15 @@ Triangle.prototype.getPoint = function(index) {
 
 /**
  * For backward compatibility
- * @deprecated use getPoint instead
+ * @function
+ * @deprecated use {@linkcode Triangle#getPoint} instead
  */
 Triangle.prototype.GetPoint = Triangle.prototype.getPoint;
 
 /**
- * @return {Array.<{x:number,y:number}>}
+ * Get all 3 vertices of the triangle as an array
+ * @public
+ * @return {Array.<XY>}
  */
 // Method added in the JavaScript version (was not present in the c++ version)
 Triangle.prototype.getPoints = function() {
@@ -104,6 +125,7 @@ Triangle.prototype.getPoints = function() {
 };
 
 /**
+ * @private
  * @param {number} index
  * @returns {?Triangle}
  */
@@ -112,9 +134,10 @@ Triangle.prototype.getNeighbor = function(index) {
 };
 
 /**
- * Test if this Triangle contains the Point object given as parameters as its
- * vertices. Only point references are compared, not values.
- * @param {{x:number,y:number}} point Point object.
+ * Test if this Triangle contains the Point object given as parameter as one of its vertices.
+ * Only point references are compared, not values.
+ * @public
+ * @param {XY} point - point object with {x,y}
  * @return {boolean} <code>True</code> if the Point object is of the Triangle's vertices,
  *         <code>false</code> otherwise.
  */
@@ -127,6 +150,7 @@ Triangle.prototype.containsPoint = function(point) {
 /**
  * Test if this Triangle contains the Edge object given as parameter as its
  * bounding edges. Only point references are compared, not values.
+ * @private
  * @param {Edge} edge
  * @return {boolean} <code>True</code> if the Edge object is of the Triangle's bounding
  *         edges, <code>false</code> otherwise.
@@ -136,8 +160,10 @@ Triangle.prototype.containsEdge = function(edge) {
 };
 
 /**
- * @param {{x:number,y:number}} p1 Point object.
- * @param {{x:number,y:number}} p2 Point object.
+ * Test if this Triangle contains the two Point objects given as parameters among its vertices.
+ * Only point references are compared, not values.
+ * @param {XY} p1 - point object with {x,y}
+ * @param {XY} p2 - point object with {x,y}
  * @return {boolean}
  */
 Triangle.prototype.containsPoints = function(p1, p2) {
@@ -145,6 +171,7 @@ Triangle.prototype.containsPoints = function(p1, p2) {
 };
 
 /**
+ * Has this triangle been marked as an interior triangle?
  * @returns {boolean}
  */
 Triangle.prototype.isInterior = function() {
@@ -152,8 +179,10 @@ Triangle.prototype.isInterior = function() {
 };
 
 /**
+ * Mark this triangle as an interior triangle
+ * @private
  * @param {boolean} interior
- * @returns {Triangle}
+ * @returns {Triangle} this
  */
 Triangle.prototype.setInterior = function(interior) {
     this.interior_ = interior;
@@ -162,8 +191,9 @@ Triangle.prototype.setInterior = function(interior) {
 
 /**
  * Update neighbor pointers.
- * @param {{x:number,y:number}} p1 Point object.
- * @param {{x:number,y:number}} p2 Point object.
+ * @private
+ * @param {XY} p1 - point object with {x,y}
+ * @param {XY} p2 - point object with {x,y}
  * @param {Triangle} t Triangle object.
  * @throws {Error} if can't find objects
  */
@@ -183,7 +213,8 @@ Triangle.prototype.markNeighborPointers = function(p1, p2, t) {
 
 /**
  * Exhaustive search to update neighbor pointers
- * @param {Triangle} t
+ * @private
+ * @param {!Triangle} t
  */
 Triangle.prototype.markNeighbor = function(t) {
     var points = this.points_;
@@ -214,7 +245,8 @@ Triangle.prototype.clearDelaunayEdges = function() {
 
 /**
  * Returns the point clockwise to the given point.
- * @param {{x:number, y:number}} p   Point
+ * @private
+ * @param {XY} p - point object with {x,y}
  */
 Triangle.prototype.pointCW = function(p) {
     var points = this.points_;
@@ -232,7 +264,8 @@ Triangle.prototype.pointCW = function(p) {
 
 /**
  * Returns the point counter-clockwise to the given point.
- * @param {{x:number, y:number}} p   Point
+ * @private
+ * @param {XY} p - point object with {x,y}
  */
 Triangle.prototype.pointCCW = function(p) {
     var points = this.points_;
@@ -250,7 +283,8 @@ Triangle.prototype.pointCCW = function(p) {
 
 /**
  * Returns the neighbor clockwise to given point.
- * @param {{x:number, y:number}} p   Point
+ * @private
+ * @param {XY} p - point object with {x,y}
  */
 Triangle.prototype.neighborCW = function(p) {
     // Here we are comparing point references, not values
@@ -265,7 +299,8 @@ Triangle.prototype.neighborCW = function(p) {
 
 /**
  * Returns the neighbor counter-clockwise to given point.
- * @param {{x:number, y:number}} p   Point
+ * @private
+ * @param {XY} p - point object with {x,y}
  */
 Triangle.prototype.neighborCCW = function(p) {
     // Here we are comparing point references, not values
@@ -380,7 +415,8 @@ Triangle.prototype.setDelaunayEdgeCCW = function(p, e) {
 
 /**
  * The neighbor across to given point.
- * @param {{x:number, y:number}} p   Point
+ * @private
+ * @param {XY} p - point object with {x,y}
  * @returns {Triangle}
  */
 Triangle.prototype.neighborAcross = function(p) {
@@ -395,8 +431,9 @@ Triangle.prototype.neighborAcross = function(p) {
 };
 
 /**
- * @param {Triangle} t Triangle object.
- * @param {{x:number, y:number}} p   Point
+ * @private
+ * @param {!Triangle} t Triangle object.
+ * @param {XY} p - point object with {x,y}
  */
 Triangle.prototype.oppositePoint = function(t, p) {
     var cw = t.pointCW(p);
@@ -405,8 +442,9 @@ Triangle.prototype.oppositePoint = function(t, p) {
 
 /**
  * Legalize triangle by rotating clockwise around oPoint
- * @param {{x:number, y:number}} opoint   Point
- * @param {{x:number, y:number}} npoint   Point
+ * @private
+ * @param {XY} opoint - point object with {x,y}
+ * @param {XY} npoint - point object with {x,y}
  * @throws {Error} if oPoint can not be found
  */
 Triangle.prototype.legalize = function(opoint, npoint) {
@@ -432,7 +470,8 @@ Triangle.prototype.legalize = function(opoint, npoint) {
 /**
  * Returns the index of a point in the triangle. 
  * The point *must* be a reference to one of the triangle's vertices.
- * @param {{x:number, y:number}} p   Point
+ * @private
+ * @param {XY} p - point object with {x,y}
  * @returns {number} index 0, 1 or 2
  * @throws {Error} if p can not be found
  */
@@ -451,8 +490,9 @@ Triangle.prototype.index = function(p) {
 };
 
 /**
- * @param {{x:number, y:number}} p1   Point
- * @param {{x:number, y:number}} p2   Point
+ * @private
+ * @param {XY} p1 - point object with {x,y}
+ * @param {XY} p2 - point object with {x,y}
  * @return {number} index 0, 1 or 2, or -1 if errror
  */
 Triangle.prototype.edgeIndex = function(p1, p2) {
@@ -482,13 +522,15 @@ Triangle.prototype.edgeIndex = function(p1, p2) {
 
 /**
  * Mark an edge of this triangle as constrained.
- * @param {number} index    edge index
+ * @private
+ * @param {number} index - edge index
  */
 Triangle.prototype.markConstrainedEdgeByIndex = function(index) {
     this.constrained_edge[index] = true;
 };
 /**
  * Mark an edge of this triangle as constrained.
+ * @private
  * @param {Edge} edge instance
  */
 Triangle.prototype.markConstrainedEdgeByEdge = function(edge) {
@@ -497,8 +539,9 @@ Triangle.prototype.markConstrainedEdgeByEdge = function(edge) {
 /**
  * Mark an edge of this triangle as constrained.
  * This method takes two Point instances defining the edge of the triangle.
- * @param {{x:number, y:number}} p   Point
- * @param {{x:number, y:number}} q   Point
+ * @private
+ * @param {XY} p - point object with {x,y}
+ * @param {XY} q - point object with {x,y}
  */
 Triangle.prototype.markConstrainedEdgeByPoints = function(p, q) {
     var points = this.points_;

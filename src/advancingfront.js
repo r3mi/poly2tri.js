@@ -29,12 +29,13 @@
 /**
  * Advancing front node
  * @constructor
+ * @private
  * @struct
- * @param {{x:number, y:number}} p Point
+ * @param {!XY} p - Point
  * @param {Triangle=} t triangle (optional)
  */
 var Node = function(p, t) {
-    /** @type {{x:number, y:number}} */
+    /** @type {XY} */
     this.point = p;
 
     /** @type {Triangle|null} */
@@ -52,6 +53,7 @@ var Node = function(p, t) {
 // ---------------------------------------------------------------AdvancingFront
 /**
  * @constructor
+ * @private
  * @struct
  * @param {Node} head
  * @param {Node} tail
@@ -128,7 +130,7 @@ AdvancingFront.prototype.locateNode = function(x) {
 };
 
 /**
- * @param {{x:number, y:number}} point Point
+ * @param {!XY} point - Point
  * @return {Node}
  */
 AdvancingFront.prototype.locatePoint = function(point) {

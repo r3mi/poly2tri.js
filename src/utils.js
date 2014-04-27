@@ -12,12 +12,19 @@
 
 "use strict";
 
-/** @const */
+/**
+ * Precision to detect repeated or collinear points
+ * @private
+ * @const {number}
+ * @default
+ */
 var EPSILON = 1e-12;
 exports.EPSILON = EPSILON;
 
 /**
+ * @private
  * @enum {number}
+ * @readonly
  */
 var Orientation = {
     "CW": 1,
@@ -37,9 +44,10 @@ exports.Orientation = Orientation;
  *              =  (x1-x3)*(y2-y3) - (y1-y3)*(x2-x3)
  * </pre>
  *
- * @param {{x:number,y:number}} pa  Point
- * @param {{x:number,y:number}} pb  Point
- * @param {{x:number,y:number}} pc  Point
+ * @private
+ * @param {!XY} pa  point object with {x,y}
+ * @param {!XY} pb  point object with {x,y}
+ * @param {!XY} pc  point object with {x,y}
  * @return {Orientation}
  */
 function orient2d(pa, pb, pc) {
@@ -59,10 +67,11 @@ exports.orient2d = orient2d;
 
 /**
  *
- * @param {{x:number,y:number}} pa  Point
- * @param {{x:number,y:number}} pb  Point
- * @param {{x:number,y:number}} pc  Point
- * @param {{x:number,y:number}} pd  Point
+ * @private
+ * @param {!XY} pa  point object with {x,y}
+ * @param {!XY} pb  point object with {x,y}
+ * @param {!XY} pc  point object with {x,y}
+ * @param {!XY} pd  point object with {x,y}
  * @return {boolean}
  */
 function inScanArea(pa, pb, pc, pd) {
@@ -83,9 +92,10 @@ exports.inScanArea = inScanArea;
 /**
  * Check if the angle between (pa,pb) and (pa,pc) is obtuse i.e. (angle > π/2 || angle < -π/2)
  *
- * @param {{x:number,y:number}} pa  Point
- * @param {{x:number,y:number}} pb  Point
- * @param {{x:number,y:number}} pc  Point
+ * @private
+ * @param {!XY} pa  point object with {x,y}
+ * @param {!XY} pb  point object with {x,y}
+ * @param {!XY} pc  point object with {x,y}
  * @return {boolean} true if angle is obtuse
  */
 function isAngleObtuse(pa, pb, pc) {

@@ -12,24 +12,46 @@
 
 "use strict";
 
-/*
- * The following functions operate on "Point" or any "Point like" object 
- * with {x,y} (duck typing).
+/**
+ * The following functions operate on "Point" or any "Point like" object with {x,y},
+ * as defined by the {@link XY} type
+ * ([duck typing]{@link http://en.wikipedia.org/wiki/Duck_typing}).
+ * @module
+ * @private
  */
 
+/**
+ * poly2tri.js supports using custom point class instead of {@linkcode Point}.
+ * Any "Point like" object with <code>{x, y}</code> attributes is supported
+ * to initialize the SweepContext polylines and points
+ * ([duck typing]{@link http://en.wikipedia.org/wiki/Duck_typing}).
+ *
+ * poly2tri.js might add extra fields to the point objects when computing the
+ * triangulation : they are prefixed with <code>_p2t_</code> to avoid collisions
+ * with fields in the custom class.
+ *
+ * @example
+ *      var contour = [{x:100, y:100}, {x:100, y:300}, {x:300, y:300}, {x:300, y:100}];
+ *      var swctx = new poly2tri.SweepContext(contour);
+ *
+ * @typedef {Object} XY
+ * @property {number} x - x coordinate
+ * @property {number} y - y coordinate
+ */
 
 /**
  * Point pretty printing ex. <i>"(5;42)"</i>)
- * @param {!{x:number, y:number}} p Point
- * @returns {string}
+ * @protected
+ * @param {!XY} p - point object with {x,y}
+ * @returns {string} <code>"(x;y)"</code>
  */
 function toStringBase(p) {
     return ("(" + p.x + ";" + p.y + ")");
 }
 /**
  * Point pretty printing ex. <i>"(5;42)"</i>)
- * @param {!{x:number, y:number}} p   Point
- * @return {string}
+ * @param {!XY} p - point object with {x,y}
+ * @returns {string} <code>"(x;y)"</code>
  */
 function toString(p) {
     // Try a custom toString first, and fallback to own implementation if none
@@ -39,8 +61,8 @@ function toString(p) {
 
 /**
  * Compare two points component-wise. Ordered by y axis first, then x axis.
- * @param {!{x:number, y:number}} a   Point
- * @param {!{x:number, y:number}} b   Point
+ * @param {!XY} a - point object with {x,y}
+ * @param {!XY} b - point object with {x,y}
  * @return {number} <code>&lt; 0</code> if <code>a &lt; b</code>,
  *         <code>&gt; 0</code> if <code>a &gt; b</code>, 
  *         <code>0</code> otherwise.
@@ -55,8 +77,8 @@ function compare(a, b) {
 
 /**
  * Test two Point objects for equality.
- * @param {!{x:number, y:number}} a   Point
- * @param {!{x:number, y:number}} b   Point
+ * @param {!XY} a - point object with {x,y}
+ * @param {!XY} b - point object with {x,y}
  * @return {boolean} <code>True</code> if <code>a == b</code>, <code>false</code> otherwise.
  */
 function equals(a, b) {

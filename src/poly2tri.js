@@ -34,34 +34,83 @@
 
 "use strict";
 
-/*
+/**
  * Public API for poly2tri.js
- * ==========================
+ * @module poly2tri
  */
 
 
-/*
- * for Browser + <script> : 
- * return the poly2tri global variable to its previous value. 
- * (this feature is not automatically provided by browserify).
+/**
+ * If you are not using a module system (e.g. CommonJS, RequireJS), you can access this library
+ * as a global variable <code>poly2tri</code> i.e. <code>window.poly2tri</code> in a browser.
+ * @name poly2tri
+ * @global
+ * @public
+ * @type {module:poly2tri}
  */
 var previousPoly2tri = global.poly2tri;
+/**
+ * For Browser + &lt;script&gt; :
+ * reverts the {@linkcode poly2tri} global object to its previous value,
+ * and returns a reference to the instance called.
+ *
+ * @example
+ *              var p = poly2tri.noConflict();
+ * @public
+ * @return {module:poly2tri} instance called
+ */
+// (this feature is not automatically provided by browserify).
 exports.noConflict = function() {
     global.poly2tri = previousPoly2tri;
     return exports;
 };
 
+/**
+ * poly2tri library version
+ * @public
+ * @const {string}
+ */
 exports.VERSION = require('../dist/version.json').version;
 
+/**
+ * Exports the {@linkcode PointError} class.
+ * @public
+ * @typedef {PointError} module:poly2tri.PointError
+ * @function
+ */
 exports.PointError = require('./pointerror');
+/**
+ * Exports the {@linkcode Point} class.
+ * @public
+ * @typedef {Point} module:poly2tri.Point
+ * @function
+ */
 exports.Point = require('./point');
+/**
+ * Exports the {@linkcode Triangle} class.
+ * @public
+ * @typedef {Triangle} module:poly2tri.Triangle
+ * @function
+ */
 exports.Triangle = require('./triangle');
+/**
+ * Exports the {@linkcode SweepContext} class.
+ * @public
+ * @typedef {SweepContext} module:poly2tri.SweepContext
+ * @function
+ */
 exports.SweepContext = require('./sweepcontext');
 
 
 // Backward compatibility
 var sweep = require('./sweep');
-/** @deprecated use SweepContext.prototype.triangulate instead */
+/**
+ * @function
+ * @deprecated use {@linkcode SweepContext#triangulate} instead
+ */
 exports.triangulate = sweep.triangulate;
-/** @deprecated use SweepContext.prototype.triangulate instead */
+/**
+ * @deprecated use {@linkcode SweepContext#triangulate} instead
+ * @property {function} Triangulate - use {@linkcode SweepContext#triangulate} instead
+ */
 exports.sweep = {Triangulate: sweep.triangulate};

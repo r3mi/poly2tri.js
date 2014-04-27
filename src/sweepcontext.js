@@ -36,6 +36,7 @@ var Node = AdvancingFront.Node;
 /**
  * Initial triangle factor, seed triangle will extend 30% of
  * PointSet width to both left and right.
+ * @private
  * @const
  */
 var kAlpha = 0.3;
@@ -46,6 +47,7 @@ var kAlpha = 0.3;
  * Represents a simple polygon's edge
  * @constructor
  * @struct
+ * @private
  * @param {Point} p1
  * @param {Point} p2
  * @throw {PointError} if p1 is same as p2
@@ -115,18 +117,35 @@ var EdgeEvent = function() {
 
 // ----------------------------------------------------SweepContext (public API)
 /**
+ * SweepContext constructor option
+ * @typedef {Object} SweepContextOptions
+ * @property {boolean=} cloneArrays - if <code>true</code>, do a shallow copy of the Array parameters
+ *                  (contour, holes). Points inside arrays are never copied.
+ *                  Default is <code>false</code> : keep a reference to the array arguments,
+ *                  who will be modified in place.
+ */
+/**
  * Constructor for the triangulation context.
  * It accepts a simple polyline (with non repeating points), 
  * which defines the constrained edges.
- * Possible options are:
- *    cloneArrays:  if true, do a shallow copy of the Array parameters 
- *                  (contour, holes). Points inside arrays are never copied.
- *                  Default is false : keep a reference to the array arguments,
- *                  who will be modified in place.
+ *
+ * @example
+ *          var contour = [
+ *              new poly2tri.Point(100, 100),
+ *              new poly2tri.Point(100, 300),
+ *              new poly2tri.Point(300, 300),
+ *              new poly2tri.Point(300, 100)
+ *          ];
+ *          var swctx = new poly2tri.SweepContext(contour, {cloneArrays: true});
+ * @example
+ *          var contour = [{x:100, y:100}, {x:100, y:300}, {x:300, y:300}, {x:300, y:100}];
+ *          var swctx = new poly2tri.SweepContext(contour, {cloneArrays: true});
  * @constructor
+ * @public
  * @struct
- * @param {Array.<{x:number,y:number}>} contour  array of "Point like" objects with {x,y} (duck typing)
- * @param {{cloneArrays:boolean|undefined}=} options  constructor options
+ * @param {Array.<XY>} contour - array of point objects. The points can be either {@linkcode Point} instances,
+ *          or any "Point like" custom class with <code>{x, y}</code> attributes.
+ * @param {SweepContextOptions=} options - constructor options
  */
 var SweepContext = function(contour, options) {
     options = options || {};
@@ -141,27 +160,39 @@ var SweepContext = function(contour, options) {
 
     /**
      * Advancing front
+     * @private
      * @type {AdvancingFront}
      */
     this.front_ = null;
 
     /**
      * head point used with advancing front
+     * @private
      * @type {Point}
      */
     this.head_ = null;
 
     /**
      * tail point used with advancing front
+     * @private
      * @type {Point}
      */
     this.tail_ = null;
 
-    /** @type {Node} */
+    /**
+     * @private
+     * @type {Node}
+     */
     this.af_head_ = null;
-    /** @type {Node} */
+    /**
+     * @private
+     * @type {Node}
+     */
     this.af_middle_ = null;
-    /** @type {Node} */
+    /**
+     * @private
+     * @type {Node}
+     */
     this.af_tail_ = null;
 
     this.basin = new Basin();
@@ -173,7 +204,16 @@ var SweepContext = function(contour, options) {
 
 /**
  * Add a hole to the constraints
- * @param {Array.<{x:number,y:number}>} polyline  array of "Point like" objects with {x,y} (duck typing)
+ * @example
+ *      var swctx = new poly2tri.SweepContext(...);
+ *      var hole = [
+ *          new poly2tri.Point(200, 200),
+ *          new poly2tri.Point(200, 250),
+ *          new poly2tri.Point(250, 250)
+ *      ];
+ *      swctx.addHole(hole);
+ * @public
+ * @param {Array.<XY>} polyline - array of "Point like" objects with {x,y}
  */
 SweepContext.prototype.addHole = function(polyline) {
     this.initEdges(polyline);
@@ -186,14 +226,20 @@ SweepContext.prototype.addHole = function(polyline) {
 
 /**
  * For backward compatibility
- * @deprecated use addHole instead
+ * @function
+ * @deprecated use {@linkcode SweepContext#addHole} instead
  */
 SweepContext.prototype.AddHole = SweepContext.prototype.addHole;
 
 
 /**
  * Add a Steiner point to the constraints
- * @param {{x:number,y:number}} point     any "Point like" object with {x,y} (duck typing)
+ * @example
+ *      var swctx = new poly2tri.SweepContext(...);
+ *      var point = new poly2tri.Point(150, 150);
+ *      swctx.addPoint(point);
+ * @public
+ * @param {XY} point - any "Point like" object with {x,y}
  */
 SweepContext.prototype.addPoint = function(point) {
     this.points_.push(point);
@@ -202,14 +248,16 @@ SweepContext.prototype.addPoint = function(point) {
 
 /**
  * For backward compatibility
- * @deprecated use addPoint instead
+ * @function
+ * @deprecated use {@linkcode SweepContext#addPoint} instead
  */
 SweepContext.prototype.AddPoint = SweepContext.prototype.addPoint;
 
 
 /**
  * Add several Steiner points to the constraints
- * @param {Array.<{x:number,y:number}>} points     array of "Point like" object with {x,y}
+ * @public
+ * @param {Array.<XY>} points - array of "Point like" object with {x,y}
  */
 // Method added in the JavaScript version (was not present in the c++ version)
 SweepContext.prototype.addPoints = function(points) {
@@ -221,6 +269,11 @@ SweepContext.prototype.addPoints = function(points) {
 /**
  * Triangulate the polygon with holes and Steiner points.
  * Do this AFTER you've added the polyline, holes, and Steiner points
+ * @example
+ *      var swctx = new poly2tri.SweepContext(...);
+ *      swctx.triangulate();
+ *      var triangles = swctx.getTriangles();
+ * @public
  */
 // Shortcut method for sweep.triangulate(SweepContext).
 // Method added in the JavaScript version (was not present in the c++ version)
@@ -234,7 +287,8 @@ SweepContext.prototype.triangulate = function() {
  * Get the bounding box of the provided constraints (contour, holes and 
  * Steinter points). Warning : these values are not available if the triangulation 
  * has not been done yet.
- * @returns {Object} object with 'min' and 'max' Point
+ * @public
+ * @returns {{min:Point,max:Point}} object with 'min' and 'max' Point
  */
 // Method added in the JavaScript version (was not present in the c++ version)
 SweepContext.prototype.getBoundingBox = function() {
@@ -242,7 +296,22 @@ SweepContext.prototype.getBoundingBox = function() {
 };
 
 /**
- * Get result of triangulation
+ * Get result of triangulation.
+ * The output triangles have vertices which are references
+ * to the initial input points (not copies): any custom fields in the
+ * initial points can be retrieved in the output triangles.
+ * @example
+ *      var swctx = new poly2tri.SweepContext(...);
+ *      swctx.triangulate();
+ *      var triangles = swctx.getTriangles();
+ * @example
+ *      var contour = [{x:100, y:100, id:1}, {x:100, y:300, id:2}, {x:300, y:300, id:3}];
+ *      var swctx = new poly2tri.SweepContext(contour);
+ *      swctx.triangulate();
+ *      var triangles = swctx.getTriangles();
+ *      typeof triangles[0].getPoint(0).id
+ *      // → "number"
+ * @public
  * @returns {array<Triangle>}   array of triangles
  */
 SweepContext.prototype.getTriangles = function() {
@@ -251,7 +320,8 @@ SweepContext.prototype.getTriangles = function() {
 
 /**
  * For backward compatibility
- * @deprecated use getTriangles instead
+ * @function
+ * @deprecated use {@linkcode SweepContext#getTriangles} instead
  */
 SweepContext.prototype.GetTriangles = SweepContext.prototype.getTriangles;
 

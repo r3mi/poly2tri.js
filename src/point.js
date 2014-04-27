@@ -26,6 +26,9 @@ var xy = require('./xy');
 // ------------------------------------------------------------------------Point
 /**
  * Construct a point
+ * @example
+ *      var point = new poly2tri.Point(150, 150);
+ * @public
  * @constructor
  * @struct
  * @param {number=} x    coordinate (0 if undefined)
@@ -46,20 +49,25 @@ var Point = function(x, y) {
     // All extra fields added to Point are prefixed with _p2t_
     // to avoid collisions if custom Point class is used.
 
-    // The edges this point constitutes an upper ending point
+    /**
+     * The edges this point constitutes an upper ending point
+     * @private
+     * @type {Array.<Edge>}
+     */
     this._p2t_edge_list = null;
 };
 
 /**
  * For pretty printing ex. <i>"(5;42)"</i>)
- * @return {string} "(x,y)"
+ * @returns {string} <code>"(x;y)"</code>
  */
 Point.prototype.toString = function() {
     return xy.toStringBase(this);
 };
 
 /**
- * JSON output, only coordinates, eg
+ * JSON output, only coordinates
+ * @example
  *      JSON.stringify(new Point(1,2)) == '{"x":1,"y":2}'
  */
 Point.prototype.toJSON = function() {
@@ -68,7 +76,7 @@ Point.prototype.toJSON = function() {
 
 /**
  * Creates a copy of this Point object.
- * @return {Point}
+ * @return {Point} new cloned point
  */
 Point.prototype.clone = function() {
     return new Point(this.x, this.y);
@@ -76,7 +84,7 @@ Point.prototype.clone = function() {
 
 /**
  * Set this Point instance to the origo. <code>(0; 0)</code>
- * @return {Point}
+ * @return {Point} this (for chaining)
  */
 Point.prototype.set_zero = function() {
     this.x = 0.0;
@@ -88,7 +96,7 @@ Point.prototype.set_zero = function() {
  * Set the coordinates of this instance.
  * @param {number} x   coordinate
  * @param {number} y   coordinate
- * @return {Point}
+ * @return {Point} this (for chaining)
  */
 Point.prototype.set = function(x, y) {
     this.x = +x || 0;
@@ -98,7 +106,7 @@ Point.prototype.set = function(x, y) {
 
 /**
  * Negate this Point instance. (component-wise)
- * @return {Point}
+ * @return {Point} this (for chaining)
  */
 Point.prototype.negate = function() {
     this.x = -this.x;
@@ -108,8 +116,8 @@ Point.prototype.negate = function() {
 
 /**
  * Add another Point object to this instance. (component-wise)
- * @param {Point} n   Point object.
- * @return {Point}
+ * @param {!Point} n - Point object.
+ * @return {Point} this (for chaining)
  */
 Point.prototype.add = function(n) {
     this.x += n.x;
@@ -119,8 +127,8 @@ Point.prototype.add = function(n) {
 
 /**
  * Subtract this Point instance with another point given. (component-wise)
- * @param {Point} n   Point object.
- * @return {Point}
+ * @param {!Point} n - Point object.
+ * @return {Point} this (for chaining)
  */
 Point.prototype.sub = function(n) {
     this.x -= n.x;
@@ -131,7 +139,7 @@ Point.prototype.sub = function(n) {
 /**
  * Multiply this Point instance by a scalar. (component-wise)
  * @param {number} s   scalar.
- * @return {Point}
+ * @return {Point} this (for chaining)
  */
 Point.prototype.mul = function(s) {
     this.x *= s;
@@ -160,8 +168,8 @@ Point.prototype.normalize = function() {
 
 /**
  * Test this Point object with another for equality.
- * @param {!{x:number,y:number}} p   any "Point like" object with {x,y}
- * @return {boolean} <code>True</code> if <code>this == p</code>, <code>false</code> otherwise.
+ * @param {!XY} p - any "Point like" object with {x,y}
+ * @return {boolean} <code>true</code> if same x and y coordinates, <code>false</code> otherwise.
  */
 Point.prototype.equals = function(p) {
     return this.x === p.x && this.y === p.y;
@@ -172,7 +180,7 @@ Point.prototype.equals = function(p) {
 
 /**
  * Negate a point component-wise and return the result as a new Point object.
- * @param {!{x:number,y:number}} p   any "Point like" object with {x,y}
+ * @param {!XY} p - any "Point like" object with {x,y}
  * @return {Point} the resulting Point object.
  */
 Point.negate = function(p) {
@@ -181,8 +189,8 @@ Point.negate = function(p) {
 
 /**
  * Add two points component-wise and return the result as a new Point object.
- * @param {!{x:number,y:number}} a   any "Point like" object with {x,y}
- * @param {!{x:number,y:number}} b   any "Point like" object with {x,y}
+ * @param {!XY} a - any "Point like" object with {x,y}
+ * @param {!XY} b - any "Point like" object with {x,y}
  * @return {Point} the resulting Point object.
  */
 Point.add = function(a, b) {
@@ -191,8 +199,8 @@ Point.add = function(a, b) {
 
 /**
  * Subtract two points component-wise and return the result as a new Point object.
- * @param {!{x:number,y:number}} a   any "Point like" object with {x,y}
- * @param {!{x:number,y:number}} b   any "Point like" object with {x,y}
+ * @param {!XY} a - any "Point like" object with {x,y}
+ * @param {!XY} b - any "Point like" object with {x,y}
  * @return {Point} the resulting Point object.
  */
 Point.sub = function(a, b) {
@@ -201,8 +209,8 @@ Point.sub = function(a, b) {
 
 /**
  * Multiply a point by a scalar and return the result as a new Point object.
- * @param {number}  s   the scalar
- * @param {!{x:number,y:number}} p   any "Point like" object with {x,y}
+ * @param {number} s - the scalar
+ * @param {!XY} p - any "Point like" object with {x,y}
  * @return {Point} the resulting Point object.
  */
 Point.mul = function(s, p) {
@@ -214,8 +222,8 @@ Point.mul = function(s, p) {
  * or a point and a scalar (this produces a point).
  * This function requires two parameters, either may be a Point object or a
  * number.
- * @param  {Point|number} a  Point object or scalar.
- * @param  {Point|number} b  Point object or scalar.
+ * @param  {XY|number} a - Point object or scalar.
+ * @param  {XY|number} b - Point object or scalar.
  * @return {Point|number} a Point object or a number, depending on the parameters.
  */
 Point.cross = function(a, b) {
@@ -248,8 +256,9 @@ Point.equals = xy.equals;
 
 /**
  * Peform the dot product on two vectors.
- * @param {!{x:number,y:number}} a   any "Point like" object with {x,y}
- * @param {!{x:number,y:number}} b   any "Point like" object with {x,y}
+ * @public
+ * @param {!XY} a - any "Point like" object with {x,y}
+ * @param {!XY} b - any "Point like" object with {x,y}
  * @return {number} The dot product
  */
 Point.dot = function(a, b) {

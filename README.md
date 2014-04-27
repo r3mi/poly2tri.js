@@ -175,7 +175,7 @@ with fields in the custom class.
 
 ### Custom Point fields
 
-The output triangles in `GetTriangles()` have vertices which are references
+The output triangles in `getTriangles()` have vertices which are references
 to the initial input points (not copies). Any custom fields in the
 initial points can be retrieved in the output triangles.
 
