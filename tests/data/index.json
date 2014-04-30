@@ -140,7 +140,10 @@
     },
     {
         "title": "Misc test data",
+        "source": "https://github.com/r3mi/poly2tri.js/tree/master/tests/data",
         "files": [
+            {"name": "octagon.dat", "content": "Octagon"},
+            {"name": "octagon.dat", "content": "Octagon containing 1 rectangle hole", "holes": "octagon_hole.dat"},
             {"name": "intersecting.dat", "content": "Intersecting edges", "throws": "intersecting constraints: polygon with crossing paths"}
         ]
     }

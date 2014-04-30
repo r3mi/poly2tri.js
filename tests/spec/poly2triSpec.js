@@ -321,45 +321,26 @@ describe("poly2tri", function() {
                 expect(contour.length).toBeGreaterThan(copy.length);
             });
         });
-        describe("an octogon", function() {
-            var contour;
+        describe("a square with a hole within a hole", function() {
+            var contour, hole1, hole2;
             beforeEach(function() {
-                contour = makePoints([200, 100, 300, 100, 400, 200, 400, 300, 300, 400, 200, 400, 100, 300, 100, 200]);
+                contour = makePoints([3, 3, 3, -3, -3, -3, -3, 3]);
+                hole1 = makePoints([2, 2, 2, -2, -2, -2, -2, 2]);
+                hole2 = makePoints([1, 1, 1, -1, -1, -1, -1, 1]);
             });
             it("should triangulate", function() {
                 var swctx = new p2t.SweepContext(contour, options);
+                swctx.addHole(hole1).addHole(hole2);
                 swctx.triangulate();
                 var t = swctx.getTriangles();
                 expect(t).toBeTruthy();
-                // should return 6 triangles
-                expect(t.length).toBe(6);
-                // should have a bounding box
-                expect(swctx.getBoundingBox().min).toEqualPoint({x: 100, y: 100});
-                expect(swctx.getBoundingBox().max).toEqualPoint({x: 400, y: 400});
-                // should be in the contour
-                expect(t).toBeInPoints([contour]);
-                // should contain the contour
-                expect(t).toContainPoints([contour]);
-            });
-        });
-        describe("an octogon containing 1 rectangle hole", function() {
-            var contour, hole;
-            beforeEach(function() {
-                contour = makePoints([200, 100, 300, 100, 400, 200, 400, 300, 300, 400, 200, 400, 100, 300, 100, 200]);
-                hole = makePoints([250, 250, 280, 250, 280, 280, 250, 280]);
-            });
-            it("should triangulate", function() {
-                var swctx = new p2t.SweepContext(contour, options);
-                swctx.addHole(hole);
-                swctx.triangulate();
-                var t = swctx.getTriangles();
-                expect(t).toBeTruthy();
-                // should return 12 triangles
-                expect(t.length).toBe(12);
+                // should return 8 triangles
+                expect(t.length).toBe(8);
                 // should be in the contour and hole
-                expect(t).toBeInPoints([contour, hole]);
-                // should contain the contour and hole
-                expect(t).toContainPoints([contour, hole]);
+                expect(t).toBeInPoints([contour, hole1, hole2]);
+                // should contain the contour and first hole (but not second hole)
+                expect(t).toContainPoints([contour, hole1]);
+                expect(t).not.toContainPoints([hole2]);
             });
         });
         describe("a polygon containing 1 hole and 2 Steiner points", function() {

@@ -148,7 +148,9 @@ exports.computeExpectedNumberOfTriangles = function (contour, holes, steiner) {
     // For a polygon with h holes and n vertices total (holes + outer boundary),
     // a triangulation has t = n + 2h - 2 triangles, which is a generalisation of the previous case
     // (see http://cs.smith.edu/~orourke/books/ArtGalleryTheorems/Art_Gallery_Chapter_5.pdf).
-    //
+    // This formula works only if the holes are disjoints, i.e. not intersecting (not allowed
+    // by poly2tri anyway), not included within each other, and not sharing vertices or edges.
+
     // Steiner points are a degenerate case of the holes (with 0 vertices), but this is valid only
     // if all the points are inside the polygon.
     //
