@@ -88,9 +88,10 @@ exports.randomPolygon = randomPolygon;
  * @returns {Triangle} a triangle failing the test, or null if success
  */
 function testTrianglesToEqualVertices(triangles, pointsLists) {
+    /* jshint maxcomplexity:8 */
     var tpoints = [];
     triangles.forEach(function (triangle) {
-        tpoints = tpoints.concat(triangle.getPoints());
+        tpoints.push.apply(tpoints, triangle.getPoints());
     });
     tpoints.sort(xy.compare);
 
@@ -110,6 +111,13 @@ function testTrianglesToEqualVertices(triangles, pointsLists) {
         // skip repeated points (shared vertices between triangles)
         while (t < tplen - 1 && tpoints[t + 1] === tpoints[t]) {
             t++;
+        }
+    }
+    if (!failed) {
+        if (t < tplen) {
+            failed = tpoints[t];
+        } else if (p < pplen) {
+            failed = ppoints[p];
         }
     }
     return failed;

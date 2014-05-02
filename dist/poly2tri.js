@@ -1707,7 +1707,7 @@ var SweepContext = function(contour, options) {
 /**
  * Add a hole to the constraints
  * @example
- *      var swctx = new poly2tri.SweepContext(...);
+ *      var swctx = new poly2tri.SweepContext(contour);
  *      var hole = [
  *          new poly2tri.Point(200, 200),
  *          new poly2tri.Point(200, 250),
@@ -1737,7 +1737,7 @@ SweepContext.prototype.AddHole = SweepContext.prototype.addHole;
 /**
  * Add a Steiner point to the constraints
  * @example
- *      var swctx = new poly2tri.SweepContext(...);
+ *      var swctx = new poly2tri.SweepContext(contour);
  *      var point = new poly2tri.Point(150, 150);
  *      swctx.addPoint(point);
  * @public
@@ -1772,7 +1772,7 @@ SweepContext.prototype.addPoints = function(points) {
  * Triangulate the polygon with holes and Steiner points.
  * Do this AFTER you've added the polyline, holes, and Steiner points
  * @example
- *      var swctx = new poly2tri.SweepContext(...);
+ *      var swctx = new poly2tri.SweepContext(contour);
  *      swctx.triangulate();
  *      var triangles = swctx.getTriangles();
  * @public
@@ -1803,7 +1803,7 @@ SweepContext.prototype.getBoundingBox = function() {
  * to the initial input points (not copies): any custom fields in the
  * initial points can be retrieved in the output triangles.
  * @example
- *      var swctx = new poly2tri.SweepContext(...);
+ *      var swctx = new poly2tri.SweepContext(contour);
  *      swctx.triangulate();
  *      var triangles = swctx.getTriangles();
  * @example
