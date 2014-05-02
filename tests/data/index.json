@@ -172,5 +172,12 @@
                 "TODO": "XXX FIXME contour not completely displayed in demo"
             }
         ]
+    },
+    {
+        "title": "Data extracted from stackoverflow Three.js failure",
+        "source": "http://stackoverflow.com/questions/16241854/holes-in-polygons-causes-triangulation-failure-in-three-js",
+        "files": [
+            {"name": "tree.dat", "demo": true, "content": "Tree", "holes": "tree_holes.dat"}
+        ]
     }
 ]
