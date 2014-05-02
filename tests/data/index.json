@@ -146,5 +146,31 @@
             {"name": "octagon.dat", "content": "Octagon containing 1 rectangle hole", "holes": "octagon_hole.dat"},
             {"name": "intersecting.dat", "content": "Intersecting edges", "throws": "intersecting constraints: polygon with crossing paths"}
         ]
+    },
+    {
+        "title": "PolyBoolean test data",
+        "source": "http://www.complex-a5.ru/polyboolean/downloads.html",
+        "files": [
+            {"name": "polyboolean/3885/c.dat", "content": "Letter C ( 1.5k points from True Type Font)"},
+            {"name": "polyboolean/3885/s.dat", "content": "Letter S ( 2.4k points from True Type Font)"},
+            {"name": "polyboolean/7076/c.dat", "content": "Letter C ( 3.1k points from True Type Font)"},
+            {"name": "polyboolean/7076/s.dat", "content": "Letter S ( 4k points from True Type Font)"},
+            {"name": "polyboolean/20190/c.dat", "content": "Letter C ( 9.5k points from True Type Font)"},
+            {"name": "polyboolean/20190/s.dat", "content": "Letter S (10k points from True Type Font)"},
+            {"name": "polyboolean/69839/c.dat", "content": "Letter C (31k points from True Type Font)"},
+            {
+                "name": "polyboolean/69839/s.dat", "content": "Letter S (39k points from True Type Font)", "slow": true,
+                "TODO": "XXX FIXME contour not completely displayed in demo"
+            },
+            {
+                "name": "polyboolean/174239/a.dat", "content": "Letter A (73k points from True Type Font)", "slow": true,
+                "holes": "polyboolean/174239/a_holes.dat",
+                "TODO": "XXX FIXME contour not completely displayed in demo"
+            },
+            {
+                "name": "polyboolean/174239/b.dat", "content": "Letter B (101k points from True Type Font)", "slow": true,
+                "TODO": "XXX FIXME contour not completely displayed in demo"
+            }
+        ]
     }
 ]

@@ -540,7 +540,7 @@ describe("poly2tri", function() {
         index.forEach(function(group) {
             describe('' + group.title, function() {
                 group.files.filter(function(file) {
-                    return file.name;
+                    return file.name && !file.slow;
                 }).forEach(function(file) {
                     describe('"' + file.name + '"', function() {
                         // not reset between tests : loaded once only
