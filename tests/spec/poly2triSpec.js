@@ -185,30 +185,6 @@ describe("poly2tri", function() {
                     return str;
                 };
                 return !failed;
-            },
-            // Checks that all the triangles vertices are in the list of points
-            toBeInPoints: function(pointslists) {
-                var triangles = this.actual, failed;
-                failed = helpers.testTrianglesToBeInPoints(triangles, pointslists);
-                // Customize message for easier debugging
-                // (because of isNot, message might be printed event if !failed)
-                this.message = function() {
-                    var str = "Expected Triangle" + (failed ? (" " + failed) : ("s ") + triangles);
-                    return str + (this.isNot ? " not" : "") + " to be in points " + pointslists;
-                };
-                return !failed;
-            },
-            // Checks that all the points are in at least one triangle
-            toContainPoints: function(pointslists) {
-                var triangles = this.actual, failed;
-                failed = helpers.testTrianglesToContainPoints(triangles, pointslists);
-                // Customize message for easier debugging
-                // (because of isNot, message might be printed event if !failed)
-                this.message = function() {
-                    var str = "Expected Point" + (failed ? (" " + failed) : ("s ") + pointslists);
-                    return str + (this.isNot ? " not" : "") + " to be in triangles " + triangles;
-                };
-                return !failed;
             }
         });
     });
