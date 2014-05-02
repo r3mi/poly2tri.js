@@ -169,6 +169,23 @@ describe("poly2tri", function() {
             toEqualPoint: function(p2) {
                 return p2t.Point.equals(this.actual, p2);
             },
+            toEqualVertices: function (pointslists) {
+                var triangles = this.actual, failed;
+                failed = helpers.testTrianglesToEqualVertices(triangles, pointslists);
+                // Customize message for easier debugging
+                // (because of isNot, message might be printed event if !failed)
+                this.message = function () {
+                    var str;
+                    if (this.isNot) {
+                        str = "Expected Triangles " + triangles + " not to equal vertices";
+                    } else {
+                        str = "Expected Triangles " + triangles + " to equal vertices " + pointslists;
+                        str += " but missing point " + failed;
+                    }
+                    return str;
+                };
+                return !failed;
+            },
             // Checks that all the triangles vertices are in the list of points
             toBeInPoints: function(pointslists) {
                 var triangles = this.actual, failed;
@@ -260,10 +277,8 @@ describe("poly2tri", function() {
                 // should have a bounding box
                 expect(swctx.getBoundingBox().min).toEqualPoint({x: 0, y: 0});
                 expect(swctx.getBoundingBox().max).toEqualPoint({x: 2, y: 1});
-                // should be in the contour 
-                expect(t).toBeInPoints([contour]);
-                // should contain the contour
-                expect(t).toContainPoints([contour]);
+                // should have triangle vertices equal to the constraints
+                expect(t).toEqualVertices([contour]);
             });
         });
         describe("a rectangle", function() {
@@ -278,10 +293,8 @@ describe("poly2tri", function() {
                 expect(t).toBeTruthy();
                 // should return 2 triangles
                 expect(t.length).toBe(2);
-                // should be in the contour
-                expect(t).toBeInPoints([contour]);
-                // should contain the contour
-                expect(t).toContainPoints([contour]);
+                // should have triangle vertices equal to the constraints
+                expect(t).toEqualVertices([contour]);
             });
         });
         describe("a rectangle containing 1 Steiner point", function() {
@@ -298,10 +311,8 @@ describe("poly2tri", function() {
                 expect(t).toBeTruthy();
                 // should return 4 triangles
                 expect(t.length).toBe(4);
-                // should be in the contour and point
-                expect(t).toBeInPoints([contour, points]);
-                // should contain the contour and point
-                expect(t).toContainPoints([contour, points]);
+                // should have triangle vertices equal to the constraints
+                expect(t).toEqualVertices([contour, points]);
             });
         });
         describe("a rectangle not cloned", function() {
@@ -336,11 +347,8 @@ describe("poly2tri", function() {
                 expect(t).toBeTruthy();
                 // should return 8 triangles
                 expect(t.length).toBe(8);
-                // should be in the contour and hole
-                expect(t).toBeInPoints([contour, hole1, hole2]);
-                // should contain the contour and first hole (but not second hole)
-                expect(t).toContainPoints([contour, hole1]);
-                expect(t).not.toContainPoints([hole2]);
+                // should have triangle vertices equal to the constraints (but excluding the interior-most hole)
+                expect(t).toEqualVertices([contour, hole1]);
             });
         });
         describe("a polygon containing 1 hole and 2 Steiner points", function() {
@@ -359,10 +367,8 @@ describe("poly2tri", function() {
                 expect(t).toBeTruthy();
                 // should return 11 triangles
                 expect(t.length).toBe(11);
-                // should be in the contour and hole and points
-                expect(t).toBeInPoints([contour, hole, points]);
-                // should contain the contour and hole and points
-                expect(t).toContainPoints([contour, hole, points]);
+                // should have triangle vertices equal to the constraints
+                expect(t).toEqualVertices([contour, hole, points]);
             });
             it("should triangulate (chained methods)", function() {
                 var swctx = new p2t.SweepContext(contour, options);
@@ -370,10 +376,8 @@ describe("poly2tri", function() {
                 expect(t).toBeTruthy();
                 // should return 11 triangles
                 expect(t.length).toBe(11);
-                // should be in the contour and hole and points
-                expect(t).toBeInPoints([contour, hole, points]);
-                // should contain the contour and hole and points
-                expect(t).toContainPoints([contour, hole, points]);
+                // should have triangle vertices equal to the constraints
+                expect(t).toEqualVertices([contour, hole, points]);
             });
             it("should triangulate (backward compatibility methods)", function() {
                 var swctx = new p2t.SweepContext(contour, options);
@@ -415,10 +419,8 @@ describe("poly2tri", function() {
                 expect(t).toBeTruthy();
                 // should return 143 triangles
                 expect(t.length).toBe(143);
-                // should be in the contour and holes and points
-                expect(t).toBeInPoints([contour, hole1, hole2, points]);
-                // should contain the contour and holes and points
-                expect(t).toContainPoints([contour, hole1, hole2, points]);
+                // should have triangle vertices equal to the constraints
+                expect(t).toEqualVertices([contour, hole1, hole2, points]);
             });
         });
         describe("a quadrilateral containing 1000 Steiner points", function() {
@@ -442,10 +444,8 @@ describe("poly2tri", function() {
                 expect(t).toBeTruthy();
                 // should return 2002 triangles
                 expect(t.length).toBe(2002);
-                // should be in the contour and points
-                expect(t).toBeInPoints([contour, points]);
-                // should contain the contour and points
-                expect(t).toContainPoints([contour, points]);
+                // should have triangle vertices equal to the constraints
+                expect(t).toEqualVertices([contour, points]);
             });
         });
         describe("a polygon with 1000 vertices", function() {
@@ -465,10 +465,8 @@ describe("poly2tri", function() {
                 expect(t).toBeTruthy();
                 // should return 998 triangles
                 expect(t.length).toBe(998);
-                // should be in the contour
-                expect(t).toBeInPoints([contour]);
-                // should contain the contour
-                expect(t).toContainPoints([contour]);
+                // should have triangle vertices equal to the constraints
+                expect(t).toEqualVertices([contour]);
             });
         });
         describe("a polygon containing extra information in points", function() {
@@ -570,7 +568,7 @@ describe("poly2tri", function() {
                 }).forEach(function(file) {
                     describe('"' + file.name + '"', function() {
                         // not reset between tests : loaded once only
-                        var contour, holes = [], points = [];
+                        var contour, holes = [], points = [], t;
                         it("should load and parse contour", function() {
                             var data = readFileSync(file.name);
                             contour = parsePoints(data);
@@ -609,24 +607,24 @@ describe("poly2tri", function() {
                         } else {
                             it("should triangulate", function() {
                                 var swctx = new p2t.SweepContext(contour, options);
-                                holes.forEach(function(hole) {
+                                holes.forEach(function (hole) {
                                     swctx.addHole(hole);
                                 });
                                 swctx.addPoints(points).triangulate();
-                                var t = swctx.getTriangles();
+                                t = swctx.getTriangles();
                                 expect(t).toBeTruthy();
-                                // Should return the expected number of triangles
-                                // (the theoretical expected number of triangles can be overwritten in the data file
-                                // for special cases i.e. Steiner points outside the contour).
-                                var nb_triangles = file.triangles || helpers.computeExpectedNumberOfTriangles(contour, holes, points);
-                                expect(t.length).toBe(nb_triangles);
                                 // should have a bounding box
                                 expect(swctx.getBoundingBox().min).toEqual(jasmine.any(p2t.Point));
                                 expect(swctx.getBoundingBox().max).toEqual(jasmine.any(p2t.Point));
-                                // should be in the constraints
-                                expect(t).toBeInPoints([contour, points].concat(holes));
-                                // should contain the constraints
-                                expect(t).toContainPoints([contour, points].concat(holes));
+                            });
+                            it("should return the expected number of triangles", function() {
+                                // The theoretical expected number of triangles can be overwritten in the data file
+                                // for special cases i.e. Steiner points outside the contour.
+                                var nb_triangles = file.triangles || helpers.computeExpectedNumberOfTriangles(contour, holes, points);
+                                expect(t.length).toBe(nb_triangles);
+                            });
+                            it("should have triangle vertices equal to the constraints", function() {
+                                expect(t).toEqualVertices([contour, points].concat(holes));
                             });
                         }
                     });

@@ -38,17 +38,21 @@
 "use strict";
 
 
+var xy = require('../../src/xy');
+
+
 /**
  * Parse a string of floats, ignoring any separators between values
  * @param {String} str
  * @returns {Array<number>} parsed floats
  */
-exports.parseFloats = function (str) {
+function parseFloats(str) {
     var floats = str.split(/[^-+eE\.\d]+/).map(parseFloat).filter(function (val) {
         return !isNaN(val);
     });
     return floats;
-};
+}
+exports.parseFloats = parseFloats;
 
 
 /**
@@ -59,7 +63,7 @@ exports.parseFloats = function (str) {
  * @param {number} n        number of vertices
  * @returns {Array<number>} array of vertices (x then y)
  */
-exports.randomPolygon = function (rnd, n) {
+function randomPolygon(rnd, n) {
     var i, theta = [], rho, x, y, points = [];
     for (i = 0; i < n; i++) {
         theta.push(rnd() * Math.PI * 2);
@@ -73,60 +77,44 @@ exports.randomPolygon = function (rnd, n) {
         points.push(500 + x, 500 + y);
     }
     return points;
-};
+}
+exports.randomPolygon = randomPolygon;
 
 
 /**
- * Checks that all the triangles vertices are in the list of points
+ * Checks that the list of triangles vertices is the same as the given list of points
  * @param {Array<Triangle>} triangles       array of triangles
  * @param {Array<Array{x,y}>} pointsLists   array of array of Points
  * @returns {Triangle} a triangle failing the test, or null if success
  */
-exports.testTrianglesToBeInPoints = function (triangles, pointsLists) {
-    var i, tlen = triangles.length, failed = null;
-    for (i = 0; i < tlen && !failed; i++) {
-        var triangle = triangles[i], found0 = false, found1 = false, found2 = false;
-        /* jshint loopfunc:true */
-        pointsLists.forEach(function (points) {
-            var j, plen = points.length;
-            for (j = 0; j < plen && !(found0 && found1 && found2); j++) {
-                var point = points[j];
-                // Here we are comparing point references, not values
-                found0 = found0 || (triangle.getPoint(0) === point);
-                found1 = found1 || (triangle.getPoint(1) === point);
-                found2 = found2 || (triangle.getPoint(2) === point);
-            }
-        });
-        if (!(found0 && found1 && found2)) {
-            failed = triangle;
+function testTrianglesToEqualVertices(triangles, pointsLists) {
+    var tpoints = [];
+    triangles.forEach(function (triangle) {
+        tpoints = tpoints.concat(triangle.getPoints());
+    });
+    tpoints.sort(xy.compare);
+
+    var ppoints = [].concat.apply([], pointsLists);
+    ppoints.sort(xy.compare);
+
+    var failed = null;
+    var tplen = tpoints.length;
+    var pplen = ppoints.length;
+    var t, p;
+    for (t = 0, p = 0; t < tplen && p < pplen && !failed; t++, p++) {
+        if (tpoints[t] !== ppoints[p]) {
+            // which one is missing ? the "smallest" one
+            var cmp = xy.compare(tpoints[t], ppoints[p]);
+            failed = ((cmp < 0) ? tpoints[t] : ppoints[p]);
+        }
+        // skip repeated points (shared vertices between triangles)
+        while (t < tplen - 1 && tpoints[t + 1] === tpoints[t]) {
+            t++;
         }
     }
     return failed;
-};
-
-
-/**
- * Checks that all the points are in at least one triangle
- * @param {Array<Triangle>} triangles       array of triangles
- * @param {Array<Array{x,y}>} pointsLists   array of array of Points
- * @returns {Point} a point failing the test, or null if success
- */
-exports.testTrianglesToContainPoints = function (triangles, pointsLists) {
-    var failed = null;
-    pointsLists.forEach(function (points) {
-        var i, plen = points.length;
-        for (i = 0; i < plen && !failed; i++) {
-            var point = points[i], found = false, j, tlen = triangles.length;
-            for (j = 0; j < tlen && !found; j++) {
-                found = found || triangles[j].containsPoint(point);
-            }
-            if (!found) {
-                failed = point;
-            }
-        }
-    });
-    return failed;
-};
+}
+exports.testTrianglesToEqualVertices = testTrianglesToEqualVertices;
 
 
 /**
