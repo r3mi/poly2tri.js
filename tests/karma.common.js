@@ -15,16 +15,17 @@ module.exports = {
     frameworks: ['jasmine', 'browserify'],
     singleRun: true,
     files: [
-        'tests/spec/*.js',
         {pattern: 'tests/data/**/*', included: false}
     ],
     preprocessors: {
-        'tests/spec/*.js': ['browserify']
+        "/**/*.browserify": "browserify"
     },
     browserify: {
-        // work around --standalone bug, see https://github.com/substack/node-browserify/issues/525
-        noParse: ['dist/*.js']
+        files: [
+            'tests/spec/*.js'
+        ]
     },
+    browserNoActivityTimeout: 15000
     //logLevel: "LOG_DEBUG",
 };
 
