@@ -595,7 +595,7 @@ describe("poly2tri", function() {
                             });
                             it("should return the expected number of triangles", function() {
                                 // The theoretical expected number of triangles can be overwritten in the data file
-                                // for special cases i.e. Steiner points outside the contour.
+                                // for special cases e.g. Steiner points outside the contour.
                                 var nb_triangles = file.triangles || helpers.computeExpectedNumberOfTriangles(contour, holes, points);
                                 expect(t.length).toBe(nb_triangles);
                             });

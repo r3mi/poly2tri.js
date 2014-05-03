@@ -92,60 +92,75 @@ Usage
    compatible with the various module systems:
     - CommonJS:
 
-            var poly2tri = require('poly2tri');
+        ```node
+        var poly2tri = require('poly2tri');
+        ```
     - RequireJS:
 
-            require('poly2tri', function (poly2tri) {
-                ...
-            });
+        ```js
+        require('poly2tri', function (poly2tri) {
+            ...
+        });
+        ```
     - If you are not using a module system at all, you can access the package
       as a global variable `poly2tri` (or `window.poly2tri` in a browser).
 
 2. Initialize CDT with a simple polyline 
    (this defines the constrained edges)
 
-        var contour = [
-            new poly2tri.Point(100, 100), 
-            new poly2tri.Point(100, 300), 
-            new poly2tri.Point(300, 300), 
-            new poly2tri.Point(300, 100)
-        ];
-        var swctx = new poly2tri.SweepContext(contour);
-               
+    ```js
+    var contour = [
+        new poly2tri.Point(100, 100),
+        new poly2tri.Point(100, 300),
+        new poly2tri.Point(300, 300),
+        new poly2tri.Point(300, 100)
+    ];
+    var swctx = new poly2tri.SweepContext(contour);
+    ```
+
 3. Add holes if necessary (also simple polylines)
 
-        var hole = [
-            new poly2tri.Point(200, 200), 
-            new poly2tri.Point(200, 250), 
-            new poly2tri.Point(250, 250)
-        ];  
-        swctx.addHole(hole);
+    ```js
+    var hole = [
+        new poly2tri.Point(200, 200),
+        new poly2tri.Point(200, 250),
+        new poly2tri.Point(250, 250)
+    ];
+    swctx.addHole(hole);
+    ```
 
 4. Add Steiner points if necessary
-
-        var point = new poly2tri.Point(150, 150);
-        swctx.addPoint(point);
+    ```js
+    var point = new poly2tri.Point(150, 150);
+    swctx.addPoint(point);
+    // or swctx.addPoints([p1, p2, p3]) for multiple points
+    ```
 
 5. Triangulate
 
-        swctx.triangulate();
-        var triangles = swctx.getTriangles();
+    ```js
+    swctx.triangulate();
+    var triangles = swctx.getTriangles();
+    ```
 
 6. Use results
 
-        triangles.forEach(function(t) { 
-            t.getPoints().forEach(function(p) { 
-                console.log(p.x, p.y); 
-            });
-            // or t.getPoint(0), t.getPoint(1), t.getPoint(2)
+    ```js
+    triangles.forEach(function(t) {
+        t.getPoints().forEach(function(p) {
+            console.log(p.x, p.y);
         });
+        // or t.getPoint(0), t.getPoint(1), t.getPoint(2)
+    });
+    ```
 
 See [`index.html`](index.html) for a complete example.
 
 Method calls can be chained:
     
-        var triangles = swctx.addHole(hole).addPoint(point).triangulate().getTriangles();
-    
+```js
+var triangles = swctx.addHole(hole).addPoint(point).triangulate().getTriangles();
+```
 
 Advanced Options
 ----------------
@@ -165,8 +180,10 @@ Any "Point like" object with `{x, y}` attributes is supported
 to initialize the SweepContext polylines and points
 ([duck typing](http://en.wikipedia.org/wiki/Duck_typing)).
 
-        var contour = [{x:100, y:100}, {x:100, y:300}, {x:300, y:300}, {x:300, y:100}];
-        var swctx = new poly2tri.SweepContext(contour);
+```js
+var contour = [{x:100, y:100}, {x:100, y:300}, {x:300, y:300}, {x:300, y:100}];
+var swctx = new poly2tri.SweepContext(contour);
+```
 
 poly2tri.js might add extra fields to the point objects when computing the
 triangulation : they are prefixed with `_p2t_` to avoid collisions 
@@ -179,20 +196,23 @@ The output triangles in `getTriangles()` have vertices which are references
 to the initial input points (not copies). Any custom fields in the
 initial points can be retrieved in the output triangles.
 
-        var contour = [{x:100, y:100, id:1}, {x:100, y:300, id:2}, {x:300, y:300, id:3}];
-        var swctx = new poly2tri.SweepContext(contour);
-        swctx.triangulate();
-        var triangles = swctx.getTriangles();
-        typeof triangles[0].getPoint(0).id
-        // → "number"
-
+```js
+var contour = [{x:100, y:100, id:1}, {x:100, y:300, id:2}, {x:300, y:300, id:3}];
+var swctx = new poly2tri.SweepContext(contour);
+swctx.triangulate();
+var triangles = swctx.getTriangles();
+typeof triangles[0].getPoint(0).id
+// → "number"
+```
 
 ### poly2tri.noConflict
 
 Reverts the `poly2tri` global object back to its original value, 
 and returns a reference to this `poly2tri` object.
 
-        var p = poly2tri.noConflict();
+```js
+var p = poly2tri.noConflict();
+```
 
 
 Displaying the samples
@@ -206,10 +226,11 @@ bower install
 Use `index.html` (also available online as a [demo]) to display the result of a triangulation.
 Polygon contour, holes, and Steiner points can be added.
 Use any separator between points, e.g.
-
-        100 100
-        [100, 300, 300, 300]
-        (300;100)
+```
+100 100
+[100, 300, 300, 300]
+(300;100)
+```
 is valid data to describe 4 points.
 
 Some interesting samples can be interactively loaded 
