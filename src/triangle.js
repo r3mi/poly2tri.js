@@ -99,7 +99,7 @@ Triangle.prototype.toString = function() {
  *      var triangles = swctx.getTriangles();
  *      typeof triangles[0].getPoint(0).id
  *      // → "number"
- * @param {number} index
+ * @param {number} index - vertice index: 0, 1 or 2
  * @public
  * @returns {XY}
  */

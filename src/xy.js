@@ -39,8 +39,12 @@
  * @property {number} y - y coordinate
  */
 
+
 /**
- * Point pretty printing ex. <i>"(5;42)"</i>)
+ * Point pretty printing : prints x and y coordinates.
+ * @example
+ *      xy.toStringBase({x:5, y:42})
+ *      // → "(5;42)"
  * @protected
  * @param {!XY} p - point object with {x,y}
  * @returns {string} <code>"(x;y)"</code>
@@ -48,8 +52,16 @@
 function toStringBase(p) {
     return ("(" + p.x + ";" + p.y + ")");
 }
+
 /**
- * Point pretty printing ex. <i>"(5;42)"</i>)
+ * Point pretty printing. Delegates to the point's custom "toString()" method if exists,
+ * else simply prints x and y coordinates.
+ * @example
+ *      xy.toString({x:5, y:42})
+ *      // → "(5;42)"
+ * @example
+ *      xy.toString({x:5,y:42,toString:function() {return this.x+":"+this.y;}})
+ *      // → "5:42"
  * @param {!XY} p - point object with {x,y}
  * @returns {string} <code>"(x;y)"</code>
  */
@@ -58,6 +70,7 @@ function toString(p) {
     var s = p.toString();
     return (s === '[object Object]' ? toStringBase(p) : s);
 }
+
 
 /**
  * Compare two points component-wise. Ordered by y axis first, then x axis.

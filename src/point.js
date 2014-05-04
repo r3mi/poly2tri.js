@@ -58,7 +58,10 @@ var Point = function(x, y) {
 };
 
 /**
- * For pretty printing ex. <i>"(5;42)"</i>)
+ * For pretty printing
+ * @example
+ *      "p=" + new poly2tri.Point(5,42)
+ *      // → "p=(5;42)"
  * @returns {string} <code>"(x;y)"</code>
  */
 Point.prototype.toString = function() {
@@ -68,7 +71,8 @@ Point.prototype.toString = function() {
 /**
  * JSON output, only coordinates
  * @example
- *      JSON.stringify(new Point(1,2)) == '{"x":1,"y":2}'
+ *      JSON.stringify(new poly2tri.Point(1,2))
+ *      // → '{"x":1,"y":2}'
  */
 Point.prototype.toJSON = function() {
     return { x: this.x, y: this.y };
