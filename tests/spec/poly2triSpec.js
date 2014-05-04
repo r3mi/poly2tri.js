@@ -398,6 +398,18 @@ describe("poly2tri", function() {
                 // should have triangle vertices equal to the constraints
                 expect(t).toEqualVertices([contour, hole1, hole2, points]);
             });
+            it("should triangulate (using addHoles)", function() {
+                var swctx = new p2t.SweepContext(contour, options);
+                swctx.addHoles([hole1, hole2]);
+                swctx.addPoints(points);
+                swctx.triangulate();
+                var t = swctx.getTriangles();
+                expect(t).toBeTruthy();
+                // should return 143 triangles
+                expect(t.length).toBe(143);
+                // should have triangle vertices equal to the constraints
+                expect(t).toEqualVertices([contour, hole1, hole2, points]);
+            });
         });
         describe("a quadrilateral containing 1000 Steiner points", function() {
             var contour, points, max = 1000;
@@ -574,19 +586,13 @@ describe("poly2tri", function() {
                             it("should fail to triangulate", function() {
                                 expect(function() {
                                     var swctx = new p2t.SweepContext(contour, options);
-                                    holes.forEach(function(hole) {
-                                        swctx.addHole(hole);
-                                    });
-                                    swctx.addPoints(points).triangulate();
+                                    swctx.addHoles(holes).addPoints(points).triangulate();
                                 }).toThrow();
                             });
                         } else {
                             it("should triangulate", function() {
                                 var swctx = new p2t.SweepContext(contour, options);
-                                holes.forEach(function (hole) {
-                                    swctx.addHole(hole);
-                                });
-                                swctx.addPoints(points).triangulate();
+                                swctx.addHoles(holes).addPoints(points).triangulate();
                                 t = swctx.getTriangles();
                                 expect(t).toBeTruthy();
                                 // should have a bounding box

@@ -127,6 +127,7 @@ Usage
         new poly2tri.Point(250, 250)
     ];
     swctx.addHole(hole);
+    // or swctx.addHoles([hole1, hole2]) for multiple holes
     ```
 
 4. Add Steiner points if necessary
@@ -159,7 +160,7 @@ See [`index.html`](index.html) for a complete example.
 Method calls can be chained:
     
 ```js
-var triangles = swctx.addHole(hole).addPoint(point).triangulate().getTriangles();
+var triangles = swctx.addHoles(holes).addPoints(points).triangulate().getTriangles();
 ```
 
 Advanced Options

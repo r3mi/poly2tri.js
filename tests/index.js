@@ -210,10 +210,7 @@ function triangulate(stage) {
     try {
         // prepare SweepContext
         swctx = new poly2tri.SweepContext(contour, {cloneArrays: true});
-        holes.forEach(function(hole) {
-            swctx.addHole(hole);
-        });
-        swctx.addPoints(points);
+        swctx.addHoles(holes).addPoints(points);
 
         // triangulate
         swctx.triangulate();

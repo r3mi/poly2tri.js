@@ -277,7 +277,10 @@ var Point = function(x, y) {
 };
 
 /**
- * For pretty printing ex. <i>"(5;42)"</i>)
+ * For pretty printing
+ * @example
+ *      "p=" + new poly2tri.Point(5,42)
+ *      // → "p=(5;42)"
  * @returns {string} <code>"(x;y)"</code>
  */
 Point.prototype.toString = function() {
@@ -287,7 +290,8 @@ Point.prototype.toString = function() {
 /**
  * JSON output, only coordinates
  * @example
- *      JSON.stringify(new Point(1,2)) == '{"x":1,"y":2}'
+ *      JSON.stringify(new poly2tri.Point(1,2))
+ *      // → '{"x":1,"y":2}'
  */
 Point.prototype.toJSON = function() {
     return { x: this.x, y: this.y };
@@ -1714,6 +1718,9 @@ var SweepContext = function(contour, options) {
  *          new poly2tri.Point(250, 250)
  *      ];
  *      swctx.addHole(hole);
+ * @example
+ *      var swctx = new poly2tri.SweepContext(contour);
+ *      swctx.addHole([{x:200, y:200}, {x:200, y:250}, {x:250, y:250}]);
  * @public
  * @param {Array.<XY>} polyline - array of "Point like" objects with {x,y}
  */
@@ -1735,11 +1742,44 @@ SweepContext.prototype.AddHole = SweepContext.prototype.addHole;
 
 
 /**
+ * Add several holes to the constraints
+ * @example
+ *      var swctx = new poly2tri.SweepContext(contour);
+ *      var holes = [
+ *          [ new poly2tri.Point(200, 200), new poly2tri.Point(200, 250), new poly2tri.Point(250, 250) ],
+ *          [ new poly2tri.Point(300, 300), new poly2tri.Point(300, 350), new poly2tri.Point(350, 350) ]
+ *      ];
+ *      swctx.addHoles(holes);
+ * @example
+ *      var swctx = new poly2tri.SweepContext(contour);
+ *      var holes = [
+ *          [{x:200, y:200}, {x:200, y:250}, {x:250, y:250}],
+ *          [{x:300, y:300}, {x:300, y:350}, {x:350, y:350}]
+ *      ];
+ *      swctx.addHoles(holes);
+ * @public
+ * @param {Array.<Array.<XY>>} holes - array of array of "Point like" objects with {x,y}
+ */
+// Method added in the JavaScript version (was not present in the c++ version)
+SweepContext.prototype.addHoles = function(holes) {
+    var i, len = holes.length;
+    for (i = 0; i < len; i++) {
+        this.initEdges(holes[i]);
+    }
+    this.points_ = this.points_.concat.apply(this.points_, holes);
+    return this; // for chaining
+};
+
+
+/**
  * Add a Steiner point to the constraints
  * @example
  *      var swctx = new poly2tri.SweepContext(contour);
  *      var point = new poly2tri.Point(150, 150);
  *      swctx.addPoint(point);
+ * @example
+ *      var swctx = new poly2tri.SweepContext(contour);
+ *      swctx.addPoint({x:150, y:150});
  * @public
  * @param {XY} point - any "Point like" object with {x,y}
  */
@@ -1758,6 +1798,17 @@ SweepContext.prototype.AddPoint = SweepContext.prototype.addPoint;
 
 /**
  * Add several Steiner points to the constraints
+ * @example
+ *      var swctx = new poly2tri.SweepContext(contour);
+ *      var points = [
+ *          new poly2tri.Point(150, 150),
+ *          new poly2tri.Point(200, 250),
+ *          new poly2tri.Point(250, 250)
+ *      ];
+ *      swctx.addPoints(points);
+ * @example
+ *      var swctx = new poly2tri.SweepContext(contour);
+ *      swctx.addPoints([{x:150, y:150}, {x:200, y:250}, {x:250, y:250}]);
  * @public
  * @param {Array.<XY>} points - array of "Point like" object with {x,y}
  */
@@ -2097,7 +2148,7 @@ Triangle.prototype.toString = function() {
  *      var triangles = swctx.getTriangles();
  *      typeof triangles[0].getPoint(0).id
  *      // → "number"
- * @param {number} index
+ * @param {number} index - vertice index: 0, 1 or 2
  * @public
  * @returns {XY}
  */
@@ -2711,8 +2762,12 @@ exports.isAngleObtuse = isAngleObtuse;
  * @property {number} y - y coordinate
  */
 
+
 /**
- * Point pretty printing ex. <i>"(5;42)"</i>)
+ * Point pretty printing : prints x and y coordinates.
+ * @example
+ *      xy.toStringBase({x:5, y:42})
+ *      // → "(5;42)"
  * @protected
  * @param {!XY} p - point object with {x,y}
  * @returns {string} <code>"(x;y)"</code>
@@ -2720,8 +2775,16 @@ exports.isAngleObtuse = isAngleObtuse;
 function toStringBase(p) {
     return ("(" + p.x + ";" + p.y + ")");
 }
+
 /**
- * Point pretty printing ex. <i>"(5;42)"</i>)
+ * Point pretty printing. Delegates to the point's custom "toString()" method if exists,
+ * else simply prints x and y coordinates.
+ * @example
+ *      xy.toString({x:5, y:42})
+ *      // → "(5;42)"
+ * @example
+ *      xy.toString({x:5,y:42,toString:function() {return this.x+":"+this.y;}})
+ *      // → "5:42"
  * @param {!XY} p - point object with {x,y}
  * @returns {string} <code>"(x;y)"</code>
  */
@@ -2730,6 +2793,7 @@ function toString(p) {
     var s = p.toString();
     return (s === '[object Object]' ? toStringBase(p) : s);
 }
+
 
 /**
  * Compare two points component-wise. Ordered by y axis first, then x axis.
