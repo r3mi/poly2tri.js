@@ -10,7 +10,7 @@
         "Rémi Turboult <r3mi@users.sf.net>"
     ],
     "description": "A 2D constrained Delaunay triangulation library",
-    "main": "dist/poly2tri.min.js",
+    "main": "dist/poly2tri.js",
     "keywords": [
         "2D",
         "constrained",
