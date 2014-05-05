@@ -1,6 +1,15 @@
 [demo]: http://r3mi.github.io/poly2tri.js
 [Browserify]: http://browserify.org/
 
+<a name="1.3.5"></a>
+# 1.3.5 (2014-05-05)
+
+- new `SweepContext.addHoles` method, to add multiple holes with one call
+- bower.json now points to the un-minified source, as per the [bower.json spec](https://github.com/bower/bower.json-spec).
+  Reported by Matt DesLauriers @mattdesl
+- better jsdoc annotations
+- add additional test cases and improve unit tests performances
+
 <a name="1.3.4"></a>
 # 1.3.4 (2014-04-25)
 
