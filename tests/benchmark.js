@@ -37,6 +37,10 @@ var loaders = {
     '1.3.3': function() {
         return require('./versions/1.3.3/poly2tri.min');
     },
+    // atan2 improvements
+    '1.3.4': function() {
+        return require('./versions/1.3.4/poly2tri');
+    },
     'current.src': function() {
         return require('../src/poly2tri');
     },
