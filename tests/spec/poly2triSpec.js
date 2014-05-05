@@ -483,6 +483,25 @@ describe("poly2tri", function() {
                 });
             });
         });
+        describe("a polygon with edge constraints", function() {
+            var contour, edge1, edge2;
+            beforeEach(function() {
+                contour = makePoints([40, -1, 71, 87, 200, 100, 250, 0, 184, 10, 168, 55, 87, 46]);
+                edge1 = makePoints([59, 35, 103, 67]);
+                edge2 = makePoints([186, 76, 203, 30]);
+            });
+            it("should triangulate", function() {
+                var swctx = new p2t.SweepContext(contour, options);
+                swctx.addEdge(edge1[0], edge1[1]).addEdge(edge2[0], edge2[1]);
+                swctx.triangulate();
+                var t = swctx.getTriangles();
+                expect(t).toBeTruthy();
+                // should return the expected number of triangles
+                expect(t.length).toBe(helpers.computeExpectedNumberOfTriangles(contour, null, edge1.concat(edge2)));
+                // should have triangle vertices equal to the constraints
+                expect(t).toEqualVertices([contour, edge1, edge2]);
+            });
+        });
         describe("a polygon with duplicate points", function() {
             var contour;
             beforeEach(function() {

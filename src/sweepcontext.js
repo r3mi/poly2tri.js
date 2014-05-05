@@ -201,6 +201,10 @@ var SweepContext = function(contour, options) {
     this.initEdges(this.points_);
 };
 
+/** @private */
+function addEdge(tcx, p1, p2) {
+    tcx.edge_list.push(new Edge(p1, p2));
+}
 
 /**
  * Add a hole to the constraints
@@ -310,6 +314,66 @@ SweepContext.prototype.AddPoint = SweepContext.prototype.addPoint;
 SweepContext.prototype.addPoints = function(points) {
     this.points_ = this.points_.concat(points);
     return this; // for chaining
+};
+
+
+/**
+ * Add an edge (a pair of points connected by a line) to the constraints.
+ * @example
+ *      var swctx = new poly2tri.SweepContext(contour);
+ *      var p1 = new poly2tri.Point(150, 150);
+ *      var p2 = new poly2tri.Point(200, 250);
+ *      swctx.addEdge(p1, p2);
+ * @example
+ *      var swctx = new poly2tri.SweepContext(contour);
+ *      swctx.addEdge({x:150, y:150}, {x:200, y:250});
+ * @public
+ * @param {XY} p1 - "Point like" object with {x,y}
+ * @param {XY} p2 - "Point like" object with {x,y}
+ */
+// Method added in the JavaScript version (was not present in the c++ version)
+SweepContext.prototype.addEdge = function(p1, p2) {
+    addEdge(this, p1, p2);
+    this.points_.push(p1, p2);
+    return this; // for chaining
+};
+
+
+/**
+ * Add edges (pair of points connected by a line) to the constraints.
+ * The edges are described by a list of points, and an array of indexes in the list of points.
+ * Each edge needs 2 indexes, for its 2 points.
+ *
+ * Notes:
+ * - With this method, it is possible to reuse the same point several times in different edges, if needed.
+ *   The other poly2tri methods do not allow sharing point instances (and poly2tri does not allow duplicated
+ *   points with the same coordinates).
+ * - the points not referenced in the indexes will become simple isolated Steiner points.
+ *
+ * @example
+ *      var swctx = new poly2tri.SweepContext(contour);
+ *      var points = [
+ *          new poly2tri.Point(150, 150),
+ *          new poly2tri.Point(200, 250),
+ *          new poly2tri.Point(250, 250)
+ *      ];
+ *      // add 2 edges, sharing the same middle point
+ *      swctx.addIndexedEdges(points, [0, 1, 1, 2]);
+ * @example
+ *      var swctx = new poly2tri.SweepContext(contour);
+ *      // add 2 distinct edges
+ *      swctx.addIndexedEdges(
+ *          [{x:150, y:150}, {x:200, y:250}, {x:250, y:250}, {x:350, y:250}],
+ *          [0, 1, 2, 3]
+ *      );
+ * @public
+ * @param {Array.<XY>} points - array of "Point like" object with {x,y}
+ * @param {Array.<number>} indexes - array of integers, referencing the points
+ */
+// Method added in the JavaScript version (was not present in the c++ version)
+SweepContext.prototype.addIndexedEdges = function(/*points, indexes*/) {
+    throw new Error("not yet implemented");
+    // XXX TODO return this; // for chaining
 };
 
 
@@ -443,7 +507,7 @@ SweepContext.prototype.initTriangulation = function() {
 SweepContext.prototype.initEdges = function(polyline) {
     var i, len = polyline.length;
     for (i = 0; i < len; ++i) {
-        this.edge_list.push(new Edge(polyline[i], polyline[(i + 1) % len]));
+        addEdge(this, polyline[i], polyline[(i + 1) % len]);
     }
 };
 
