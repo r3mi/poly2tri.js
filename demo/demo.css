@@ -36,8 +36,6 @@ html, body {
     height: 100%;
     padding: 0;
     margin: 0;
-    font-family: arial,verdana,helvetica,sans-serif;
-    font-size: 12px;
 }
 
 #control {
@@ -59,19 +57,4 @@ html, body {
     right: 410px;
     left: 10px;
     bottom: 10px;
-}
-
-.wrapper {
-    width: 100%;
-    margin-bottom: 1.5em;
-    padding: 0;
-}
-
-.wrapper textarea {
-    margin: 5px;
-    width: 380px;
-}
-
-.info, .parsed {
-    color: #777;
 }

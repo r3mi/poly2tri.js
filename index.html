@@ -3,51 +3,64 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>poly2tri tester</title>
+        <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="demo/demo.css" media="screen">
     </head>
     <body>
         <div id="control">
             <form>
-                <div class="wrapper">
+                <div class="form-group">
                     <label for="preset">Load preset data:</label>
                     <select id="preset"></select>
-                    <input id="btnTriangulate" type="button" value="Triangulate!">
-                    <address id="attribution"></address>
-                    <div class="info">(<span id="triangles_size">0</span> triangles computed)</div>
+                    <span id="attribution" class="help-block"></span>
                 </div>
-                <div class="wrapper">
+                <button id="btnTriangulate" type="button" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-tree-conifer"></span> Triangulate!
+                </button>
+                <div class="alert alert-success">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    <span id="triangles_size" class="badge"></span> triangles computed
+                </div>
+                <div class="alert alert-danger">
+                    <span class="glyphicon glyphicon-exclamation-sign"></span> <span id="error"></span>
+                </div>
+                <div class="form-group">
                     <input id="draw_constraints" type="checkbox" value="drawConstraints" checked="checked">
-                    <label for="draw_constraints">Draw constraints</label> 
+                    <label for="draw_constraints">Draw constraints</label>
                 </div>
-                <div class="wrapper">
-                    <label for="poly_contour">Contour of the polygon (any separator between coordinates):</label>
-                    <textarea id="poly_contour" rows="7" cols="50"></textarea>
-                    <div class="parsed">(<span id="contour_size">0</span> points parsed)</div>
+                <div class="form-group">
+                    <span id="contour_size" class="badge"></span>
+                    <label for="poly_contour">Contour points</label>
+                    <textarea id="poly_contour" rows="7" class="form-control input-sm"></textarea>
+                    <span class="help-block">(any separator between coordinates)</span>
                 </div>
-                <div class="wrapper">
-                    <label for="poly_holes">Holes in the polygon (at least one blank line between each hole):</label>
-                    <textarea id="poly_holes" rows="5" cols="50"></textarea>
-                    <div class="parsed">(<span id="holes_size">0</span> holes parsed)</div>
+                <div class="form-group">
+                    <span id="holes_size" class="badge"></span>
+                    <label for="poly_holes">Holes</label>
+                    <textarea id="poly_holes" rows="5" class="form-control input-sm"></textarea>
+                    <span class="help-block">(at least one blank line between each hole)</span>
                 </div>
-                <div class="wrapper">
-                    <label for="poly_points">Steiner points (any separator between coordinates):</label>
-                    <textarea id="poly_points" rows="5" cols="50"></textarea>
-                    <div class="parsed">(<span id="points_size">0</span> points parsed)</div>
-                </div>
-                <div class="wrapper">
-                    Pointer in drawing coords: {x: <span id="pointer_x"></span>, y: <span id="pointer_y"></span>}
-                    <br>
-                    <em>Drag to Pan. Use wheel to zoom on pointer.</em>
+                <div class="form-group">
+                    <span id="points_size" class="badge"></span>
+                    <label for="poly_points">Steiner points</label>
+                    <textarea id="poly_points" rows="5" class="form-control input-sm"></textarea>
+                    <span class="help-block">(any separator between coordinates)</span>
                 </div>
             </form>
-            <address>
-                Powered by <a href="https://github.com/r3mi/poly2tri.js.git">poly2tri.js</a> 
+            <p class="text-primary">
+                <span class="glyphicon glyphicon-map-marker"></span>
+                Pointer in drawing coords: {x: <span id="pointer_x"></span>, y: <span id="pointer_y"></span>}
+            </p>
+            <p class="text-info">Drag to Pan. Use wheel to zoom on pointer.</p>
+            <p class="text-muted">
+                Powered by <a href="https://github.com/r3mi/poly2tri.js.git">poly2tri.js</a>
                 v<span id="version">???</span>
-            </address>
+            </p>
         </div>
         <div id="content">
         </div>
         <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="bower_components/jquery-mousewheel/jquery.mousewheel.min.js"></script>
         <script type="text/javascript" src="bower_components/textentered/jquery.textentered.js"></script>
         <script type="text/javascript" src="bower_components/purl/purl.js"></script>

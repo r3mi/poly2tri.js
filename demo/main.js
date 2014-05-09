@@ -50,7 +50,7 @@ if (typeof $ === 'undefined') {
 
 
 function clearData() {
-    $(".info").css('visibility', 'hidden');
+    $(".alert").addClass("hidden");
     $("textarea").val("").change();
     $("#attribution").empty();
 }
@@ -92,7 +92,7 @@ function countHoles(str) {
 
 function triangulate(stage) {
     stage.reset();
-    $(".info").css('visibility', 'visible');
+    $(".alert").addClass("hidden");
 
     // parse constraints
     var contour = parsePoints($("textarea#poly_contour").val());
@@ -110,11 +110,13 @@ function triangulate(stage) {
         // triangulate
         swctx.triangulate();
     } catch (e) {
-        window.alert(e);
+        $("#error").text(e).parents(".alert").removeClass("hidden");
         error_points = e.points;
     }
     var triangles = swctx.getTriangles() || [];
-    $("#triangles_size").text(triangles.length);
+    if (triangles.length) {
+        $("#triangles_size").text(triangles.length).parents(".alert").removeClass("hidden");
+    }
 
     // auto scale / translate
     var bounds = swctx.getBoundingBox();
