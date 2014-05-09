@@ -46,9 +46,12 @@ if (typeof $ === 'undefined') {
 // Styles
 var TRIANGLE_FILL_COLOR = "#e0c4ef";
 var TRIANGLE_STROKE_COLOR = "#911ccd";
+var TRIANGLE_STROKE_WIDTH = 1;
 var CONSTRAINT_COLOR = "rgba(0,0,0,0.6)";
 var CONSTRAINT_DASH_ARRAY = [10, 5];
+var CONSTRAINT_STROKE_WIDTH = 4;
 var ERROR_COLOR = "rgba(255,0,0,0.8)";
+var ERROR_RADIUS = 4;
 var CANVAS_MARGIN = 5;
 
 
@@ -108,7 +111,7 @@ function drawTriangles(stage, triangles) {
             stroke: TRIANGLE_STROKE_COLOR
         });
         provideFixedLineWidth(triangle, function(linescale) {
-            this.setStrokeWidth(1 * linescale);
+            this.setStrokeWidth(TRIANGLE_STROKE_WIDTH * linescale);
         });
         layer.add(triangle);
     });
@@ -124,7 +127,7 @@ function drawConstraints(stage, contour, holes, points) {
         dashArrayEnabled: true
     });
     provideFixedLineWidth(polygon, function(linescale) {
-        this.setStrokeWidth(4 * linescale);
+        this.setStrokeWidth(CONSTRAINT_STROKE_WIDTH * linescale);
         var dashArray = CONSTRAINT_DASH_ARRAY.map(function(dash) {
             return dash * linescale;
         });
@@ -139,7 +142,7 @@ function drawConstraints(stage, contour, holes, points) {
             dashArrayEnabled: true
         });
         provideFixedLineWidth(polygon, function(linescale) {
-            this.setStrokeWidth(4 * linescale);
+            this.setStrokeWidth(CONSTRAINT_STROKE_WIDTH * linescale);
             var dashArray = CONSTRAINT_DASH_ARRAY.map(function(dash) {
                 return dash * linescale;
             });
@@ -155,7 +158,7 @@ function drawConstraints(stage, contour, holes, points) {
             fill: CONSTRAINT_COLOR
         });
         provideFixedLineWidth(circle, function(linescale) {
-            this.setRadius(4 * linescale);
+            this.setRadius(CONSTRAINT_STROKE_WIDTH * linescale);
         });
         layer.add(circle);
     });
@@ -172,7 +175,7 @@ function drawErrors(stage, error_points) {
             fill: ERROR_COLOR
         });
         provideFixedLineWidth(circle, function(linescale) {
-            this.setRadius(4 * linescale);
+            this.setRadius(ERROR_RADIUS * linescale);
         });
         layer.add(circle);
     });
