@@ -41,6 +41,10 @@
 var xy = require('../../src/xy');
 
 
+var RND_ORIGIN_X = 500;
+var RND_ORIGIN_Y = 500;
+var RND_RADIUS_MAX = 200;
+
 /**
  * Parse a string of floats, ignoring any separators between values
  * @param {String} str
@@ -70,11 +74,11 @@ function randomPolygon(rnd, n) {
     }
     theta.sort();
     for (i = 0; i < n; i++) {
-        rho = rnd() * 200;
+        rho = rnd() * RND_RADIUS_MAX;
         // pol2cart
         x = rho * Math.cos(theta[i]);
         y = rho * Math.sin(theta[i]);
-        points.push(500 + x, 500 + y);
+        points.push(RND_ORIGIN_X + x, RND_ORIGIN_Y + y);
     }
     return points;
 }
