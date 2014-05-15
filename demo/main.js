@@ -38,6 +38,10 @@
 
 "use strict";
 
+var parse = require("../tests/utils/parse");
+var mapPairs = require("../tests/utils/mapPairs");
+
+
 if (typeof $ === 'undefined') {
     window.alert("jQuery not found -- dependencies not installed ?");
     throw new Error("jQuery not loaded -- bower dependencies not installed ?");
@@ -68,17 +72,22 @@ function setVisibleLayers(stage) {
     });
 }
 
-function parsePoints(str) {
-    var floats = str.split(/[^-+eE\.\d]+/).map(parseFloat).filter(function(val) {
-        return !isNaN(val);
+function makePoints(floats) {
+    return mapPairs(floats, function makePoint(x, y) {
+        return new poly2tri.Point(x, y);
     });
-    var i, points = [];
-    // bitwise 'and' to ignore any isolated float at the end
-    /* jshint bitwise:false */
-    for (i = 0; i < (floats.length & 0x7FFFFFFE); i += 2) {
-        points.push(new poly2tri.Point(floats[i], floats[i + 1]));
-    }
-    return points;
+}
+
+function parsePoints(str) {
+    var floats = parse.parseFloats(str);
+    return makePoints(floats);
+}
+
+function parseHoles(str) {
+    var holes = parse.parseFloatsGroups(str).map(makePoints).filter(function (points) {
+        return points.length > 0;
+    });
+    return holes;
 }
 
 // XXX why is it needed ? normally KineticJS should accept our {x,y} objects,
@@ -194,13 +203,7 @@ function triangulate(stage) {
     $("#contour_size").text(contour.length);
 
     // parse holes
-    var holes = [];
-    $("textarea#poly_holes").val().split(/\n\s*\n/).forEach(function(val) {
-        var hole = parsePoints(val);
-        if (hole.length > 0) {
-            holes.push(hole);
-        }
-    });
+    var holes = parseHoles($("textarea#poly_holes").val());
     $("#holes_size").text(holes.length);
 
     // parse points

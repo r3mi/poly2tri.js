@@ -96,26 +96,40 @@ describe("poly2tri", function() {
      */
     var MersenneTwister = require('mersennetwister');
 
-    var helpers = require('./helpers');
+    var geom = require('./../utils/geom');
+    var mapPairs = require('../utils/mapPairs');
+    var parse = require('../utils/parse');
 
-    // Creates list of Point from list of coordinates [ x1, y1, x2, y2 ...]
-    function makePoints(a) {
-        var i, len = a.length, points = [];
-        for (i = 0; i < len; i += 2) {
-            points.push(new p2t.Point(a[i], a[i + 1]));
-        }
-        return points;
+    /**
+     * Creates list of Point from list of coordinates [ x1, y1, x2, y2 ...]
+     */
+    function makePoints(floats) {
+        return mapPairs(floats, function makePoint(x, y) {
+            return new p2t.Point(x, y);
+        });
     }
 
     /**
      * Parse points coordinates : pairs of x y, with any separator between coordinates
      * @param {String} str
-     * @returns {Array<Point>}  points
+     * @returns {Array.<Point>} points
      */
     function parsePoints(str) {
-        return makePoints(helpers.parseFloats(str));
+        var floats = parse.parseFloats(str);
+        return makePoints(floats);
     }
 
+    /**
+     * Parse holes : at least one blank line between each hole.
+     * @param {String} str
+     * @returns {Array.<Array.<Point>>} points
+     */
+    function parseHoles(str) {
+        var holes = parse.parseFloatsGroups(str).map(makePoints).filter(function (points) {
+            return points.length > 0;
+        });
+        return holes;
+    }
 
 // -----------------------------------------------------------------SweepContext
 
@@ -171,7 +185,7 @@ describe("poly2tri", function() {
             },
             toEqualVertices: function (pointslists) {
                 var triangles = this.actual, failed;
-                failed = helpers.testTrianglesToEqualVertices(triangles, pointslists);
+                failed = geom.testTrianglesToEqualVertices(triangles, pointslists);
                 // Customize message for easier debugging
                 // (because of isNot, message might be printed event if !failed)
                 this.message = function () {
@@ -370,11 +384,10 @@ describe("poly2tri", function() {
         });
         describe("a polygon with 2 holes and points using custom Point class", function() {
             var contour, hole1, hole2, points;
-            function makeCustomPoints(a) {
-                var i, len = a.length, points = [];
-                for (i = 0; i < len; i += 2) {
-                    points.push({x: a[i], y: a[i + 1]});
-                }
+            function makeCustomPoints(floats) {
+                var points = mapPairs(floats, function (x, y) {
+                    return {x: x, y: y};
+                });
                 return points;
             }
             beforeEach(function() {
@@ -441,7 +454,7 @@ describe("poly2tri", function() {
             beforeEach(function() {
                 // pseudo-random generator with known seed, so that test is repeatable
                 var m = new MersenneTwister(3756);
-                contour = helpers.randomPolygon(function() {
+                contour = geom.randomPolygon(function() {
                     return m.rnd();
                 }, max);
                 contour = makePoints(contour);
@@ -462,7 +475,7 @@ describe("poly2tri", function() {
             beforeEach(function() {
                 // pseudo-random generator with known seed, so that test is repeatable
                 var m = new MersenneTwister(235336);
-                contour = helpers.randomPolygon(function() {
+                contour = geom.randomPolygon(function() {
                     return m.rnd();
                 }, max);
                 contour = makePoints(contour);
@@ -565,13 +578,7 @@ describe("poly2tri", function() {
                         if (file.holes) {
                             it("should load and parse holes " + file.holes, function() {
                                 var data = readFileSync(file.holes);
-                                // at least one blank line between each hole
-                                data.split(/\n\s*\n/).forEach(function(val) {
-                                    var hole = parsePoints(val);
-                                    if (hole.length > 0) {
-                                        holes.push(hole);
-                                    }
-                                });
+                                holes = parseHoles(data);
                                 expect(holes.length).toBeGreaterThan(0);
                             });
                         }
@@ -602,7 +609,7 @@ describe("poly2tri", function() {
                             it("should return the expected number of triangles", function() {
                                 // The theoretical expected number of triangles can be overwritten in the data file
                                 // for special cases e.g. Steiner points outside the contour.
-                                var nb_triangles = file.triangles || helpers.computeExpectedNumberOfTriangles(contour, holes, points);
+                                var nb_triangles = file.triangles || geom.computeExpectedNumberOfTriangles(contour, holes, points);
                                 expect(t.length).toBe(nb_triangles);
                             });
                             it("should have triangle vertices equal to the constraints", function() {
