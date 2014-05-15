@@ -62,7 +62,7 @@ var CANVAS_MARGIN = 5;
 
 function clearData() {
     $(".info").css('visibility', 'hidden');
-    $("textarea").val("");
+    $("textarea").val("").change();
     $("#attribution").empty();
 }
 
@@ -84,11 +84,23 @@ function parsePoints(str) {
     return makePoints(floats);
 }
 
+function countPoints(str) {
+    var floats = parse.parseFloats(str);
+    return Math.floor(floats.length / 2);
+}
+
 function parseHoles(str) {
     var holes = parse.parseFloatsGroups(str).map(makePoints).filter(function (points) {
         return points.length > 0;
     });
     return holes;
+}
+
+function countHoles(str) {
+    var count = parse.parseFloatsGroups(str).filter(function (floats) {
+        return floats.length > 1;
+    }).length;
+    return count;
 }
 
 // XXX why is it needed ? normally KineticJS should accept our {x,y} objects,
@@ -199,17 +211,10 @@ function triangulate(stage) {
     stage.setAbsolutePosition(0, 0);
     $(".info").css('visibility', 'visible');
 
-    // parse contour
+    // parse constraints
     var contour = parsePoints($("textarea#poly_contour").val());
-    $("#contour_size").text(contour.length);
-
-    // parse holes
     var holes = parseHoles($("textarea#poly_holes").val());
-    $("#holes_size").text(holes.length);
-
-    // parse points
     var points = parsePoints($("textarea#poly_points").val());
-    $("#points_size").text(points.length);
 
     // perform triangulation
     var swctx;
@@ -336,7 +341,7 @@ function loadPresetMenu() {
                 $.ajax({
                     url: "tests/data/" + filename,
                     success: function(data) {
-                        $(selector).val(data);
+                        $(selector).val(data).change();
                     }
                 });
             }
@@ -378,6 +383,20 @@ $(document).ready(function() {
 
     // Display pointer coordinates
     $content.on('mousemove', stage, onMouseMove);
+
+    // Display number of constraints
+    $("textarea#poly_contour").bind('textentered', function() {
+        var count = countPoints($(this).val());
+        $("#contour_size").text(count);
+    });
+    $("textarea#poly_holes").bind('textentered', function() {
+        var count = countHoles($(this).val());
+        $("#holes_size").text(count);
+    });
+    $("textarea#poly_points").bind('textentered', function() {
+        var count = countPoints($(this).val());
+        $("#points_size").text(count);
+    });
 
     $("#btnTriangulate").click(function() {
         triangulate(stage);
