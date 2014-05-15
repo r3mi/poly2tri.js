@@ -16,9 +16,10 @@
         "test.node": "jasmine-node --captureExceptions ./tests/spec",
         "test.phantom": "./node_modules/karma/bin/karma start tests/karma.phantom.js",
         "test.browsers": "./node_modules/karma/bin/karma start tests/karma.browsers.js",
-        "jshint": "jshint *.js src/*.js tests/*.js tests/spec/*.js",
-        "build": "npm run jshint && npm run build.nocheck",
-        "build.nocheck": "mkdir -p dist && node ./build.js",
+        "jshint": "jshint *.js src/*.js tests/*.js tests/spec/*.js tests/utils/*.js demo/*.js",
+        "build": "npm run jshint && npm run build.lib && npm run build.demo",
+        "build.lib": "mkdir -p dist && node ./build.js",
+        "build.demo": "mkdir -p dist && browserify demo/main.js -o dist/demo.js",
         "bench": "node ./tests/benchmark.js"
     },
     "keywords": [

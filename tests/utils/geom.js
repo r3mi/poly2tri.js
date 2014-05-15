@@ -46,20 +46,6 @@ var RND_ORIGIN_Y = 500;
 var RND_RADIUS_MAX = 200;
 
 /**
- * Parse a string of floats, ignoring any separators between values
- * @param {String} str
- * @returns {Array<number>} parsed floats
- */
-function parseFloats(str) {
-    var floats = str.split(/[^-+eE\.\d]+/).map(parseFloat).filter(function (val) {
-        return !isNaN(val);
-    });
-    return floats;
-}
-exports.parseFloats = parseFloats;
-
-
-/**
  * Simple polygon generation (star shaped)
  * See http://stackoverflow.com/questions/8997099/algorithm-to-generate-random-2d-polygon
  *
