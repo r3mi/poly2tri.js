@@ -22,17 +22,17 @@
                 <div class="wrapper">
                     <label for="poly_contour">Contour of the polygon (any separator between coordinates):</label>
                     <textarea id="poly_contour" rows="7" cols="50"></textarea>
-                    <div class="info">(<span id="contour_size">0</span> points parsed)</div>
+                    <div class="parsed">(<span id="contour_size">0</span> points parsed)</div>
                 </div>
                 <div class="wrapper">
                     <label for="poly_holes">Holes in the polygon (at least one blank line between each hole):</label>
                     <textarea id="poly_holes" rows="5" cols="50"></textarea>
-                    <div class="info">(<span id="holes_size">0</span> holes parsed)</div>
+                    <div class="parsed">(<span id="holes_size">0</span> holes parsed)</div>
                 </div>
                 <div class="wrapper">
                     <label for="poly_points">Steiner points (any separator between coordinates):</label>
                     <textarea id="poly_points" rows="5" cols="50"></textarea>
-                    <div class="info">(<span id="points_size">0</span> points parsed)</div>
+                    <div class="parsed">(<span id="points_size">0</span> points parsed)</div>
                 </div>
                 <div class="wrapper">
                     Pointer in drawing coords: {x: <span id="pointer_x"></span>, y: <span id="pointer_y"></span>}
@@ -49,6 +49,7 @@
         </div>
         <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="bower_components/jquery-mousewheel/jquery.mousewheel.min.js"></script>
+        <script type="text/javascript" src="bower_components/textentered/jquery.textentered.js"></script>
         <script type="text/javascript" src="bower_components/purl/purl.js"></script>
         <script type="text/javascript" src="bower_components/kineticjs/index.js"></script>
         <script type="text/javascript" src="dist/poly2tri.min.js"></script>

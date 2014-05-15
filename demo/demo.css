@@ -72,6 +72,6 @@ html, body {
     width: 380px;
 }
 
-.info {
+.info, .parsed {
     color: #777;
 }
