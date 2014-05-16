@@ -31,6 +31,10 @@
         "test",
         "tests",
         "lib",
+        "out",
+        "src",
+        "build.js",
+        "package.json",
         "index.html"
     ],
     "devDependencies": {
