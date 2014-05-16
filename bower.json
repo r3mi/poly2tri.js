@@ -32,6 +32,7 @@
         "tests",
         "lib",
         "out",
+        "demo",
         "index.html"
     ],
     "devDependencies": {
