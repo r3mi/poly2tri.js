@@ -33,6 +33,7 @@
         "lib",
         "out",
         "src",
+        "demo",
         "build.js",
         "package.json",
         "index.html"
