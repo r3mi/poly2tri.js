@@ -28,23 +28,69 @@
                     <input id="draw_constraints" type="checkbox" value="drawConstraints" checked="checked">
                     <label for="draw_constraints">Draw constraints</label>
                 </div>
-                <div class="form-group">
-                    <span id="contour_size" class="badge"></span>
-                    <label for="poly_contour">Contour points</label>
-                    <textarea id="poly_contour" rows="7" class="form-control input-sm"></textarea>
-                    <span class="help-block">(any separator between coordinates)</span>
-                </div>
-                <div class="form-group">
-                    <span id="holes_size" class="badge"></span>
-                    <label for="poly_holes">Holes</label>
-                    <textarea id="poly_holes" rows="5" class="form-control input-sm"></textarea>
-                    <span class="help-block">(at least one blank line between each hole)</span>
-                </div>
-                <div class="form-group">
-                    <span id="points_size" class="badge"></span>
-                    <label for="poly_points">Steiner points</label>
-                    <textarea id="poly_points" rows="5" class="form-control input-sm"></textarea>
-                    <span class="help-block">(any separator between coordinates)</span>
+                <div class="panel-group">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">
+                                <span class="glyphicon glyphicon-map-marker"></span>
+                                Pointer in drawing coords: {x: <span id="pointer_x"></span>, y: <span id="pointer_y"></span>}
+                            </h2>
+                        </div>
+                        <div class="panel-body">
+                            <span class="text-info">Drag to Pan. Use wheel to zoom on pointer.</span>
+                        </div>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">
+                                <a data-toggle="collapse" href="#collapseContour">
+                                    Contour points
+                                    <span class="caret"></span>
+                                </a>
+                                <span id="contour_size" class="badge pull-right"></span>
+                            </h2>
+                        </div>
+                        <div id="collapseContour" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                <textarea id="poly_contour" rows="7" class="form-control input-sm"></textarea>
+                                <span class="help-block">(any separator between coordinates)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">
+                                <a data-toggle="collapse" href="#collapseHoles">
+                                    Holes
+                                    <span class="caret"></span>
+                                </a>
+                                <span id="holes_size" class="badge pull-right"></span>
+                            </h2>
+                        </div>
+                        <div id="collapseHoles" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                <textarea id="poly_holes" rows="5" class="form-control input-sm"></textarea>
+                                <span class="help-block">(at least one blank line between each hole)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">
+                                <a data-toggle="collapse" href="#collapsePoints">
+                                    Steiner points
+                                    <span class="caret"></span>
+                                </a>
+                                <span id="points_size" class="badge pull-right"></span>
+                            </h2>
+                        </div>
+                        <div id="collapsePoints" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                <textarea id="poly_points" rows="5" class="form-control input-sm"></textarea>
+                                <span class="help-block">(any separator between coordinates)</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </form>
             <p class="text-primary">
