@@ -87,7 +87,7 @@ Usage
 -----
 
 1. Get a reference to the library.
-   Thanks to [browserify](http://browserify.org/), the module is in 
+   Thanks to [browserify](http://browserify.org/), the module is in
    [UMD](https://github.com/umdjs/umd) format (Universal Module Definition), 
    compatible with the various module systems:
     - CommonJS:
@@ -247,6 +247,12 @@ Development
 Install the dependent packages by running:
 ```sh
 npm install
+```
+
+Build the release code in `dist/` (library and demo) using:
+```sh
+npm run build
+# or safer: npm run test
 ```
 
 The automated tests are built using [jasmine](http://pivotal.github.com/jasmine/),
