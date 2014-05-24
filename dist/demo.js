@@ -1,69 +1,52 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /*
- * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
- * http://code.google.com/p/poly2tri/
- * 
- * poly2tri.js (JavaScript port) (c) 2009-2014, Poly2Tri Contributors
- * https://github.com/r3mi/poly2tri.js
+ * poly2tri.js demo.
+ * Main AngularJS module.
  *
+ * (c) 2014, Rémi Turboult
  * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the documentation
- *   and/or other materials provided with the distribution.
- * * Neither the name of Poly2Tri nor the names of its contributors may be
- *   used to endorse or promote products derived from this software without specific
- *   prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Distributed under the 3-clause BSD License, see LICENSE.txt
  */
 
 /* jshint browser:true, jquery:true, globalstrict:true */
-/* global poly2tri */
+/* global angular */
 
 
 "use strict";
 
-var Stage = require('./stage');
-var parse = require("../tests/utils/parse");
-var mapPairs = require("../tests/utils/mapPairs");
-
-
+// XXX remove jQuery
+// XXX also in bower_components and bower.json
 if (typeof $ === 'undefined') {
     window.alert("jQuery not found -- dependencies not installed ?");
     throw new Error("jQuery not loaded -- bower dependencies not installed ?");
 }
 
-
-function clearData() {
-    $(".info").css('visibility', 'hidden');
-    $("textarea").val("");
-    $("#attribution").empty();
+if (typeof angular === 'undefined') {
+    window.alert("AngularJS not found -- dependencies not installed ?");
+    throw new Error("AngularJS not loaded -- bower dependencies not installed ?");
 }
 
-function setVisibleLayers(stage) {
-    var visible = $("#draw_constraints").is(':checked');
-    stage.setConstraintsVisible(visible);
-}
+
+var parse = require("../tests/utils/parse");
+var mapPairs = require("../tests/utils/mapPairs");
+
+// AngularJS main
+var app = angular.module('demo', [
+    require("./files").name,
+    require("./triangulation").name,
+    require("./stage").name
+]);
+
+
+app.controller('poly2triCtrl', ['$scope', 'poly2tri', function ($scope, poly2tri) {
+    $scope.poly2tri = poly2tri;
+}]);
+
 
 function makePoints(floats) {
     return mapPairs(floats, function makePoint(x, y) {
-        return new poly2tri.Point(x, y);
+        // XXX return new poly2tri.Point(x, y);
+        return {x: x, y: y};
     });
 }
 
@@ -79,153 +62,162 @@ function parseHoles(str) {
     return holes;
 }
 
-function triangulate(stage) {
-    stage.reset();
-    $(".info").css('visibility', 'visible');
 
-    // parse contour
-    var contour = parsePoints($("textarea#poly_contour").val());
-    $("#contour_size").text(contour.length);
-
-    // parse holes
-    var holes = parseHoles($("textarea#poly_holes").val());
-    $("#holes_size").text(holes.length);
-
-    // parse points
-    var points = parsePoints($("textarea#poly_points").val());
-    $("#points_size").text(points.length);
-
-    // perform triangulation
-    var swctx;
-    var error_points;
-    try {
-        // prepare SweepContext
-        swctx = new poly2tri.SweepContext(contour, {cloneArrays: true});
-        swctx.addHoles(holes).addPoints(points);
-
-        // triangulate
-        swctx.triangulate();
-    } catch (e) {
-        window.alert(e);
-        error_points = e.points;
-    }
-    var triangles = swctx.getTriangles() || [];
-    $("#triangles_size").text(triangles.length);
-
-    // auto scale / translate
-    var bounds = swctx.getBoundingBox();
-    stage.setBoundingBox(bounds.min, bounds.max);
-
-    // draw result
-    stage.setTriangles(triangles);
-    stage.setConstraints(contour, holes, points);
-    if (error_points) {
-        stage.setErrors(error_points);
-    }
-    stage.draw();
-    setVisibleLayers(stage);
-}
-
-
-// Display pointer coordinates
-function onMouseMove(e) {
-    var stage = e.data;
-    var pos = stage.getPointerCoordinates();
-    $('#pointer_x').text(pos.x);
-    $('#pointer_y').text(pos.y);
-}
-
-// Load index.json and populate 'preset' menu.
-// By default, only show the entries with 'demo'=true.
-// Use ?all=1 to force showing all entries.
-function loadPresetMenu() {
-    var $menu = $("#preset");
-    var all = +($.url().param('all'));
-    $menu.empty().append($('<option>', {
-        text: "--Empty--"
-    }));
-    $.ajax({
-        url: "tests/data/index.json",
-        dataType: "json",
-        success: function(data) {
-            var options = [];
-            data.forEach(function(group) {
-                group.files.filter(function(file) {
-                    return file.name && (file.demo || all);
-                }).forEach(function(file) {
-                    var text = (file.content || file.name);
-                    if (file.throws) {
-                        text += " (throws!)";
-                    }
-                    options.push($('<option>', {
-                        value: file.name,
-                        text: text
-                    }).data("file", file).data("attrib", {
-                        title: group.title,
-                        source: group.source
-                    }));
-                });
-            });
-            // Sort before adding
-            options.sort(function(a, b) {
-                return $(a).text().localeCompare($(b).text());
-            }).forEach(function(option) {
-                $menu.append(option);
-            });
-            // Load some default data
-            $menu.find("option[value='dude.dat']").attr("selected", "selected");
-            $menu.change();
-        }
-    });
-    $menu.change(function() {
-        var file = $menu.find("option:selected").data("file") || {};
-        var attrib = $menu.find("option:selected").data("attrib") || {};
-        function load(filename, selector) {
-            if (filename) {
-                $.ajax({
-                    url: "tests/data/" + filename,
-                    success: function(data) {
-                        $(selector).val(data);
-                    }
-                });
-            }
-        }
-        clearData();
-        if (attrib.title) {
-            $("#attribution").html("(source: <a href='" + attrib.source + "'>" + attrib.title + "</a>)");
-        }
-        load(file.name, "#poly_contour");
-        load(file.holes, "#poly_holes");
-        load(file.steiner, "#poly_points");
-    });
-}
-
-$(document).ready(function() {
-    $('#version').text(poly2tri.VERSION);
-
-    var stage = new Stage('#content');
-
-    $("#draw_constraints").change(function() {
-        setVisibleLayers(stage);
-        stage.draw();
-    });
-
-    // Display pointer coordinates
-    $('#content').on('mousemove', stage, onMouseMove);
-
-    $("#btnTriangulate").click(function() {
-        triangulate(stage);
-    });
-    clearData();
-
-    loadPresetMenu();
+app.config(function ($locationProvider) {
+    // Get rid of #! before search parameters, in compatible browsers.
+    // See http://stackoverflow.com/a/16678065
+    $locationProvider.html5Mode(true);
 });
 
 
-},{"../tests/utils/mapPairs":3,"../tests/utils/parse":4,"./stage":2}],2:[function(require,module,exports){
+/**
+ * Global controller : manages constraints, performs triangulation
+ * XXX separate controllers ?
+ */
+app.controller('demoCtrl', function ($scope, filesPromise, triangulate, $window) {
+    var self = this;
+    filesPromise.then(function (data) {
+        self.files = data;
+        self.file = data.findBy('holes', 'dude_holes.dat');
+    });
+    this.text = $scope.textConstraints = {
+        /** @type {string} */
+        contour: null,
+        /** @type {string} */
+        holes: null,
+        /** @type {string} */
+        points: null
+    };
+    this.parsed = $scope.parsedConstraints = {
+        contour: null,
+        holes: null,
+        points: null
+    };
+
+    /**
+     * Watch text areas, to parse constraints.
+     *      contour.text => parsePoints => contour.parsed
+     *      holes.text => parseHoles => holes.parsed
+     *      points.text => parsePoints => points.parsed
+     * @param {string} scopeProperty
+     * @param {function} parseFn
+     */
+        // XXX to replace with Custom Validations ??
+        // XXX see NgModelController and https://docs.angularjs.org/guide/forms
+        //
+        // XXX add Non-immediate (debounced) model updates ??
+        // XXX see ngModelOptions and https://docs.angularjs.org/guide/forms
+    function watch(scopeProperty, parseFn) {
+        $scope.$watch('textConstraints.' + scopeProperty, function (text) {
+            $scope.parsedConstraints[scopeProperty] = parseFn(text);
+        });
+    }
+
+    watch('contour', parsePoints);
+    watch('holes', parseHoles);
+    watch('points', parsePoints);
+
+    this.triangulate = function () {
+        var result = triangulate(self.parsed);
+        self.result = result;
+        if (result.error) {
+            // XXX move in View
+            $window.alert(result.error);
+        }
+    };
+});
+
+},{"../tests/utils/mapPairs":5,"../tests/utils/parse":6,"./files":2,"./stage":3,"./triangulation":4}],2:[function(require,module,exports){
+/*
+ * poly2tri.js demo.
+ * File loading AngularJS module.
+ *
+ * (c) 2014, Rémi Turboult
+ * All rights reserved.
+ * Distributed under the 3-clause BSD License, see LICENSE.txt
+ */
+
+/* jshint node:true */
+/* global angular */
+
+
+"use strict";
+
+module.exports = angular.module('files', [ ])
+    .constant('DATA_URL', "tests/data")
+/**
+ * List of files.
+ * Load index.json and return a Promise for the asynchronously loaded data.
+ * By default, only show the entries with 'demo'=true.
+ * Use ?all=1 to force showing all entries.
+ */
+    .factory('filesPromise', function ($http, $location, DATA_URL) {
+        return $http.get(DATA_URL + "/index.json").then(function (res) {
+            var showAll = +($location.search().all);
+            var files = [];
+            res.data.forEach(function (group) {
+                group.files.filter(function (file) {
+                    return file.name && (file.demo || showAll);
+                }).forEach(function (file) {
+                    file.title = group.title;
+                    file.source = group.source;
+                    file.label = (file.content || file.name);
+                    files.push(file);
+                });
+            });
+            // XXX needed ?
+            files.findBy = function (property, value) {
+                var file = this.filter(function (file) {
+                    return file[property] === value;
+                });
+                return (file ? file[0] : null);
+            };
+            return files;
+        });
+    })
+/**
+ * Service to load a data file and return a Promise for the asynchronously loaded data.
+ */
+    .factory('loadData', function ($http, DATA_URL, $log) {
+        return function (filename) {
+            // XXX if filename ??
+            return $http.get(DATA_URL + "/" + filename, {
+                // Avoid the default toJSON transformation
+                transformResponse: null
+            }).then(function (res) {
+                $log.debug("loaded=", res);
+                return res.data;
+            });
+        };
+    })
+/**
+ * Initialize an input field with the content of a file
+ */
+    .directive('initFromFile', function (loadData) {
+        return {
+            restrict: 'A',
+            require: 'ngModel',
+            scope: {
+                filename: '=initFromFile',
+                model: '=ngModel'
+            },
+            link: function (scope /*XXX, element, attrs, ngModel*/) {
+                scope.$watch('filename', function (filename) {
+                    scope.model = "";
+                    if (filename) {
+                        loadData(filename).then(function (data) {
+                            scope.model = data;
+                        });
+                    }
+                });
+            }
+        };
+    });
+
+},{}],3:[function(require,module,exports){
 /*
  * Display poly2tri results in the browser.
- * Facade for the Kinetic Stage.
+ * Angular facade for the Kinetic Stage.
  *
  * (c) 2014, Rémi Turboult
  * All rights reserved.
@@ -234,7 +226,7 @@ $(document).ready(function() {
 
 
 /* jshint browser:true, jquery:true, globalstrict:true */
-/* global Kinetic */
+/* global Kinetic, angular */
 
 
 "use strict";
@@ -276,14 +268,35 @@ function onMouseWheel(e, delta) {
 }
 
 
+function setVisibleLayers(stage) {
+    // XXX remove jQuery
+    /* jshint jquery:true */
+    var visible = $("#draw_constraints").is(':checked');
+    stage.setConstraintsVisible(visible);
+}
+
+// Display pointer coordinates
+function onMouseMove(e) {
+    var stage = e.data;
+    var pos = stage.getPointerCoordinates();
+    $('#pointer_x').text(pos.x);
+    $('#pointer_y').text(pos.y);
+}
+
+
 /**
+ * Stage class : facade for the Kinetic Stage
+ * ------------------------------------------
+ *
  * Create a new stage
  * @param selector - jQuery selector for the container
  * @constructor
  */
-var Stage = function (selector) {
+// XXX put in a controller ?
+var Stage = function ($container) {
 
-    var $container = $(selector);
+    // XXX remove jQuery code
+
     var kStage = new Kinetic.Stage({
         container: $container[0],
         width: $container.width(),
@@ -376,7 +389,7 @@ Stage.prototype.getPointerCoordinates = function () {
  */
 Stage.prototype.setTriangles = function (triangles) {
     var layer = new Kinetic.Layer({name: "triangles"});
-    triangles.forEach(function (t) {
+    (triangles || []).forEach(function (t) {
         var triangle = new Kinetic.Polygon({
             points: makeKineticPoints(t.getPoints()),
             fill: TRIANGLE_FILL_COLOR,
@@ -400,21 +413,23 @@ Stage.prototype.setTriangles = function (triangles) {
 Stage.prototype.setConstraints = function (contour, holes, points) {
     var layer = new Kinetic.Layer({name: "constraints"});
 
-    var polygon = new Kinetic.Polygon({
-        points: makeKineticPoints(contour),
-        stroke: CONSTRAINT_COLOR,
-        dashArrayEnabled: true
-    });
-    provideFixedLineWidth(polygon, function (lineScale) {
-        this.setStrokeWidth(CONSTRAINT_STROKE_WIDTH * lineScale);
-        var dashArray = CONSTRAINT_DASH_ARRAY.map(function (dash) {
-            return dash * lineScale;
+    if (contour && contour.length) {
+        var polygon = new Kinetic.Polygon({
+            points: makeKineticPoints(contour),
+            stroke: CONSTRAINT_COLOR,
+            dashArrayEnabled: true
         });
-        this.setDashArray(dashArray);
-    });
-    layer.add(polygon);
+        provideFixedLineWidth(polygon, function (lineScale) {
+            this.setStrokeWidth(CONSTRAINT_STROKE_WIDTH * lineScale);
+            var dashArray = CONSTRAINT_DASH_ARRAY.map(function (dash) {
+                return dash * lineScale;
+            });
+            this.setDashArray(dashArray);
+        });
+        layer.add(polygon);
+    }
 
-    holes.forEach(function (hole) {
+    (holes || []).forEach(function (hole) {
         var polygon = new Kinetic.Polygon({
             points: makeKineticPoints(hole),
             stroke: CONSTRAINT_COLOR,
@@ -430,7 +445,7 @@ Stage.prototype.setConstraints = function (contour, holes, points) {
         layer.add(polygon);
     });
 
-    points.forEach(function (point) {
+    (points || []).forEach(function (point) {
         var circle = new Kinetic.Circle({
             x: point.x,
             y: point.y,
@@ -459,11 +474,11 @@ Stage.prototype.setConstraintsVisible = function (visible) {
 
 /**
  * Draw errors
- * @param {Array.<XY>} error_points
+ * @param {Array.<XY>} errorPoints
  */
-Stage.prototype.setErrors = function (error_points) {
+Stage.prototype.setErrors = function (errorPoints) {
     var layer = new Kinetic.Layer({name: "errors"});
-    error_points.forEach(function (point) {
+    (errorPoints || []).forEach(function (point) {
         var circle = new Kinetic.Circle({
             x: point.x,
             y: point.y,
@@ -486,10 +501,144 @@ Stage.prototype.draw = function () {
 };
 
 
-module.exports = Stage;
+/*
+ * Angular module and bindings
+ * ---------------------------
+ */
+module.exports = angular.module('stage', [ ])
+/**
+ * KineticJS stage directive
+ */
+    .directive('stage', function ($log) {
+        return {
+            restrict: 'E',
+            scope: {
+                contour: '=',
+                holes: '=',
+                points: '=',
+                triangles: '=',
+                boundingBox: '=',
+                errorPoints: '='
+            },
+            link: function (scope, element /* XXX , attrs*/) {
+                // XXX todo: remove jQuery selectors and events
+
+                var stage = new Stage(element);
+
+                $("#draw_constraints").change(function () {
+                    setVisibleLayers(stage);
+                    stage.draw();
+                });
+
+                // Display pointer coordinates
+                $('#content').on('mousemove', stage, onMouseMove);
+
+                // Redraw iff triangles is modified
+                // (for the time being, don't redraw if constraints are modified : wait for triangulation).
+                // We use watchCollection so only a shallow comparison is done i.e. collection items such as
+                // 'triangles' are compared using '===', not not deep equality. This should be sufficient
+                // for this use case (each triangulation returns a new array).
+                scope.$watchCollection('[ triangles, errorPoints ]', function (newValue) {
+                    $log.debug("stage $watchCollection", newValue);
+                    stage.reset();
+
+                    $log.debug("stage scope", scope);
+
+                    // XXX watch separately ?
+                    // XXX compute if not set ?
+                    if (scope.boundingBox) {
+                        stage.setBoundingBox(scope.boundingBox.min, scope.boundingBox.max);
+                    }
+
+                    // draw result
+                    stage.setTriangles(scope.triangles);
+                    stage.setConstraints(scope.contour, scope.holes, scope.points);
+                    if (scope.errorPoints) {
+                        stage.setErrors(scope.errorPoints);
+                    }
+                    stage.draw();
+                    setVisibleLayers(stage);
+                });
+            }
+        };
+    });
+
+},{}],4:[function(require,module,exports){
+/*
+ * poly2tri.js demo.
+ * AngularJS triangulation service.
+ *
+ * (c) 2014, Rémi Turboult
+ * All rights reserved.
+ * Distributed under the 3-clause BSD License, see LICENSE.txt
+ */
+
+/* jshint node:true */
+/* global poly2tri, angular */
+
+"use strict";
 
 
-},{}],3:[function(require,module,exports){
+module.exports = angular.module('triangulation', [ ])
+/**
+ * Triangulation library
+ */
+    .value('poly2tri', poly2tri.noConflict())
+/**
+ * Triangulation service
+ */
+    .factory('triangulate', function (poly2tri, $log) {
+        /**
+         * Parsed constraints
+         * @typedef {Object} ParsedConstraints
+         * @property {Array.<Point>} contour
+         * @property {Array.<Array.<Point>>} holes
+         * @property {Array.<Point>} points - Steiner points
+         */
+        /**
+         * Triangulation result
+         * @typedef {Object} TriangulationResult
+         * @property {Array.<Triangle>} triangles
+         * @property {{min:Point,max:Point}} boundingBox
+         * @property {Error} error - exception, if any
+         * @property {Array.<Point>} error_points - faulty constraints, if any
+         */
+        /**
+         * Perform a triangulation
+         * @param {ParsedConstraints} constraints
+         * @returns {TriangulationResult} result
+         */
+        return function triangulate(constraints) {
+            $log.debug("triangulate", constraints);
+
+            // get model
+            var contour = constraints.contour;
+            var holes = constraints.holes;
+            var points = constraints.points;
+
+            // perform triangulation
+            var swctx;
+            var result = { };
+            try {
+                // prepare SweepContext
+                swctx = new poly2tri.SweepContext(contour, {cloneArrays: true});
+                swctx.addHoles(holes).addPoints(points);
+
+                // triangulate
+                swctx.triangulate();
+            } catch (e) {
+                result.error = e;
+                result.error_points = e.points;
+            }
+            result.triangles = (swctx && swctx.getTriangles());
+            result.boundingBox = (swctx && swctx.getBoundingBox());
+
+            $log.debug("result", result);
+            return result;
+        };
+    });
+
+},{}],5:[function(require,module,exports){
 /*
  * Helper function for poly2tri.js demo & tests
  * 
@@ -557,7 +706,7 @@ function mapPairs(arr, callback, thisArg) {
 }
 module.exports = mapPairs;
 
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /*
  * Helper function for poly2tri.js demo & tests
  *
@@ -577,7 +726,7 @@ module.exports = mapPairs;
  * @returns {Array.<number>} parsed floats (empty array if none)
  */
 function parseFloats(str) {
-    var floats = str.split(/[^-+eE\.\d]+/).map(parseFloat).filter(function (val) {
+    var floats = (str||"").split(/[^-+eE\.\d]+/).map(parseFloat).filter(function (val) {
         return !isNaN(val);
     });
     return floats;
@@ -592,7 +741,7 @@ exports.parseFloats = parseFloats;
  * @returns {Array.<Array.<number>>} parsed groups of floats (empty array if none)
  */
 function parseFloatsGroups(str) {
-    var groups = str.split(/\n\s*\n/).map(parseFloats).filter(function (floats) {
+    var groups = (str||"").split(/\n\s*\n/).map(parseFloats).filter(function (floats) {
         return floats.length > 0;
     });
     return groups;

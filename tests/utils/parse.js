@@ -17,7 +17,7 @@
  * @returns {Array.<number>} parsed floats (empty array if none)
  */
 function parseFloats(str) {
-    var floats = str.split(/[^-+eE\.\d]+/).map(parseFloat).filter(function (val) {
+    var floats = (str||"").split(/[^-+eE\.\d]+/).map(parseFloat).filter(function (val) {
         return !isNaN(val);
     });
     return floats;
@@ -32,7 +32,7 @@ exports.parseFloats = parseFloats;
  * @returns {Array.<Array.<number>>} parsed groups of floats (empty array if none)
  */
 function parseFloatsGroups(str) {
-    var groups = str.split(/\n\s*\n/).map(parseFloats).filter(function (floats) {
+    var groups = (str||"").split(/\n\s*\n/).map(parseFloats).filter(function (floats) {
         return floats.length > 0;
     });
     return groups;

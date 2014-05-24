@@ -39,9 +39,9 @@
         "index.html"
     ],
     "devDependencies": {
+        "angular": "~1.2.16",
         "jquery": "~2.0.3",
         "kineticjs": "http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.7.4.min.js",
-        "jquery-mousewheel": "~3.1.11",
-        "purl": "~2.3.1"
+        "jquery-mousewheel": "~3.1.11"
     }
 }

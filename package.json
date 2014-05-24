@@ -19,7 +19,7 @@
         "jshint": "jshint *.js src/*.js tests/*.js tests/spec/*.js tests/utils/*.js demo/*.js",
         "build": "npm run jshint && npm run build.lib && npm run build.demo",
         "build.lib": "mkdir -p dist && node ./build.js",
-        "build.demo": "mkdir -p dist && browserify demo/main.js -o dist/demo.js",
+        "build.demo": "mkdir -p dist && browserify demo/app.js -o dist/demo.js",
         "bench": "node ./tests/benchmark.js"
     },
     "keywords": [

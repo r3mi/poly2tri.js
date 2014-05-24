@@ -1,19 +1,26 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!doctype html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>poly2tri tester</title>
         <link rel="stylesheet" type="text/css" href="demo/demo.css" media="screen">
     </head>
-    <body>
+    <body ng-app="demo" ng-controller="demoCtrl as demo">
         <div id="control">
             <form>
                 <div class="wrapper">
                     <label for="preset">Load preset data:</label>
-                    <select id="preset"></select>
-                    <input id="btnTriangulate" type="button" value="Triangulate!">
-                    <address id="attribution"></address>
-                    <div class="info">(<span id="triangles_size">0</span> triangles computed)</div>
+                    <select id="preset" ng-model="demo.file"
+                            ng-options="(file.label + (file.throws ? ' (throws!)' : '')) for file in demo.files | orderBy:'label'">
+                        <option value="">--Empty--</option>
+                    </select>
+                    <address ng-show="demo.file.title">
+                        (source: <a ng-href="{{ demo.file.source }}">{{ demo.file.title }}</a>)
+                    </address>
+                    <input ng-click="demo.triangulate()" type="button" value="Triangulate!">
+                    <div class="info" ng-show="demo.result.triangles.length >= 0">
+                        ({{ demo.result.triangles.length }} triangles computed)
+                    </div>
                 </div>
                 <div class="wrapper">
                     <input id="draw_constraints" type="checkbox" value="drawConstraints" checked="checked">
@@ -21,18 +28,21 @@
                 </div>
                 <div class="wrapper">
                     <label for="poly_contour">Contour of the polygon (any separator between coordinates):</label>
-                    <textarea id="poly_contour" rows="7" cols="50"></textarea>
-                    <div class="info">(<span id="contour_size">0</span> points parsed)</div>
+                    <textarea id="poly_contour" ng-model="demo.text.contour"
+                              init-from-file="demo.file.name" rows="7" cols="50"></textarea>
+                    <div class="info">({{ demo.parsed.contour.length }} points parsed)</div>
                 </div>
                 <div class="wrapper">
                     <label for="poly_holes">Holes in the polygon (at least one blank line between each hole):</label>
-                    <textarea id="poly_holes" rows="5" cols="50"></textarea>
-                    <div class="info">(<span id="holes_size">0</span> holes parsed)</div>
+                    <textarea id="poly_holes" ng-model="demo.text.holes"
+                              init-from-file="demo.file.holes" rows="5" cols="50"></textarea>
+                    <div class="info">({{ demo.parsed.holes.length }} holes parsed)</div>
                 </div>
                 <div class="wrapper">
                     <label for="poly_points">Steiner points (any separator between coordinates):</label>
-                    <textarea id="poly_points" rows="5" cols="50"></textarea>
-                    <div class="info">(<span id="points_size">0</span> points parsed)</div>
+                    <textarea id="poly_points" ng-model="demo.text.points"
+                              init-from-file="demo.file.points" rows="5" cols="50"></textarea>
+                    <div class="info">({{ demo.parsed.points.length }} points parsed)</div>
                 </div>
                 <div class="wrapper">
                     Pointer in drawing coords: {x: <span id="pointer_x"></span>, y: <span id="pointer_y"></span>}
@@ -40,16 +50,23 @@
                     <em>Drag to Pan. Use wheel to zoom on pointer.</em>
                 </div>
             </form>
-            <address>
+            <address ng-controller="poly2triCtrl">
                 Powered by <a href="https://github.com/r3mi/poly2tri.js.git">poly2tri.js</a> 
-                v<span id="version">???</span>
+                v{{ poly2tri.VERSION }}</span>
             </address>
         </div>
-        <div id="content">
-        </div>
+        <stage id="content"
+               contour="demo.parsed.contour"
+               holes="demo.parsed.holes"
+               points="demo.parsed.points"
+               triangles="demo.result.triangles"
+               bounding-box="demo.result.boundingBox"
+               error-points="demo.result.error_points">
+        </stage>
+
         <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="bower_components/jquery-mousewheel/jquery.mousewheel.min.js"></script>
-        <script type="text/javascript" src="bower_components/purl/purl.js"></script>
+        <script src="bower_components/angular/angular.js"></script>
         <script type="text/javascript" src="bower_components/kineticjs/index.js"></script>
         <script type="text/javascript" src="dist/poly2tri.min.js"></script>
         <script type="text/javascript" src="dist/demo.js"></script>

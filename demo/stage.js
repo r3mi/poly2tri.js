@@ -1,6 +1,6 @@
 /*
  * Display poly2tri results in the browser.
- * Facade for the Kinetic Stage.
+ * Angular facade for the Kinetic Stage.
  *
  * (c) 2014, Rémi Turboult
  * All rights reserved.
@@ -9,7 +9,7 @@
 
 
 /* jshint browser:true, jquery:true, globalstrict:true */
-/* global Kinetic */
+/* global Kinetic, angular */
 
 
 "use strict";
@@ -51,14 +51,35 @@ function onMouseWheel(e, delta) {
 }
 
 
+function setVisibleLayers(stage) {
+    // XXX remove jQuery
+    /* jshint jquery:true */
+    var visible = $("#draw_constraints").is(':checked');
+    stage.setConstraintsVisible(visible);
+}
+
+// Display pointer coordinates
+function onMouseMove(e) {
+    var stage = e.data;
+    var pos = stage.getPointerCoordinates();
+    $('#pointer_x').text(pos.x);
+    $('#pointer_y').text(pos.y);
+}
+
+
 /**
+ * Stage class : facade for the Kinetic Stage
+ * ------------------------------------------
+ *
  * Create a new stage
  * @param selector - jQuery selector for the container
  * @constructor
  */
-var Stage = function (selector) {
+// XXX put in a controller ?
+var Stage = function ($container) {
 
-    var $container = $(selector);
+    // XXX remove jQuery code
+
     var kStage = new Kinetic.Stage({
         container: $container[0],
         width: $container.width(),
@@ -151,7 +172,7 @@ Stage.prototype.getPointerCoordinates = function () {
  */
 Stage.prototype.setTriangles = function (triangles) {
     var layer = new Kinetic.Layer({name: "triangles"});
-    triangles.forEach(function (t) {
+    (triangles || []).forEach(function (t) {
         var triangle = new Kinetic.Polygon({
             points: makeKineticPoints(t.getPoints()),
             fill: TRIANGLE_FILL_COLOR,
@@ -175,21 +196,23 @@ Stage.prototype.setTriangles = function (triangles) {
 Stage.prototype.setConstraints = function (contour, holes, points) {
     var layer = new Kinetic.Layer({name: "constraints"});
 
-    var polygon = new Kinetic.Polygon({
-        points: makeKineticPoints(contour),
-        stroke: CONSTRAINT_COLOR,
-        dashArrayEnabled: true
-    });
-    provideFixedLineWidth(polygon, function (lineScale) {
-        this.setStrokeWidth(CONSTRAINT_STROKE_WIDTH * lineScale);
-        var dashArray = CONSTRAINT_DASH_ARRAY.map(function (dash) {
-            return dash * lineScale;
+    if (contour && contour.length) {
+        var polygon = new Kinetic.Polygon({
+            points: makeKineticPoints(contour),
+            stroke: CONSTRAINT_COLOR,
+            dashArrayEnabled: true
         });
-        this.setDashArray(dashArray);
-    });
-    layer.add(polygon);
+        provideFixedLineWidth(polygon, function (lineScale) {
+            this.setStrokeWidth(CONSTRAINT_STROKE_WIDTH * lineScale);
+            var dashArray = CONSTRAINT_DASH_ARRAY.map(function (dash) {
+                return dash * lineScale;
+            });
+            this.setDashArray(dashArray);
+        });
+        layer.add(polygon);
+    }
 
-    holes.forEach(function (hole) {
+    (holes || []).forEach(function (hole) {
         var polygon = new Kinetic.Polygon({
             points: makeKineticPoints(hole),
             stroke: CONSTRAINT_COLOR,
@@ -205,7 +228,7 @@ Stage.prototype.setConstraints = function (contour, holes, points) {
         layer.add(polygon);
     });
 
-    points.forEach(function (point) {
+    (points || []).forEach(function (point) {
         var circle = new Kinetic.Circle({
             x: point.x,
             y: point.y,
@@ -234,11 +257,11 @@ Stage.prototype.setConstraintsVisible = function (visible) {
 
 /**
  * Draw errors
- * @param {Array.<XY>} error_points
+ * @param {Array.<XY>} errorPoints
  */
-Stage.prototype.setErrors = function (error_points) {
+Stage.prototype.setErrors = function (errorPoints) {
     var layer = new Kinetic.Layer({name: "errors"});
-    error_points.forEach(function (point) {
+    (errorPoints || []).forEach(function (point) {
         var circle = new Kinetic.Circle({
             x: point.x,
             y: point.y,
@@ -261,5 +284,64 @@ Stage.prototype.draw = function () {
 };
 
 
-module.exports = Stage;
+/*
+ * Angular module and bindings
+ * ---------------------------
+ */
+module.exports = angular.module('stage', [ ])
+/**
+ * KineticJS stage directive
+ */
+    .directive('stage', function ($log) {
+        return {
+            restrict: 'E',
+            scope: {
+                contour: '=',
+                holes: '=',
+                points: '=',
+                triangles: '=',
+                boundingBox: '=',
+                errorPoints: '='
+            },
+            link: function (scope, element /* XXX , attrs*/) {
+                // XXX todo: remove jQuery selectors and events
 
+                var stage = new Stage(element);
+
+                $("#draw_constraints").change(function () {
+                    setVisibleLayers(stage);
+                    stage.draw();
+                });
+
+                // Display pointer coordinates
+                $('#content').on('mousemove', stage, onMouseMove);
+
+                // Redraw iff triangles is modified
+                // (for the time being, don't redraw if constraints are modified : wait for triangulation).
+                // We use watchCollection so only a shallow comparison is done i.e. collection items such as
+                // 'triangles' are compared using '===', not not deep equality. This should be sufficient
+                // for this use case (each triangulation returns a new array).
+                scope.$watchCollection('[ triangles, errorPoints ]', function (newValue) {
+                    $log.debug("stage $watchCollection", newValue);
+                    stage.reset();
+
+                    $log.debug("stage scope", scope);
+
+                    // XXX watch separately ?
+                    // XXX compute if not set ?
+                    if (scope.boundingBox) {
+                        stage.setBoundingBox(scope.boundingBox.min, scope.boundingBox.max);
+                    }
+
+                    // draw result
+                    stage.setTriangles(scope.triangles);
+                    stage.setConstraints(scope.contour, scope.holes, scope.points);
+                    if (scope.errorPoints) {
+                        stage.setErrors(scope.errorPoints);
+                    }
+                    stage.draw();
+                    setVisibleLayers(stage);
+                });
+            }
+        };
+    });
