@@ -221,7 +221,7 @@ module.exports = angular.module('files', [ ])
  */
 
 
-/* jshint browser:true, jquery:true, globalstrict:true */
+/* jshint browser:true, globalstrict:true */
 /* global Kinetic, angular */
 
 
@@ -263,16 +263,11 @@ function onMouseWheel(e, delta) {
     }
 }
 
-
-function setVisibleLayers(stage) {
-    // XXX remove jQuery
-    /* jshint jquery:true */
-    var visible = $("#draw_constraints").is(':checked');
-    stage.setConstraintsVisible(visible);
-}
-
 // Display pointer coordinates
 function onMouseMove(e) {
+    // XXX remove jQuery code
+    /* jshint jquery:true */
+
     var stage = e.data;
     var pos = stage.getPointerCoordinates();
     $('#pointer_x').text(pos.x);
@@ -514,20 +509,26 @@ module.exports = angular.module('stage', [ ])
                 points: '=',
                 triangles: '=',
                 boundingBox: '=',
-                errorPoints: '='
+                errorPoints: '=',
+                showConstraints: '='
             },
-            link: function (scope, element /* XXX , attrs*/) {
+            link: function (scope, element) {
                 // XXX todo: remove jQuery selectors and events
+                /* jshint jquery:true */
 
                 var stage = new Stage(element);
 
-                $("#draw_constraints").change(function () {
-                    setVisibleLayers(stage);
-                    stage.draw();
-                });
-
                 // Display pointer coordinates
                 $('#content').on('mousemove', stage, onMouseMove);
+
+                // Show or hide constraints (contour + holes + Steiner points)
+                scope.$watch('showConstraints', function (newValue) {
+                    stage.setConstraintsVisible(newValue);
+                    // Shouldn't be needed to redraw explicitly, but sometimes when stage is created
+                    // with hidden constraints, it is not possible to show the constraints again, without
+                    // forcing a redraw.
+                    stage.draw();
+                });
 
                 // Redraw iff triangles is modified
                 // (for the time being, don't redraw if constraints are modified : wait for triangulation).
@@ -538,8 +539,6 @@ module.exports = angular.module('stage', [ ])
                     $log.debug("stage $watchCollection", newValue);
                     stage.reset();
 
-                    $log.debug("stage scope", scope);
-
                     // XXX watch separately ?
                     // XXX compute if not set ?
                     if (scope.boundingBox) {
@@ -549,11 +548,11 @@ module.exports = angular.module('stage', [ ])
                     // draw result
                     stage.setTriangles(scope.triangles);
                     stage.setConstraints(scope.contour, scope.holes, scope.points);
+                    stage.setConstraintsVisible(scope.showConstraints);
                     if (scope.errorPoints) {
                         stage.setErrors(scope.errorPoints);
                     }
                     stage.draw();
-                    setVisibleLayers(stage);
                 });
             }
         };

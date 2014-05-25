@@ -23,7 +23,8 @@
                     </div>
                 </div>
                 <div class="wrapper">
-                    <input id="draw_constraints" type="checkbox" value="drawConstraints" checked="checked">
+                    <input id="draw_constraints" type="checkbox"
+                           ng-model="demo.showConstraints" ng-init="demo.showConstraints = true">
                     <label for="draw_constraints">Draw constraints</label> 
                 </div>
                 <div class="wrapper">
@@ -61,7 +62,8 @@
                points="demo.parsed.points"
                triangles="demo.result.triangles"
                bounding-box="demo.result.boundingBox"
-               error-points="demo.result.error_points">
+               error-points="demo.result.error_points"
+               show-constraints="demo.showConstraints">
         </stage>
 
         <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
