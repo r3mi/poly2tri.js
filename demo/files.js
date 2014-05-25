@@ -35,13 +35,6 @@ module.exports = angular.module('files', [ ])
                     files.push(file);
                 });
             });
-            // XXX needed ?
-            files.findBy = function (property, value) {
-                var file = this.filter(function (file) {
-                    return file[property] === value;
-                });
-                return (file ? file[0] : null);
-            };
             return files;
         });
     })

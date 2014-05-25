@@ -29,6 +29,7 @@ if (typeof angular === 'undefined') {
 
 var parse = require("../tests/utils/parse");
 var mapPairs = require("../tests/utils/mapPairs");
+var find = require('array-find');
 
 // AngularJS main
 var app = angular.module('demo', [
@@ -78,7 +79,9 @@ app.controller('demoCtrl', function ($scope, filesPromise, triangulate, $window)
     var self = this;
     filesPromise.then(function (data) {
         self.files = data;
-        self.file = data.findBy('holes', 'dude_holes.dat');
+        self.file = find(data, function (element) {
+            return element.holes === 'dude_holes.dat';
+        });
     });
     this.text = $scope.textConstraints = {
         /** @type {string} */
@@ -127,7 +130,7 @@ app.controller('demoCtrl', function ($scope, filesPromise, triangulate, $window)
     };
 });
 
-},{"../tests/utils/mapPairs":5,"../tests/utils/parse":6,"./files":2,"./stage":3,"./triangulation":4}],2:[function(require,module,exports){
+},{"../tests/utils/mapPairs":6,"../tests/utils/parse":7,"./files":2,"./stage":3,"./triangulation":4,"array-find":5}],2:[function(require,module,exports){
 /*
  * poly2tri.js demo.
  * File loading AngularJS module.
@@ -165,13 +168,6 @@ module.exports = angular.module('files', [ ])
                     files.push(file);
                 });
             });
-            // XXX needed ?
-            files.findBy = function (property, value) {
-                var file = this.filter(function (file) {
-                    return file[property] === value;
-                });
-                return (file ? file[0] : null);
-            };
             return files;
         });
     })
@@ -639,6 +635,29 @@ module.exports = angular.module('triangulation', [ ])
     });
 
 },{}],5:[function(require,module,exports){
+function find(array, predicate, self) {
+  self = self || this;
+  var len = array.length;
+  var i;
+  if (len === 0) {
+    return;
+  }
+  if (typeof predicate !== 'function') {
+    throw new TypeError(predicate + ' must be a function');
+  }
+
+  for (i = 0; i < len; i++) {
+    if (predicate.call(self, array[i], i, array)) {
+      return array[i];
+    }
+  }
+
+  return;
+}
+
+module.exports = find;
+
+},{}],6:[function(require,module,exports){
 /*
  * Helper function for poly2tri.js demo & tests
  * 
@@ -706,7 +725,7 @@ function mapPairs(arr, callback, thisArg) {
 }
 module.exports = mapPairs;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /*
  * Helper function for poly2tri.js demo & tests
  *

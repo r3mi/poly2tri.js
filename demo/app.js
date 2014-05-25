@@ -28,6 +28,7 @@ if (typeof angular === 'undefined') {
 
 var parse = require("../tests/utils/parse");
 var mapPairs = require("../tests/utils/mapPairs");
+var find = require('array-find');
 
 // AngularJS main
 var app = angular.module('demo', [
@@ -77,7 +78,9 @@ app.controller('demoCtrl', function ($scope, filesPromise, triangulate, $window)
     var self = this;
     filesPromise.then(function (data) {
         self.files = data;
-        self.file = data.findBy('holes', 'dude_holes.dat');
+        self.file = find(data, function (element) {
+            return element.holes === 'dude_holes.dat';
+        });
     });
     this.text = $scope.textConstraints = {
         /** @type {string} */
