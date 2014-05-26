@@ -263,17 +263,6 @@ function onMouseWheel(e, delta) {
     }
 }
 
-// Display pointer coordinates
-function onMouseMove(e) {
-    // XXX remove jQuery code
-    /* jshint jquery:true */
-
-    var stage = e.data;
-    var pos = stage.getPointerCoordinates();
-    $('#pointer_x').text(pos.x);
-    $('#pointer_y').text(pos.y);
-}
-
 
 /**
  * Stage class : facade for the Kinetic Stage
@@ -287,6 +276,7 @@ function onMouseMove(e) {
 var Stage = function ($container) {
 
     // XXX remove jQuery code
+    /* jshint jquery:true */
 
     var kStage = new Kinetic.Stage({
         container: $container[0],
@@ -498,9 +488,15 @@ Stage.prototype.draw = function () {
  */
 module.exports = angular.module('stage', [ ])
 /**
+ * KineticJS stage factory
+ */
+    .factory('Stage', function() {
+        return Stage;
+    })
+/**
  * KineticJS stage directive
  */
-    .directive('stage', function ($log) {
+    .directive('stage', function ($log, Stage) {
         return {
             restrict: 'E',
             scope: {
@@ -510,16 +506,11 @@ module.exports = angular.module('stage', [ ])
                 triangles: '=',
                 boundingBox: '=',
                 errorPoints: '=',
-                showConstraints: '='
+                showConstraints: '=',
+                onMouseMove: '&'
             },
             link: function (scope, element) {
-                // XXX todo: remove jQuery selectors and events
-                /* jshint jquery:true */
-
                 var stage = new Stage(element);
-
-                // Display pointer coordinates
-                $('#content').on('mousemove', stage, onMouseMove);
 
                 // Show or hide constraints (contour + holes + Steiner points)
                 scope.$watch('showConstraints', function (newValue) {
@@ -554,6 +545,15 @@ module.exports = angular.module('stage', [ ])
                     }
                     stage.draw();
                 });
+
+                // Update pointer coordinates
+                if (typeof scope.onMouseMove === 'function') {
+                    element.on('mousemove', function () {
+                        scope.$apply(function () {
+                            scope.onMouseMove({ stage: stage });
+                        });
+                    });
+                }
             }
         };
     });

@@ -46,7 +46,7 @@
                     <div class="info">({{ demo.parsed.points.length }} points parsed)</div>
                 </div>
                 <div class="wrapper">
-                    Pointer in drawing coords: {x: <span id="pointer_x"></span>, y: <span id="pointer_y"></span>}
+                    Pointer in drawing coords: {x: {{ demo.pointer.x }}, y: {{demo.pointer.y}}}
                     <br>
                     <em>Drag to Pan. Use wheel to zoom on pointer.</em>
                 </div>
@@ -57,6 +57,7 @@
             </address>
         </div>
         <stage id="content"
+               on-mouse-move="demo.pointer = stage.getPointerCoordinates()"
                contour="demo.parsed.contour"
                holes="demo.parsed.holes"
                points="demo.parsed.points"
