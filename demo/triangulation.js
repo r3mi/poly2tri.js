@@ -8,7 +8,7 @@
  */
 
 /* jshint node:true */
-/* global poly2tri, angular */
+/* global angular */
 
 "use strict";
 
@@ -17,7 +17,7 @@ module.exports = angular.module('triangulation', [ ])
 /**
  * Triangulation library
  */
-    .value('poly2tri', poly2tri.noConflict())
+    .value('poly2tri', poly2tri.noConflict()) // jshint ignore:line
 /**
  * Triangulation service
  */
