@@ -57,7 +57,8 @@
             </address>
         </div>
         <stage id="content"
-               on-mouse-move="demo.pointer = stage.getPointerCoordinates()"
+               model="stage"
+               ng-mousemove="demo.pointer = stage.getPointerCoordinates()"
                contour="demo.parsed.contour"
                holes="demo.parsed.holes"
                points="demo.parsed.points"

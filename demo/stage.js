@@ -143,11 +143,14 @@ Stage.prototype.setBoundingBox = function (min, max) {
 Stage.prototype.getPointerCoordinates = function () {
     var kStage = this.kStage;
     var pointer = kStage.getPointerPosition();
-    var stage_pos = kStage.getAbsolutePosition();
-    var x = (pointer.x - stage_pos.x) / kStage.getScaleX() + kStage.getOffsetX();
-    var y = (pointer.y - stage_pos.y) / kStage.getScaleY() + kStage.getOffsetY();
-    var digits = Math.min(kStage.getScaleX() / 10, 5);
-    return {x: x.toFixed(digits), y: y.toFixed(digits)};
+    if (pointer) { // can be undefined
+        var stage_pos = kStage.getAbsolutePosition();
+        var x = (pointer.x - stage_pos.x) / kStage.getScaleX() + kStage.getOffsetX();
+        var y = (pointer.y - stage_pos.y) / kStage.getScaleY() + kStage.getOffsetY();
+        var digits = Math.min(kStage.getScaleX() / 10, 5);
+        return {x: x.toFixed(digits), y: y.toFixed(digits)};
+    }
+    return null;
 };
 
 
@@ -277,16 +280,19 @@ module.exports = angular.module('stage', [ ])
 /**
  * KineticJS stage factory
  */
+    // XXX TODO inject KineticJS
     .factory('Stage', function() {
         return Stage;
     })
 /**
- * KineticJS stage directive
+ * KineticJS stage directive.
+ * Optionally export the KineticJS stage object to the parent scope, trough the "model" attribute, if specified.
  */
     .directive('stage', function ($log, Stage) {
         return {
             restrict: 'E',
             scope: {
+                stageModel: '=?model',
                 contour: '=',
                 holes: '=',
                 points: '=',
@@ -298,6 +304,9 @@ module.exports = angular.module('stage', [ ])
             },
             link: function (scope, element) {
                 var stage = new Stage(element);
+
+                // Export the KineticJS stage object to the parent scope
+                scope.stageModel = stage;
 
                 // Show or hide constraints (contour + holes + Steiner points)
                 scope.$watch('showConstraints', function (newValue) {
@@ -332,15 +341,6 @@ module.exports = angular.module('stage', [ ])
                     }
                     stage.draw();
                 });
-
-                // Update pointer coordinates
-                if (typeof scope.onMouseMove === 'function') {
-                    element.on('mousemove', function () {
-                        scope.$apply(function () {
-                            scope.onMouseMove({ stage: stage });
-                        });
-                    });
-                }
             }
         };
     });
