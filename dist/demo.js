@@ -220,9 +220,8 @@ module.exports = angular.module('files', [ ])
  * Distributed under the 3-clause BSD License, see LICENSE.txt
  */
 
-
-/* jshint browser:true, globalstrict:true */
-/* global Kinetic, angular */
+/* jshint node:true */
+/* global angular */
 
 
 "use strict";
@@ -269,11 +268,14 @@ function onMouseWheel(e, delta) {
  * ------------------------------------------
  *
  * Create a new stage
- * @param selector - jQuery selector for the container
+ * @param {Object} Kinetic - the KineticJS object library object (dependency injection for tests)
+ * @param {Object} $container - jQuery selector for the container
  * @constructor
  */
-// XXX put in a controller ?
-var Stage = function ($container) {
+// XXX put in a service ?
+var Stage = function (Kinetic, $container) {
+
+    this.Kinetic = Kinetic;
 
     // XXX remove jQuery code
     /* jshint jquery:true */
@@ -288,6 +290,8 @@ var Stage = function ($container) {
     });
     this.kStage = kStage;
 
+    // XXX remove window dependency
+    /* global window */
     $(window).resize(function () {
         kStage.setSize($container.width(), $container.height());
     });
@@ -372,9 +376,10 @@ Stage.prototype.getPointerCoordinates = function () {
  * @param {Array.<Triangle>} triangles
  */
 Stage.prototype.setTriangles = function (triangles) {
-    var layer = new Kinetic.Layer({name: "triangles"});
+    var K = this.Kinetic;
+    var layer = new K.Layer({name: "triangles"});
     (triangles || []).forEach(function (t) {
-        var triangle = new Kinetic.Polygon({
+        var triangle = new K.Polygon({
             points: makeKineticPoints(t.getPoints()),
             fill: TRIANGLE_FILL_COLOR,
             stroke: TRIANGLE_STROKE_COLOR
@@ -395,10 +400,11 @@ Stage.prototype.setTriangles = function (triangles) {
  * @param {Array.<XY>} points
  */
 Stage.prototype.setConstraints = function (contour, holes, points) {
-    var layer = new Kinetic.Layer({name: "constraints"});
+    var K = this.Kinetic;
+    var layer = new K.Layer({name: "constraints"});
 
     if (contour && contour.length) {
-        var polygon = new Kinetic.Polygon({
+        var polygon = new K.Polygon({
             points: makeKineticPoints(contour),
             stroke: CONSTRAINT_COLOR,
             dashArrayEnabled: true
@@ -414,7 +420,7 @@ Stage.prototype.setConstraints = function (contour, holes, points) {
     }
 
     (holes || []).forEach(function (hole) {
-        var polygon = new Kinetic.Polygon({
+        var polygon = new K.Polygon({
             points: makeKineticPoints(hole),
             stroke: CONSTRAINT_COLOR,
             dashArrayEnabled: true
@@ -430,7 +436,7 @@ Stage.prototype.setConstraints = function (contour, holes, points) {
     });
 
     (points || []).forEach(function (point) {
-        var circle = new Kinetic.Circle({
+        var circle = new K.Circle({
             x: point.x,
             y: point.y,
             fill: CONSTRAINT_COLOR
@@ -461,9 +467,10 @@ Stage.prototype.setConstraintsVisible = function (visible) {
  * @param {Array.<XY>} errorPoints
  */
 Stage.prototype.setErrors = function (errorPoints) {
-    var layer = new Kinetic.Layer({name: "errors"});
+    var K = this.Kinetic;
+    var layer = new K.Layer({name: "errors"});
     (errorPoints || []).forEach(function (point) {
-        var circle = new Kinetic.Circle({
+        var circle = new K.Circle({
             x: point.x,
             y: point.y,
             fill: ERROR_COLOR
@@ -491,11 +498,16 @@ Stage.prototype.draw = function () {
  */
 module.exports = angular.module('stage', [ ])
 /**
+ * KineticJS library
+ */
+    .value('Kinetic', Kinetic) // jshint ignore:line
+/**
  * KineticJS stage factory
  */
-    // XXX TODO inject KineticJS
-    .factory('Stage', function() {
-        return Stage;
+    .factory('Stage', function(Kinetic) {
+        return function ($container) {
+            return new Stage(Kinetic, $container);
+        };
     })
 /**
  * KineticJS stage directive.
@@ -569,7 +581,7 @@ module.exports = angular.module('stage', [ ])
  */
 
 /* jshint node:true */
-/* global poly2tri, angular */
+/* global angular */
 
 "use strict";
 
@@ -578,7 +590,7 @@ module.exports = angular.module('triangulation', [ ])
 /**
  * Triangulation library
  */
-    .value('poly2tri', poly2tri.noConflict())
+    .value('poly2tri', poly2tri.noConflict()) // jshint ignore:line
 /**
  * Triangulation service
  */
