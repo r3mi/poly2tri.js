@@ -25,31 +25,6 @@ var ERROR_RADIUS = 4;
 var CANVAS_MARGIN = 5;
 
 
-// Adapted from "Zoom to point and scale (kineticjs+mousewheel)"
-// http://nightlycoding.com/index.php/2013/08/zoom-to-point-and-scale-kineticjsmousewheel/
-function onMouseWheel(e, delta) {
-    //prevent the actual wheel movement
-    e.preventDefault();
-
-    var kStage = e.data;
-    var scale = kStage.getScaleX(); // scaleX === scaleY in this app
-
-    // Change scale by +/- 10%
-    // ("delta" has been normalized at +/-1 by the jquery-mousewheel plugin).
-    var new_scale = scale * (1 + delta * 0.1);
-
-    if (new_scale > 0.0) {
-        var pointer = kStage.getPointerPosition();
-        var stage_pos = kStage.getAbsolutePosition();
-        var x = pointer.x - (pointer.x - stage_pos.x) / scale * new_scale;
-        var y = pointer.y - (pointer.y - stage_pos.y) / scale * new_scale;
-        kStage.setPosition(x, y);
-        kStage.setScale(new_scale);
-        kStage.draw();
-    }
-}
-
-
 /**
  * Stage class : facade for the Kinetic Stage
  * ------------------------------------------
@@ -61,7 +36,7 @@ function onMouseWheel(e, delta) {
  */
 // XXX put in a service ?
 var Stage = function (Kinetic, $container) {
-
+    var self = this;
     this.Kinetic = Kinetic;
 
     // XXX remove jQuery code
@@ -84,7 +59,12 @@ var Stage = function (Kinetic, $container) {
     });
 
     // Zoom to point and scale
-    $container.on('mousewheel', kStage, onMouseWheel);
+    // ("delta" has been normalized at +/-1 by the jquery-mousewheel plugin).
+    $container.on('mousewheel', function onMouseWheel(e, delta) {
+        //prevent the actual wheel movement
+        e.preventDefault();
+        self.zoomOnPointer(delta);
+    });
 };
 
 
@@ -155,6 +135,30 @@ Stage.prototype.getPointerCoordinates = function () {
         return {x: x.toFixed(digits), y: y.toFixed(digits)};
     }
     return null;
+};
+
+
+/**
+ * Zoom the stage (relatively to the current zoom), centered on the pointer position.
+ * Adapted from "Zoom to point and scale (kineticjs+mousewheel)"
+ *      http://nightlycoding.com/index.php/2013/08/zoom-to-point-and-scale-kineticjsmousewheel/
+ * @param {number} delta - zoom increment, in steps of +/-1
+ */
+Stage.prototype.zoomOnPointer = function (delta) {
+    var kStage = this.kStage;
+    var scale = kStage.getScaleX(); // scaleX === scaleY in this app
+
+    // Change scale by +/- 10%
+    var new_scale = scale * (1 + delta * 0.1);
+    var pointer = kStage.getPointerPosition();
+    if (new_scale > 0.0 && pointer) {
+        var stage_pos = kStage.getAbsolutePosition();
+        var x = pointer.x - (pointer.x - stage_pos.x) / scale * new_scale;
+        var y = pointer.y - (pointer.y - stage_pos.y) / scale * new_scale;
+        kStage.setPosition(x, y);
+        kStage.setScale(new_scale);
+        kStage.draw();
+    }
 };
 
 
