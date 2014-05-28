@@ -7,18 +7,12 @@
  * Distributed under the 3-clause BSD License, see LICENSE.txt
  */
 
-/* jshint browser:true, jquery:true, globalstrict:true */
+/* jshint browser:true, globalstrict:true */
 /* global angular */
 
 
 "use strict";
 
-// XXX remove jQuery
-// XXX also in bower_components and bower.json
-if (typeof $ === 'undefined') {
-    window.alert("jQuery not found -- dependencies not installed ?");
-    throw new Error("jQuery not loaded -- bower dependencies not installed ?");
-}
 
 if (typeof angular === 'undefined') {
     window.alert("AngularJS not found -- dependencies not installed ?");
