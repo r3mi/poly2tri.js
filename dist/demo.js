@@ -33,6 +33,7 @@ var find = require('array-find');
 
 // AngularJS main
 var app = angular.module('demo', [
+    'monospaced.mousewheel',
     require("./files").name,
     require("./triangulation").name,
     require("./stage").name
@@ -249,7 +250,6 @@ var CANVAS_MARGIN = 5;
  */
 // XXX put in a service ?
 var Stage = function (Kinetic, $container) {
-    var self = this;
     this.Kinetic = Kinetic;
 
     // XXX remove jQuery code
@@ -269,14 +269,6 @@ var Stage = function (Kinetic, $container) {
     /* global window */
     $(window).resize(function () {
         kStage.setSize($container.width(), $container.height());
-    });
-
-    // Zoom to point and scale
-    // ("delta" has been normalized at +/-1 by the jquery-mousewheel plugin).
-    $container.on('mousewheel', function onMouseWheel(e, delta) {
-        //prevent the actual wheel movement
-        e.preventDefault();
-        self.zoomOnPointer(delta);
     });
 };
 
@@ -508,7 +500,7 @@ module.exports = angular.module('stage', [ ])
 /**
  * KineticJS stage factory
  */
-    .factory('Stage', function(Kinetic) {
+    .factory('Stage', function (Kinetic) {
         return function ($container) {
             return new Stage(Kinetic, $container);
         };

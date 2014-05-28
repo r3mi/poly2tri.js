@@ -59,6 +59,7 @@
         <stage id="content"
                model="stage"
                ng-mousemove="demo.pointer = stage.getPointerCoordinates()"
+               msd-wheel="$event.preventDefault(); stage.zoomOnPointer($delta)"
                contour="demo.parsed.contour"
                holes="demo.parsed.holes"
                points="demo.parsed.points"
@@ -69,8 +70,9 @@
         </stage>
 
         <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
-        <script type="text/javascript" src="bower_components/jquery-mousewheel/jquery.mousewheel.min.js"></script>
         <script src="bower_components/angular/angular.js"></script>
+        <script src="bower_components/hamsterjs/hamster.js"></script>
+        <script src="bower_components/angular-mousewheel/mousewheel.js"></script>
         <script type="text/javascript" src="bower_components/kineticjs/index.js"></script>
         <script type="text/javascript" src="dist/poly2tri.min.js"></script>
         <script type="text/javascript" src="dist/demo.js"></script>

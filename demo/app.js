@@ -32,6 +32,7 @@ var find = require('array-find');
 
 // AngularJS main
 var app = angular.module('demo', [
+    'monospaced.mousewheel',
     require("./files").name,
     require("./triangulation").name,
     require("./stage").name
