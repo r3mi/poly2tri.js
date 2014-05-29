@@ -157,10 +157,11 @@ module.exports = angular.module('files', [ ])
                 group.files.filter(function (file) {
                     return file.name && (file.demo || showAll);
                 }).forEach(function (file) {
-                    file.title = group.title;
-                    file.source = group.source;
-                    file.label = (file.content || file.name);
-                    files.push(file);
+                    files.push(angular.extend({
+                        title: group.title,
+                        source: group.source,
+                        label: (file.content || file.name)
+                    }, file));
                 });
             });
             return files;
