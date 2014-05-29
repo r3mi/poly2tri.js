@@ -15,6 +15,7 @@
 
 module.exports = angular.module('files', [ ])
     .constant('DATA_URL', "tests/data")
+
 /**
  * List of files.
  * Load index.json and return a Promise for the asynchronously loaded data.
@@ -38,6 +39,7 @@ module.exports = angular.module('files', [ ])
             return files;
         });
     })
+
 /**
  * Service to load a data file and return a Promise for the asynchronously loaded data.
  */
@@ -53,23 +55,23 @@ module.exports = angular.module('files', [ ])
             });
         };
     })
+
 /**
  * Initialize an input field with the content of a file
+ * (for <input>, <textarea> or <select>)
  */
     .directive('initFromFile', function (loadData) {
         return {
             restrict: 'A',
-            require: 'ngModel',
             scope: {
-                filename: '=initFromFile',
-                model: '=ngModel'
+                filename: '=initFromFile'
             },
-            link: function (scope /*XXX, element, attrs, ngModel*/) {
+            link: function (scope, element) {
                 scope.$watch('filename', function (filename) {
-                    scope.model = "";
+                    element.val("").change(); // "change" to trigger angular model update
                     if (filename) {
                         loadData(filename).then(function (data) {
-                            scope.model = data;
+                            element.val(data).change();
                         });
                     }
                 });
