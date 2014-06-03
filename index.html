@@ -10,62 +10,62 @@
             <form>
                 <div class="wrapper">
                     <label for="preset">Load preset data:</label>
-                    <select id="preset" ng-model="demo.file"
-                            ng-options="(file.label + (file.throws ? ' (throws!)' : '')) for file in demo.files | orderBy:'label'">
+                    <select id="preset" ng-model="file"
+                            ng-options="(file.label + (file.throws ? ' (throws!)' : '')) for file in files | orderBy:'label'">
                         <option value="">--Empty--</option>
                     </select>
-                    <address ng-show="demo.file.title">
-                        (source: <a ng-href="{{ demo.file.source }}">{{ demo.file.title }}</a>)
+                    <address ng-show="file.title">
+                        (source: <a ng-href="{{ file.source }}">{{ file.title }}</a>)
                     </address>
-                    <input ng-click="result = demo.triangulate(constraints)" type="button" value="Triangulate!">
+                    <input ng-click="result = triangulate(constraints)" type="button" value="Triangulate!">
                     <div class="info" ng-show="result.triangles.length >= 0">
                         ({{ result.triangles.length }} triangles computed)
                     </div>
                 </div>
                 <div class="wrapper">
                     <input id="draw_constraints" type="checkbox"
-                           ng-model="demo.showConstraints" ng-init="demo.showConstraints = true">
+                           ng-model="showConstraints" ng-init="showConstraints = true">
                     <label for="draw_constraints">Draw constraints</label> 
                 </div>
                 <div class="wrapper">
                     <label for="poly_contour">Contour of the polygon (any separator between coordinates):</label>
                     <textarea id="poly_contour" ng-model="constraints.contour" parse-points
-                              init-from-file="demo.file.name" rows="7" cols="50"></textarea>
+                              init-from-file="file.name" rows="7" cols="50"></textarea>
                     <div class="info">({{ constraints.contour.length }} points parsed)</div>
                 </div>
                 <div class="wrapper">
                     <label for="poly_holes">Holes in the polygon (at least one blank line between each hole):</label>
                     <textarea id="poly_holes" ng-model="constraints.holes" parse-holes
-                              init-from-file="demo.file.holes" rows="5" cols="50"></textarea>
+                              init-from-file="file.holes" rows="5" cols="50"></textarea>
                     <div class="info">({{ constraints.holes.length }} holes parsed)</div>
                 </div>
                 <div class="wrapper">
                     <label for="poly_points">Steiner points (any separator between coordinates):</label>
                     <textarea id="poly_points" ng-model="constraints.points" parse-points
-                              init-from-file="demo.file.points" rows="5" cols="50"></textarea>
+                              init-from-file="file.points" rows="5" cols="50"></textarea>
                     <div class="info">({{ constraints.points.length }} points parsed)</div>
                 </div>
                 <div class="wrapper">
-                    Pointer in drawing coords: {x: {{ demo.pointer.x }}, y: {{demo.pointer.y}}}
+                    Pointer in drawing coords: {x: {{ pointer.x }}, y: {{ pointer.y }}}
                     <br>
                     <em>Drag to Pan. Use wheel to zoom on pointer.</em>
                 </div>
             </form>
-            <address ng-controller="poly2triCtrl">
+            <address>
                 Powered by <a href="https://github.com/r3mi/poly2tri.js.git">poly2tri.js</a> 
                 v{{ poly2tri.VERSION }}</span>
             </address>
         </div>
         <stage id="content"
                model="stage"
-               ng-mousemove="demo.pointer = stage.getPointerCoordinates()"
+               ng-mousemove="pointer = stage.getPointerCoordinates()"
                contour="constraints.contour"
                holes="constraints.holes"
                points="constraints.points"
                triangles="result.triangles"
                bounding-box="result.boundingBox"
                error-points="result.error_points"
-               show-constraints="demo.showConstraints">
+               show-constraints="showConstraints">
         </stage>
 
         <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>

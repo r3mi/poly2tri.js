@@ -18,6 +18,7 @@ module.exports = angular.module('triangulation', [ ])
  * Triangulation library
  */
     .value('poly2tri', poly2tri.noConflict()) // jshint ignore:line
+
 /**
  * Triangulation service
  */
