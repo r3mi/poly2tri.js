@@ -24,7 +24,7 @@ module.exports = angular.module('triangulation', [ ])
     .factory('triangulate', function (poly2tri, $log) {
         /**
          * Parsed constraints
-         * @typedef {Object} ParsedConstraints
+         * @typedef {Object} TriangulationConstraints
          * @property {Array.<Point>} contour
          * @property {Array.<Array.<Point>>} holes
          * @property {Array.<Point>} points - Steiner points
@@ -39,7 +39,7 @@ module.exports = angular.module('triangulation', [ ])
          */
         /**
          * Perform a triangulation
-         * @param {ParsedConstraints} constraints
+         * @param {TriangulationConstraints} constraints
          * @returns {TriangulationResult} result
          */
         return function triangulate(constraints) {

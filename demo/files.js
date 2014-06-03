@@ -57,6 +57,9 @@ module.exports = angular.module('files', [ ])
         };
     })
 
+    // XXX bug : if empty field (eg sample with no steiner points) is edited and then
+    // file change to another sample with also empty field, the empty field is not reset
+
 /**
  * Initialize an input field with the content of a file
  * (for <input>, <textarea> or <select>)

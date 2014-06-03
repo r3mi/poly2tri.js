@@ -33,6 +33,7 @@ var app = angular.module('demo', [
 ]);
 
 
+// XXX move to triangulation.js
 app.controller('poly2triCtrl', ['$scope', 'poly2tri', function ($scope, poly2tri) {
     $scope.poly2tri = poly2tri;
 }]);
@@ -66,10 +67,12 @@ app.config(function ($locationProvider) {
 
 
 /**
- * Global controller : manages constraints, performs triangulation
+ * Global controller : manages files, performs triangulation
  * XXX separate controllers ?
  */
-app.controller('demoCtrl', function ($scope, filesPromise, triangulate, $window) {
+app.controller('demoCtrl', function (filesPromise, triangulate, $window) {
+
+    // XXX move to file.js
     var self = this;
     filesPromise.then(function (data) {
         self.files = data;
@@ -77,49 +80,51 @@ app.controller('demoCtrl', function ($scope, filesPromise, triangulate, $window)
             return element.holes === 'dude_holes.dat';
         });
     });
-    this.text = $scope.textConstraints = {
-        /** @type {string} */
-        contour: null,
-        /** @type {string} */
-        holes: null,
-        /** @type {string} */
-        points: null
-    };
-    this.parsed = $scope.parsedConstraints = {
-        contour: null,
-        holes: null,
-        points: null
-    };
 
-    /**
-     * Watch text areas, to parse constraints.
-     *      contour.text => parsePoints => contour.parsed
-     *      holes.text => parseHoles => holes.parsed
-     *      points.text => parsePoints => points.parsed
-     * @param {string} scopeProperty
-     * @param {function} parseFn
-     */
-        // XXX to replace with Custom Validations ??
-        // XXX see NgModelController and https://docs.angularjs.org/guide/forms
-        //
-        // XXX add Non-immediate (debounced) model updates ??
-        // XXX see ngModelOptions and https://docs.angularjs.org/guide/forms
-    function watch(scopeProperty, parseFn) {
-        $scope.$watch('textConstraints.' + scopeProperty, function (text) {
-            $scope.parsedConstraints[scopeProperty] = parseFn(text);
-        });
-    }
-
-    watch('contour', parsePoints);
-    watch('holes', parseHoles);
-    watch('points', parsePoints);
-
-    this.triangulate = function () {
-        var result = triangulate(self.parsed);
-        self.result = result;
+    // XXX move to triangulation.js
+    this.triangulate = function (constraints) {
+        var result = triangulate(constraints);
         if (result.error) {
             // XXX move in View
             $window.alert(result.error);
+        }
+        return result;
+    };
+});
+
+
+// XXX add Non-immediate (debounced) model updates ??
+// XXX see ngModelOptions and https://docs.angularjs.org/guide/forms
+
+/**
+ * Parse an input field with 'parsePoints' and update the underlying ng-model
+ */
+// XXX move into files.js ??
+app.directive('parsePoints', function () {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, element, attrs, ctrl) {
+            ctrl.$parsers.push(function(viewValue) {
+                return parsePoints(viewValue);
+            });
+        }
+    };
+});
+
+
+/**
+ * Parse an input field with 'parseHoles' and update the underlying ng-model
+ */
+// XXX move into files.js ??
+app.directive('parseHoles', function () {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, element, attrs, ctrl) {
+            ctrl.$parsers.push(function(viewValue) {
+                return parseHoles(viewValue);
+            });
         }
     };
 });
@@ -183,6 +188,9 @@ module.exports = angular.module('files', [ ])
             });
         };
     })
+
+    // XXX bug : if empty field (eg sample with no steiner points) is edited and then
+    // file change to another sample with also empty field, the empty field is not reset
 
 /**
  * Initialize an input field with the content of a file
@@ -591,7 +599,7 @@ module.exports = angular.module('triangulation', [ ])
     .factory('triangulate', function (poly2tri, $log) {
         /**
          * Parsed constraints
-         * @typedef {Object} ParsedConstraints
+         * @typedef {Object} TriangulationConstraints
          * @property {Array.<Point>} contour
          * @property {Array.<Array.<Point>>} holes
          * @property {Array.<Point>} points - Steiner points
@@ -606,7 +614,7 @@ module.exports = angular.module('triangulation', [ ])
          */
         /**
          * Perform a triangulation
-         * @param {ParsedConstraints} constraints
+         * @param {TriangulationConstraints} constraints
          * @returns {TriangulationResult} result
          */
         return function triangulate(constraints) {
