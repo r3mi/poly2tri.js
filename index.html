@@ -30,19 +30,19 @@
                 <div class="wrapper">
                     <label for="poly_contour">Contour of the polygon (any separator between coordinates):</label>
                     <textarea id="poly_contour" ng-model="constraints.contour" parse-points
-                              init-from-file="file.name" rows="7" cols="50"></textarea>
+                              init-from-file="file.name" reload-trigger="file" rows="7" cols="50"></textarea>
                     <div class="info">({{ constraints.contour.length }} points parsed)</div>
                 </div>
                 <div class="wrapper">
                     <label for="poly_holes">Holes in the polygon (at least one blank line between each hole):</label>
                     <textarea id="poly_holes" ng-model="constraints.holes" parse-holes
-                              init-from-file="file.holes" rows="5" cols="50"></textarea>
+                              init-from-file="file.holes" reload-trigger="file" rows="5" cols="50"></textarea>
                     <div class="info">({{ constraints.holes.length }} holes parsed)</div>
                 </div>
                 <div class="wrapper">
                     <label for="poly_points">Steiner points (any separator between coordinates):</label>
                     <textarea id="poly_points" ng-model="constraints.points" parse-points
-                              init-from-file="file.points" rows="5" cols="50"></textarea>
+                              init-from-file="file.points" reload-trigger="file" rows="5" cols="50"></textarea>
                     <div class="info">({{ constraints.points.length }} points parsed)</div>
                 </div>
                 <div class="wrapper">

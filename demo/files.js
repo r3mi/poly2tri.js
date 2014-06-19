@@ -46,7 +46,6 @@ module.exports = angular.module('files', [ ])
  */
     .factory('loadData', function ($http, DATA_URL, $log) {
         return function (filename) {
-            // XXX if filename ??
             return $http.get(DATA_URL + "/" + filename, {
                 // Avoid the default toJSON transformation
                 transformResponse: null
@@ -57,9 +56,6 @@ module.exports = angular.module('files', [ ])
         };
     })
 
-    // XXX bug : if empty field (eg sample with no steiner points) is edited and then
-    // file change to another sample with also empty field, the empty field is not reset
-
 /**
  * Initialize an input field with the content of a file
  * (for <input>, <textarea> or <select>)
@@ -68,13 +64,17 @@ module.exports = angular.module('files', [ ])
         return {
             restrict: 'A',
             scope: {
-                filename: '=initFromFile'
+                filename: '=initFromFile',
+                trigger: '=reloadTrigger'
             },
             link: function (scope, element) {
-                scope.$watch('filename', function (filename) {
+                // We need to watch both the filename and a 'trigger', so that we can reload if the trigger
+                // has changed, event if the filename has not. This can happen if the user performs some input,
+                // then reload the same filename (eg an empty holes file on a different example).
+                scope.$watchCollection('[ filename, trigger ]', function () {
                     element.val("").change(); // "change" to trigger angular model update
-                    if (filename) {
-                        loadData(filename).then(function (data) {
+                    if (scope.filename) {
+                        loadData(scope.filename).then(function (data) {
                             element.val(data).change();
                         });
                     }
