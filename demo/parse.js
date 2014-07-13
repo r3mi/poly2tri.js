@@ -39,7 +39,7 @@ function parseHoles(str) {
 // XXX add Non-immediate (debounced) model updates ??
 // XXX see ngModelOptions and https://docs.angularjs.org/guide/forms
 
-module.exports = angular.module('parse', [ ])
+module.exports = angular.module(__filename, [ ])
 
 /**
  * Parse an input field with 'parsePoints' and update the underlying ng-model

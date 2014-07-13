@@ -13,7 +13,7 @@
 "use strict";
 
 
-module.exports = angular.module('triangulation', [ ])
+module.exports = angular.module(__filename, [ ])
 /**
  * Triangulation library
  */

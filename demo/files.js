@@ -13,7 +13,7 @@
 
 "use strict";
 
-module.exports = angular.module('files', [ ])
+module.exports = angular.module(__filename, [ ])
     .constant('DATA_URL', "tests/data")
 
 /**

@@ -61,6 +61,7 @@ module.exports = angular.module('demo', [
 
 
 },{"./files":2,"./parse":3,"./stage":4,"./triangulation":5,"array-find":6}],2:[function(require,module,exports){
+(function (__filename){
 /*
  * poly2tri.js demo.
  * File loading AngularJS module.
@@ -76,7 +77,7 @@ module.exports = angular.module('demo', [
 
 "use strict";
 
-module.exports = angular.module('files', [ ])
+module.exports = angular.module(__filename, [ ])
     .constant('DATA_URL', "tests/data")
 
 /**
@@ -146,7 +147,9 @@ module.exports = angular.module('files', [ ])
         };
     });
 
+}).call(this,"/files.js")
 },{}],3:[function(require,module,exports){
+(function (__filename){
 /*
  * poly2tri.js demo.
  * AngularJS module for Point parsing.
@@ -188,7 +191,7 @@ function parseHoles(str) {
 // XXX add Non-immediate (debounced) model updates ??
 // XXX see ngModelOptions and https://docs.angularjs.org/guide/forms
 
-module.exports = angular.module('parse', [ ])
+module.exports = angular.module(__filename, [ ])
 
 /**
  * Parse an input field with 'parsePoints' and update the underlying ng-model
@@ -220,7 +223,9 @@ module.exports = angular.module('parse', [ ])
         };
     });
 
+}).call(this,"/parse.js")
 },{"../tests/utils/mapPairs":7,"../tests/utils/parse":8}],4:[function(require,module,exports){
+(function (__filename){
 /*
  * Display poly2tri results in the browser.
  * Angular facade for the Kinetic Stage.
@@ -236,7 +241,7 @@ module.exports = angular.module('parse', [ ])
 
 "use strict";
 
-module.exports = angular.module('stage', [ ])
+module.exports = angular.module(__filename, [ ])
 
 /**
  * KineticJS library
@@ -577,7 +582,9 @@ module.exports = angular.module('stage', [ ])
         };
     });
 
+}).call(this,"/stage.js")
 },{}],5:[function(require,module,exports){
+(function (__filename){
 /*
  * poly2tri.js demo.
  * AngularJS triangulation service.
@@ -593,7 +600,7 @@ module.exports = angular.module('stage', [ ])
 "use strict";
 
 
-module.exports = angular.module('triangulation', [ ])
+module.exports = angular.module(__filename, [ ])
 /**
  * Triangulation library
  */
@@ -653,6 +660,7 @@ module.exports = angular.module('triangulation', [ ])
         };
     });
 
+}).call(this,"/triangulation.js")
 },{}],6:[function(require,module,exports){
 function find(array, predicate, self) {
   self = self || this;

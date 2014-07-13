@@ -13,7 +13,7 @@
 
 "use strict";
 
-module.exports = angular.module('stage', [ ])
+module.exports = angular.module(__filename, [ ])
 
 /**
  * KineticJS library
