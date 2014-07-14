@@ -32,12 +32,22 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+ * Fix Bootstrap's CSS, following angular-bootstrap documentation :
+ *   " Original Bootstrap's CSS depends on empty href attributes to style cursors for several components
+ *   (pagination, tabs etc.). But in AngularJS adding empty href attributes to link tags will cause unwanted
+ *   route changes. This is why we need to remove empty href attributes from directive templates and as a result
+ *   styling is not applied correctly. The remedy is simple, just add the following styling to your application: "
+ */
+.nav, .pagination, .carousel, .panel-title a {
+    cursor: pointer;
+}
+
+
 html, body {
     height: 100%;
     padding: 0;
     margin: 0;
-    font-family: arial,verdana,helvetica,sans-serif;
-    font-size: 12px;
 }
 
 #control {
@@ -59,19 +69,4 @@ html, body {
     right: 410px;
     left: 10px;
     bottom: 10px;
-}
-
-.wrapper {
-    width: 100%;
-    margin-bottom: 1.5em;
-    padding: 0;
-}
-
-.wrapper textarea {
-    margin: 5px;
-    width: 380px;
-}
-
-.info {
-    color: #777;
 }

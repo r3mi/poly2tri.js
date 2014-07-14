@@ -23,6 +23,7 @@ var find = require('array-find');
 
 // AngularJS main
 module.exports = angular.module('demo', [
+    'ui.bootstrap',
     require("./files").name,
     require("./parse").name,
     require("./triangulation").name,
@@ -38,7 +39,7 @@ module.exports = angular.module('demo', [
 /**
  * Global controller : manages files, performs triangulation
  */
-    .controller('demoCtrl', function ($scope, filesPromise, triangulate, $window, poly2tri) {
+    .controller('demoCtrl', function ($scope, filesPromise, triangulate, poly2tri) {
         filesPromise.then(function (data) {
             $scope.files = data;
             $scope.file = find(data, function (element) {
@@ -50,10 +51,6 @@ module.exports = angular.module('demo', [
 
         $scope.triangulate = function (constraints) {
             var result = triangulate(constraints);
-            if (result.error) {
-                // XXX move in View
-                $window.alert(result.error);
-            }
             return result;
         };
     });
