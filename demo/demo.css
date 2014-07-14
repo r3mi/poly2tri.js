@@ -70,3 +70,8 @@ html, body {
     left: 10px;
     bottom: 10px;
 }
+
+samp {
+    font-size: 90%;
+    line-height: normal;
+}
