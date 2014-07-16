@@ -10,11 +10,12 @@
         <div id="control">
             <form>
                 <div class="form-group">
-                    <label for="preset">Load preset data:</label>
-                    <select id="preset" ng-model="file"
-                            ng-options="(file.label + (file.throws ? ' (throws!)' : '')) for file in files | orderBy:'label'">
-                        <option value="">--Empty--</option>
-                    </select>
+                    <label>Load preset data:
+                        <select ng-model="file"
+                                ng-options="(file.label + (file.throws ? ' (throws!)' : '')) for file in files | orderBy:'label'">
+                            <option value="">--Empty--</option>
+                        </select>
+                    </label>
                     <span class="help-block" ng-show="file.title">
                         (source: <a ng-href="{{ file.source }}">{{ file.title }}</a>)
                     </span>
@@ -32,9 +33,10 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <input id="draw_constraints" type="checkbox"
-                           ng-model="showConstraints" ng-init="showConstraints = true">
-                    <label for="draw_constraints">Draw constraints</label>
+                    <label>
+                        <input type="checkbox" ng-model="showConstraints" ng-init="showConstraints = true">
+                        Draw constraints
+                    </label>
                 </div>
                 <div class="form-group">
                     <span class="badge">{{ constraints.contour.length }}</span>
