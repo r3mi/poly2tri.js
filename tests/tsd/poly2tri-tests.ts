@@ -7,6 +7,7 @@ function initializeCDT(): poly2tri.SweepContext {
         new poly2tri.Point(300, 300),
         new poly2tri.Point(300, 100)
     ];
+
     var swctx = new poly2tri.SweepContext(contour);
     return swctx;
 }
