@@ -1,4 +1,9 @@
-﻿declare module poly2tri {
+﻿// Type definitions for poly2tri v0.9.10
+// Project: http://github.com/r3mi/poly2tri.js/
+// Definitions by: Elemar Junior <https://github.com/elemarjr/>
+// Definitions: https://github.com/borisyankov/DefinitelyTyped
+
+declare module poly2tri {
 
     interface IPointLike {
         x: number;
