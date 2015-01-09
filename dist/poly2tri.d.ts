@@ -1,4 +1,4 @@
-﻿// Type definitions for poly2tri v0.9.10
+﻿// Type definitions for poly2tri v1.3.5
 // Project: http://github.com/r3mi/poly2tri.js/
 // Definitions by: Elemar Junior <https://github.com/elemarjr/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
