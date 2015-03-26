@@ -1,89 +1,153 @@
 <!doctype html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <title>poly2tri tester</title>
-        <link rel="stylesheet" type="text/css" href="demo/magic-bootstrap.css">
-        <link rel="stylesheet" type="text/css" href="demo/demo.css" media="screen">
-    </head>
-    <body ng-app="demo" ng-controller="demoCtrl as demo">
-        <div id="control">
-            <form>
-                <div class="form-group">
-                    <label>Load preset data:
-                        <select ng-model="file"
-                                ng-options="(file.label + (file.throws ? ' (throws!)' : '')) for file in files | orderBy:'label'">
-                            <option value="">--Empty--</option>
-                        </select>
-                    </label>
-                    <span class="help-block" ng-show="file.title">
-                        (source: <a ng-href="{{ file.source }}">{{ file.title }}</a>)
-                    </span>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>poly2tri tester</title>
+    <link rel="stylesheet" type="text/css" href="demo/magic-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="demo/demo.css" media="screen">
+</head>
+<body ng-app="demo" ng-controller="demoCtrl as demo" ng-init="constraints = {}">
+<div id="container">
+    <div id="control">
+        <form>
+            <!-- XXX
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" ng-click="result = triangulate(constraints)">
+                    <span class="glyphicon glyphicon-play"></span> Triangulate!
+                </button>
+                <div class="alert alert-success" ng-show="result.triangles.length >= 0 && !result.error">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    <span class="badge">{{ result.triangles.length }}</span> triangles computed
                 </div>
-                <div class="form-group">
-                    <button type="button" class="btn btn-primary" ng-click="result = triangulate(constraints)">
-                        <span class="glyphicon glyphicon-tree-conifer"></span> Triangulate!
-                    </button>
-                    <div class="alert alert-success" ng-show="result.triangles.length >= 0 && !result.error">
-                        <span class="glyphicon glyphicon-ok"></span>
-                        <span class="badge">{{ result.triangles.length }}</span> triangles computed
-                    </div>
-                    <div class="alert alert-danger" ng-show="result.error">
-                        <span class="glyphicon glyphicon-exclamation-sign"></span> {{ result.error + "" }}
-                    </div>
-                </div>
-                <div class="form-group">
+                <alert type="danger" ng-show="result.error" close="result.error = null">
+                    <span class="glyphicon glyphicon-exclamation-sign"></span> {{ result.error + "" }}
+                </alert>
+                <div class="alert alert-info" ng-show="result">
                     <label>
                         <input type="checkbox" ng-model="showConstraints" ng-init="showConstraints = true">
                         Draw constraints
                     </label>
-                </div>
-                <div class="form-group">
-                    <span class="badge">{{ constraints.contour.length }}</span>
-                    <label for="poly_contour">Contour points</label>
                     <br>
-                    <samp>
-                        <textarea id="poly_contour" ng-model="constraints.contour" parse-points
+                    <span class="text-muted">Drag to Pan. Use wheel to zoom on pointer.</span>
+                </div>
+            </div>
+            XXX -->
+            <div class="panel panel-primary" ng-init="isExtended = false">
+                <div class="panel-heading">
+                            <span class="panel-title">
+                                <label>Data:
+                                    <select ng-model="file"
+                                            ng-change="isExtended = !file || isExtended"
+                                            ng-options="(file.label + (file.throws ? ' (throws!)' : '')) for file in files | orderBy:'label'">
+                                        <option value="">--Custom--</option>
+                                    </select>
+                                </label>
+                            </span>
+                    <button type="button" class="btn btn-success btn-block"
+                            ng-click="result = triangulate(constraints)">
+                        <span class="glyphicon glyphicon-play"></span> Triangulate!
+                    </button>
+                </div>
+                <div class="panel-body" ng-show="result">
+                    <alert type="success" ng-show="result.triangles.length >= 0 && !result.error">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        <span class="badge">{{ result.triangles.length }}</span> triangles computed
+                    </alert>
+                    <alert type="danger" ng-show="result.error" close="result.error = null">
+                        <span class="glyphicon glyphicon-exclamation-sign"></span> {{ result.error + "" }}
+                    </alert>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" ng-model="showConstraints" ng-init="showConstraints = true">
+                            Draw constraints
+                        </label>
+                    </div>
+                    <p class="text-info">
+                        <span class="glyphicon glyphicon-map-marker"></span>
+                        Pointer in drawing coords: {x: {{ pointer.x }}, y: {{ pointer.y }}}
+                    </p>
+                    <!-- XXX
+                                            <span class="help-block">Drag to Pan. Use wheel to zoom on pointer.</span>
+                    -->
+                </div>
+                <div class="panel-body bg-info">
+                    <h3 class="panel-title">
+                        <a ng-click="isExtended = !isExtended">
+                            Contour points
+                            <span class="caret"></span>
+                            <span class="badge pull-right">{{ constraints.contour.length }}</span>
+                        </a>
+                    </h3>
+                </div>
+                <div class="panel-body" collapse="!isExtended">
+                    <p class="text-info">
+                        <span class="glyphicon glyphicon-map-marker"></span>
+                        Pointer in drawing coords: {x: {{ pointer.x }}, y: {{ pointer.y }}}
+                    </p>
+                    <samp xxtooltip="any separator between coordinates" xxxtooltip-append-to-body
+                          tooltip-placement="bottom">
+                        <textarea ng-model="constraints.contour" parse-points
                                   init-from-file="file.name" reload-trigger="file" rows="7" cols="50">
                         </textarea>
                     </samp>
-                    <span class="help-block">(any separator between coordinates)</span>
                 </div>
-                <div class="form-group">
-                    <span class="badge">{{ constraints.holes.length }}</span>
-                    <label for="poly_holes">Holes</label>
-                    <br>
+                <div class="panel-body bg-info">
+                    <h3 class="panel-title">
+                        <a ng-click="isExtended = !isExtended">
+                            Holes
+                            <span class="caret"></span>
+                            <span class="badge pull-right">{{ constraints.holes.length }}</span>
+                        </a>
+                    </h3>
+                </div>
+                <div class="panel-body" collapse="!isExtended">
                     <samp>
-                        <textarea id="poly_holes" ng-model="constraints.holes" parse-holes
-                                  init-from-file="file.holes" reload-trigger="file" rows="5" cols="50">
+                        <textarea ng-model="constraints.holes" parse-holes
+                                  init-from-file="file.holes" reload-trigger="file"
+                                  rows="5" cols="50">
                         </textarea>
                     </samp>
                     <span class="help-block">(at least one blank line between each hole)</span>
                 </div>
-                <div class="form-group">
-                    <span class="badge">{{ constraints.points.length }}</span>
-                    <label for="poly_points">Steiner points</label>
-                    <br>
-                    <samp>
-                        <textarea id="poly_points" ng-model="constraints.points" parse-points
+                <div class="panel-body bg-info">
+                    <h3 class="panel-title">
+                        <a ng-click="isExtended = !isExtended">
+                            Steiner points
+                            <span class="caret"></span>
+                            <span class="badge pull-right">{{ constraints.points.length }}</span>
+                        </a>
+                    </h3>
+                </div>
+                <div class="panel-body" collapse="!isExtended">
+                    <samp xxpopover="any separator between coordinates" popover-append-to-body
+                          popover-trigger="mouseenter" popover-placement="bottom">
+                        <textarea ng-model="constraints.points" parse-points
                                   init-from-file="file.points" reload-trigger="file" rows="5" cols="50">
                         </textarea>
                     </samp>
-                    <span class="help-block">(any separator between coordinates)</span>
                 </div>
-            </form>
-            <p class="text-primary">
-                <span class="glyphicon glyphicon-map-marker"></span>
-                Pointer in drawing coords: {x: {{ pointer.x }}, y: {{ pointer.y }}}
-            </p>
-            <p class="text-info">Drag to Pan. Use wheel to zoom on pointer.</p>
-            <p class="text-muted">
-                Powered by <a href="https://github.com/r3mi/poly2tri.js.git">poly2tri.js</a>
-                v{{ poly2tri.VERSION }}
-            </p>
-        </div>
-        <stage id="content"
-               model="stage"
+                <div class="panel-footer" ng-show="file.title">
+                    (source: <a ng-href="{{ file.source }}">{{ file.title }}</a>)
+                </div>
+            </div>
+        </form>
+        <!-- XXX
+        <p class="text-primary">
+            <span class="glyphicon glyphicon-map-marker"></span>
+            Pointer in drawing coords: {x: {{ pointer.x }}, y: {{ pointer.y }}}
+        </p>
+        <p class="text-info">Drag to Pan. Use wheel to zoom on pointer.</p>
+        XXX -->
+        <!--XXX
+        <p class="text-muted">
+            Powered by <a href="https://github.com/r3mi/poly2tri.js.git">poly2tri.js</a>
+            v{{ poly2tri.VERSION }}
+        </p>
+        XXX -->
+    </div>
+    <div id="content">
+        <stage model="stage"
                ng-mousemove="pointer = stage.getPointerCoordinates()"
                contour="constraints.contour"
                holes="constraints.holes"
@@ -93,13 +157,27 @@
                error-points="result.error_points"
                show-constraints="showConstraints">
         </stage>
+        <footer>
+            <div class="footer-cell">
+                <span class="text-muted">Drag to Pan. Use wheel to zoom on pointer.</span>
+            </div>
+            <div class="footer-cell">.col-md-4</div>
+            <div class="footer-cell">
+            <span class="text-muted">
+                Powered by <a href="https://github.com/r3mi/poly2tri.js.git">poly2tri.js</a>
+                v{{ poly2tri.VERSION }}
+            </span>
+            </div>
+        </footer>
+    </div>
+</div>
 
-        <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
-        <script type="text/javascript" src="bower_components/jquery-mousewheel/jquery.mousewheel.min.js"></script>
-        <script src="bower_components/angular/angular.js"></script>
-        <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
-        <script type="text/javascript" src="bower_components/kineticjs/index.js"></script>
-        <script type="text/javascript" src="dist/poly2tri.min.js"></script>
-        <script type="text/javascript" src="dist/demo.js"></script>
-    </body>
+<script src="bower_components/jquery/jquery.min.js"></script>
+<script src="bower_components/jquery-mousewheel/jquery.mousewheel.min.js"></script>
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script src="bower_components/kineticjs/index.js"></script>
+<script src="dist/poly2tri.min.js"></script>
+<script src="dist/demo.js"></script>
+</body>
 </html>
