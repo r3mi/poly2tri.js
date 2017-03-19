@@ -1,7 +1,7 @@
 {
     "name": "poly2tri",
     "version": "1.3.5",
-    "homepage": "http://code.google.com/p/poly2tri/",
+    "homepage": "https://github.com/r3mi/poly2tri.js",
     "authors": [
         "Poly2Tri Contributors",
         "Mason Green <mason.green@gmail.com>",

@@ -33,7 +33,7 @@
         "tessellation",
         "Steiner"
     ],
-    "homepage": "http://code.google.com/p/poly2tri/",
+    "homepage": "https://github.com/r3mi/poly2tri.js",
     "author": "Rémi Turboult <r3mi@users.sf.net>",
     "contributors": [
         "Poly2Tri Contributors",
@@ -43,7 +43,7 @@
         "Rémi Turboult <r3mi@users.sf.net>"
     ],
     "license": "BSD-3-Clause",
-    "bugs": "https://code.google.com/p/poly2tri/issues/list",
+    "bugs": "https://github.com/r3mi/poly2tri.js/issues",
     "devDependencies": {
         "mersennetwister": "^0.1.1",
         "jasmine": "^2.5.3",
