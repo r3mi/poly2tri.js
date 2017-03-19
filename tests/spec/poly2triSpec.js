@@ -247,6 +247,16 @@ describe("poly2tri", function() {
                 expect(t[0].getPoint(1)).toEqualPoint(t2[0].getPoint(1));
                 expect(t[0].getPoint(2)).toEqualPoint(t2[0].getPoint(2));
             });
+            it("should fail on frozen points", function () {
+                contour = contour.map(function (value) {
+                    return Object.freeze(value);
+                });
+                expect(function () {
+                    // Fail because can't write the "_p2t_*" properties into the Points
+                    var swctx = new p2t.SweepContext(contour, options);
+                    swctx.triangulate();
+                }).toThrowError(TypeError);
+            });
         });
         describe("a square", function() {
             var contour;
