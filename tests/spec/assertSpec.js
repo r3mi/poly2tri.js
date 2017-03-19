@@ -2,7 +2,7 @@
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  * 
- * poly2tri.js (JavaScript port) (c) 2009-2014, Poly2Tri Contributors
+ * poly2tri.js (JavaScript port) (c) 2009-2017, Poly2Tri Contributors
  * https://github.com/r3mi/poly2tri.js
  *
  * Unit tests for assert.js
@@ -55,7 +55,7 @@ describe("assert", function () {
     it("should throw custom error if assertion fails", function () {
         expect(function () {
             assert(1 === 2, "custom");
-        }).toThrow("custom");
+        }).toThrowError("custom");
     });
 });
 

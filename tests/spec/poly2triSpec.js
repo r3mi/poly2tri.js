@@ -2,7 +2,7 @@
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  * 
- * poly2tri.js (JavaScript port) (c) 2009-2014, Poly2Tri Contributors
+ * poly2tri.js (JavaScript port) (c) 2009-2017, Poly2Tri Contributors
  * https://github.com/r3mi/poly2tri.js
  *
  * Unit tests for poly2tri.js
@@ -116,6 +116,39 @@ describe("poly2tri", function() {
         return makePoints(helpers.parseFloats(str));
     }
 
+    /**
+     * Custom matchers to ease test writing, compatible with Jasmine 2
+     */
+    var customMatchers = {
+        // Checks that a point equals another
+        toEqualPoint: function (/*util, customEqualityTesters*/) {
+            return {
+                compare: function (actual, expected) {
+                    var result = {};
+                    result.pass = p2t.Point.equals(actual, expected);
+                    return result;
+                }
+            };
+        },
+        toEqualVertices: function (/*util, customEqualityTesters*/) {
+            return {
+                compare: function (actual, expected) {
+                    var result = {}, failedTriangle;
+                    failedTriangle = helpers.testTrianglesToEqualVertices(actual, expected);
+                    result.pass = !failedTriangle;
+                    // Customize message for easier debugging
+                    if (result.pass) {
+                        result.message = "Expected Triangles " + actual + " not to equal vertices";
+                    } else {
+                        result.message = "Expected Triangles " + actual + " to equal vertices " + expected;
+                        result.message += " but missing point " + failedTriangle;
+
+                    }
+                    return result;
+                }
+            };
+        }
+    };
 
 // -----------------------------------------------------------------SweepContext
 
@@ -162,31 +195,8 @@ describe("poly2tri", function() {
 
 // ------------------------------------------------------------------Triangulate
 
-    beforeEach(function() {
-        // Helper matchers to ease test writing
-        this.addMatchers({
-            // Checks that a point equals another
-            toEqualPoint: function(p2) {
-                return p2t.Point.equals(this.actual, p2);
-            },
-            toEqualVertices: function (pointslists) {
-                var triangles = this.actual, failed;
-                failed = helpers.testTrianglesToEqualVertices(triangles, pointslists);
-                // Customize message for easier debugging
-                // (because of isNot, message might be printed event if !failed)
-                this.message = function () {
-                    var str;
-                    if (this.isNot) {
-                        str = "Expected Triangles " + triangles + " not to equal vertices";
-                    } else {
-                        str = "Expected Triangles " + triangles + " to equal vertices " + pointslists;
-                        str += " but missing point " + failed;
-                    }
-                    return str;
-                };
-                return !failed;
-            }
-        });
+    beforeEach(function () {
+        jasmine.addMatchers(customMatchers);
     });
 
     describe("Triangulate", function() {
@@ -492,7 +502,7 @@ describe("poly2tri", function() {
                 expect(function() {
                     var swctx = new p2t.SweepContext(contour, options);
                     swctx.triangulate();
-                }).toThrow("poly2tri Invalid Edge constructor: repeated points! (100;100)");
+                }).toThrowError("poly2tri Invalid Edge constructor: repeated points! (100;100)");
             });
             it("should provide faulty points in exception", function() {
                 var exception;
@@ -515,7 +525,7 @@ describe("poly2tri", function() {
                 expect(function() {
                     var swctx = new p2t.SweepContext(contour, options);
                     swctx.triangulate();
-                }).toThrow("poly2tri EdgeEvent: Collinear not supported! (300;100) (200;100) (100;100)");
+                }).toThrowError("poly2tri EdgeEvent: Collinear not supported! (300;100) (200;100) (100;100)");
             });
             it("should provide faulty points in exception", function() {
                 var exception;

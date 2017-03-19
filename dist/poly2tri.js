@@ -1,6 +1,6 @@
-!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.poly2tri=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.poly2tri = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports={"version": "1.3.5"}
-},{}],2:[function(_dereq_,module,exports){
+},{}],2:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -181,7 +181,7 @@ module.exports = AdvancingFront;
 module.exports.Node = Node;
 
 
-},{}],3:[function(_dereq_,module,exports){
+},{}],3:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -216,7 +216,7 @@ module.exports = assert;
 
 
 
-},{}],4:[function(_dereq_,module,exports){
+},{}],4:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -240,7 +240,7 @@ module.exports = assert;
  * easier to keep the 2 versions in sync.
  */
 
-var xy = _dereq_('./xy');
+var xy = require('./xy');
 
 // ------------------------------------------------------------------------Point
 /**
@@ -493,7 +493,7 @@ Point.dot = function(a, b) {
 
 module.exports = Point;
 
-},{"./xy":11}],5:[function(_dereq_,module,exports){
+},{"./xy":11}],5:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -512,7 +512,7 @@ module.exports = Point;
  * Class added in the JavaScript version (was not present in the c++ version)
  */
 
-var xy = _dereq_('./xy');
+var xy = require('./xy');
 
 /**
  * Custom exception class to indicate invalid Point values
@@ -547,7 +547,7 @@ PointError.prototype.constructor = PointError;
 
 module.exports = PointError;
 
-},{"./xy":11}],6:[function(_dereq_,module,exports){
+},{"./xy":11}],6:[function(require,module,exports){
 (function (global){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
@@ -621,7 +621,7 @@ exports.noConflict = function() {
  * @public
  * @const {string}
  */
-exports.VERSION = _dereq_('../dist/version.json').version;
+exports.VERSION = require('../dist/version.json').version;
 
 /**
  * Exports the {@linkcode PointError} class.
@@ -629,32 +629,32 @@ exports.VERSION = _dereq_('../dist/version.json').version;
  * @typedef {PointError} module:poly2tri.PointError
  * @function
  */
-exports.PointError = _dereq_('./pointerror');
+exports.PointError = require('./pointerror');
 /**
  * Exports the {@linkcode Point} class.
  * @public
  * @typedef {Point} module:poly2tri.Point
  * @function
  */
-exports.Point = _dereq_('./point');
+exports.Point = require('./point');
 /**
  * Exports the {@linkcode Triangle} class.
  * @public
  * @typedef {Triangle} module:poly2tri.Triangle
  * @function
  */
-exports.Triangle = _dereq_('./triangle');
+exports.Triangle = require('./triangle');
 /**
  * Exports the {@linkcode SweepContext} class.
  * @public
  * @typedef {SweepContext} module:poly2tri.SweepContext
  * @function
  */
-exports.SweepContext = _dereq_('./sweepcontext');
+exports.SweepContext = require('./sweepcontext');
 
 
 // Backward compatibility
-var sweep = _dereq_('./sweep');
+var sweep = require('./sweep');
 /**
  * @function
  * @deprecated use {@linkcode SweepContext#triangulate} instead
@@ -666,8 +666,8 @@ exports.triangulate = sweep.triangulate;
  */
 exports.sweep = {Triangulate: sweep.triangulate};
 
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../dist/version.json":1,"./point":4,"./pointerror":5,"./sweep":7,"./sweepcontext":8,"./triangle":9}],7:[function(_dereq_,module,exports){
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../dist/version.json":1,"./point":4,"./pointerror":5,"./sweep":7,"./sweepcontext":8,"./triangle":9}],7:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -700,15 +700,15 @@ exports.sweep = {Triangulate: sweep.triangulate};
  * easier to keep the 2 versions in sync.
  */
 
-var assert = _dereq_('./assert');
-var PointError = _dereq_('./pointerror');
-var Triangle = _dereq_('./triangle');
-var Node = _dereq_('./advancingfront').Node;
+var assert = require('./assert');
+var PointError = require('./pointerror');
+var Triangle = require('./triangle');
+var Node = require('./advancingfront').Node;
 
 
 // ------------------------------------------------------------------------utils
 
-var utils = _dereq_('./utils');
+var utils = require('./utils');
 
 /** @const */
 var EPSILON = utils.EPSILON;
@@ -1503,7 +1503,7 @@ function flipScanEdgeEvent(tcx, ep, eq, flip_triangle, t, p) {
 
 exports.triangulate = triangulate;
 
-},{"./advancingfront":2,"./assert":3,"./pointerror":5,"./triangle":9,"./utils":10}],8:[function(_dereq_,module,exports){
+},{"./advancingfront":2,"./assert":3,"./pointerror":5,"./triangle":9,"./utils":10}],8:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -1529,11 +1529,11 @@ exports.triangulate = triangulate;
  * easier to keep the 2 versions in sync.
  */
 
-var PointError = _dereq_('./pointerror');
-var Point = _dereq_('./point');
-var Triangle = _dereq_('./triangle');
-var sweep = _dereq_('./sweep');
-var AdvancingFront = _dereq_('./advancingfront');
+var PointError = require('./pointerror');
+var Point = require('./point');
+var Triangle = require('./triangle');
+var sweep = require('./sweep');
+var AdvancingFront = require('./advancingfront');
 var Node = AdvancingFront.Node;
 
 
@@ -2046,7 +2046,7 @@ SweepContext.prototype.meshClean = function(triangle) {
 
 module.exports = SweepContext;
 
-},{"./advancingfront":2,"./point":4,"./pointerror":5,"./sweep":7,"./triangle":9}],9:[function(_dereq_,module,exports){
+},{"./advancingfront":2,"./point":4,"./pointerror":5,"./sweep":7,"./triangle":9}],9:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -2072,7 +2072,7 @@ module.exports = SweepContext;
  * easier to keep the 2 versions in sync.
  */
 
-var xy = _dereq_("./xy");
+var xy = require("./xy");
 
 
 // ---------------------------------------------------------------------Triangle
@@ -2609,7 +2609,7 @@ Triangle.prototype.markConstrainedEdgeByPoints = function(p, q) {
 
 module.exports = Triangle;
 
-},{"./xy":11}],10:[function(_dereq_,module,exports){
+},{"./xy":11}],10:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -2720,7 +2720,7 @@ function isAngleObtuse(pa, pb, pc) {
 exports.isAngleObtuse = isAngleObtuse;
 
 
-},{}],11:[function(_dereq_,module,exports){
+},{}],11:[function(require,module,exports){
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
@@ -2829,6 +2829,5 @@ module.exports = {
     equals: equals
 };
 
-},{}]},{},[6])
-(6)
+},{}]},{},[6])(6)
 });
