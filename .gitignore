@@ -1,6 +1,9 @@
 /nbproject/
+/.idea/
 /temp/
 *.log
 *.orig
 /node_modules/
 /bower_components/
+*.tgz
+
