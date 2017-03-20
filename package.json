@@ -1,6 +1,6 @@
 {
     "name": "poly2tri",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "description": "A 2D constrained Delaunay triangulation library",
     "main": "src/poly2tri.js",
     "types": "src/poly2tri.d.ts",

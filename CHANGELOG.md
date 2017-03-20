@@ -1,6 +1,11 @@
 [demo]: http://r3mi.github.io/poly2tri.js
 [Browserify]: http://browserify.org/
 
+<a name="1.4.1"></a>
+# 1.4.1 (2017-03-20)
+
+- keep all `dist/` files in npm package, including UMD version
+
 <a name="1.4.0"></a>
 # 1.4.0 (2017-03-20)
 
