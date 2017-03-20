@@ -69,6 +69,11 @@ For Node.js:
 
 [![NPM](https://nodei.co/npm/poly2tri.png?compact=true)](https://nodei.co/npm/poly2tri/)
 
+For TypeScript: poly2tri types (`poly2tri.d.ts`) are now directly bundled inside the NPM package, 
+so that they can automatically be consumed from TypeScript applications. 
+You do not need to install types separately from `DefinitelyTyped` or `@types` anymore.
+
+
 For browsers, using Bower:
 ```sh
 bower install --save poly2tri
@@ -83,6 +88,7 @@ It is standalone and has no mandatory dependency.
 Use `dist/poly2tri.min.js` for the compressed version.
 
 
+
 Usage
 -----
 
@@ -92,9 +98,14 @@ Usage
    compatible with the various module systems:
     - CommonJS:
 
-        ```node
+        ```js
         var poly2tri = require('poly2tri');
         ```
+    - TypeScript:
+
+        ```typescript
+        import * as poly2tri from 'poly2tri';
+        ```    
     - RequireJS:
 
         ```js
@@ -261,13 +272,13 @@ Run the headless tests (JSHint, Node.js and PhantomJS) with:
 ```sh
 npm test
 ```
-Run all the browser tests (PhantomJS, Firefox and Chrome) with:
+Run all the browser tests (PhantomJS, Firefox, Safari and Chrome) with:
 ```sh
 npm run test.browsers
 ```
-Check JSHint with:
+Check JSHint and TSLint with:
 ```sh
-npm run jshint
+npm run check
 ```
 
 

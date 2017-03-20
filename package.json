@@ -3,6 +3,7 @@
     "version": "1.3.5",
     "description": "A 2D constrained Delaunay triangulation library",
     "main": "src/poly2tri.js",
+    "types": "src/poly2tri.d.ts",
     "files": [
         "src/",
         "dist/version.json"
@@ -16,12 +17,15 @@
     },
     "scripts": {
         "prepublish": "npm run build",
-        "test": "npm run build && npm run test.node && npm run test.phantom",
+        "test": "npm run build && npm run test.node && npm run test.phantom && npm run test.types",
         "test.node": "jasmine tests/spec/*.js",
         "test.phantom": "karma start tests/karma.phantom.js",
         "test.browsers": "karma start tests/karma.browsers.js",
+        "test.types": "ts-node tests/types/*.ts",
+        "check": "npm run jshint && npm run tslint",
         "jshint": "jshint *.js src/*.js tests/*.js tests/spec/*.js",
-        "build": "npm run jshint && npm run build.nocheck",
+        "tslint": "tslint src/*.ts tests/types/*.ts",
+        "build": "npm run check && npm run build.nocheck",
         "build.nocheck": "mkdir -p dist && node ./build.js",
         "bench": "node ./tests/benchmark.js"
     },
@@ -44,7 +48,8 @@
         "Mason Green <mason.green@gmail.com>",
         "Thomas Åhlén <thahlen@gmail.com>",
         "Laszlo Kustra <kl223hun@gmail.com>",
-        "Rémi Turboult <r3mi@users.sf.net>"
+        "Rémi Turboult <r3mi@users.sf.net>",
+        "Elemar Junior <elemarjr@gmail.com>"
     ],
     "license": "BSD-3-Clause",
     "bugs": "https://github.com/r3mi/poly2tri.js/issues",
@@ -60,6 +65,9 @@
         "karma-phantomjs-launcher": "^1.0.4",
         "karma-chrome-launcher": "^2.0.0",
         "karma-firefox-launcher": "^1.0.1",
+        "ts-node": "^2.1.0",
+        "typescript": "^2.2.1",
+        "tslint": "^4.5.1",
         "jshint": "^2.5.0",
         "browserify": "^14.1.0",
         "watchify": "^3.9.0",

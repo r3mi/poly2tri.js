@@ -25,7 +25,7 @@ fs.writeFileSync('./dist/version.json', '{"version": "' + pkg.version + '"}');
 
 var preamble = '/*! ' + pkg.name + ' v' + pkg.version + ' | (c) 2009-2017 Poly2Tri Contributors */\n';
 
-var b = browserify('./src/poly2tri.js', {standalone: 'poly2tri'});
+var b = browserify(pkg.main, {standalone: 'poly2tri'});
 b.bundle(function(err, buffer) {
     if (err instanceof Error) {
         throw(err);
