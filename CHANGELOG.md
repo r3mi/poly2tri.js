@@ -1,6 +1,16 @@
 [demo]: http://r3mi.github.io/poly2tri.js
 [Browserify]: http://browserify.org/
 
+<a name="1.4.0"></a>
+# 1.4.0 (2017-03-20)
+
+- TypeScript types (`poly2tri.d.ts`) initialy provided by @ElemarJR 
+  are now directly bundled in the NPM package 
+  (no need to install separately from `DefinitelyTyped` or `@types`) 
+- reduce size of npm package
+- fix old google code URLs in `package.json`
+- upgrade build and tests dependencies
+
 <a name="1.3.5"></a>
 # 1.3.5 (2014-05-05)
 
