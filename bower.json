@@ -40,7 +40,7 @@
     ],
     "devDependencies": {
         "jquery": "~2.0.3",
-        "kineticjs": "http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.7.4.min.js",
+        "kineticjs": "http://kineticjs.com/tars/kinetic-v4.7.4.tar",
         "jquery-mousewheel": "~3.1.9",
         "purl": "~2.3.1"
     }
