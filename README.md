@@ -251,6 +251,8 @@ You can get additional files from the `tests/data` directory.
 
 You need a modern browser to draw the results, supporting the HTML5 `<canvas>`.
 
+![Demo sample](demo.png)
+
 
 Development
 -----------
