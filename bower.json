@@ -35,6 +35,7 @@
         "src",
         "build.js",
         "package.json",
+        "tslint.json",
         "index.html"
     ],
     "devDependencies": {
