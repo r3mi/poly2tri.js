@@ -11,6 +11,11 @@
     ],
     "description": "A 2D constrained Delaunay triangulation library",
     "main": "dist/poly2tri.js",
+    "moduleType": [
+        "amd",
+        "globals",
+        "node"
+    ],
     "keywords": [
         "2D",
         "constrained",
