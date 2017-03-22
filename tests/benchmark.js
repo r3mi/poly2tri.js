@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /*
  * Benchmarking tests for poly2tri.js
- * 
+ *
  * (c) 2013-2014, Rémi Turboult
  * All rights reserved.
  * Distributed under the 3-clause BSD License, see LICENSE.txt
@@ -12,6 +12,7 @@
 var Benchmark = require('benchmark').Benchmark;
 var load = require('load');
 var Linespin = require('linespin');
+var bars = require('jstrace-bars');
 
 var suite = new Benchmark.Suite();
 
@@ -145,29 +146,16 @@ suite
         .on('complete', function() {
             console.log("");
             console.log('Fastest is ' + this.filter('fastest').pluck('name'));
+            console.log("");
 
-            // Sort results
-            var sorted = this.filter('successful').sort(function(a, b) {
-                a = a.stats;
-                b = b.stats;
-                return (a.mean + a.moe > b.mean + b.moe ? 1 : -1);
+            // Sorted ouput with ascii bars
+            var successful = this.filter('successful');
+            var data = {};
+            successful.forEach(function (value) {
+                data[value.name] = Math.round(1 / value.stats.mean);
             });
-
-            // Output results with ranks (ties get the same rank)
-            var results = [sorted[0].name + " "];
-            for (var i = 1; i < sorted.length; i++) {
-                var a = sorted[i - 1];
-                var b = sorted[i];
-                if (a.compare(b) !== 0) {
-                    results.push("");
-                }
-                results[results.length - 1] += b.name + " ";
-            }
-            results.forEach(function(val, index) {
-                console.log((index + 1) + ": " + val);
-            });
-
-        })
+            console.log(bars(data, { sort: true }));
+    })
 // run async
         .run({'async': true});
 
