@@ -154,7 +154,7 @@ suite
             successful.forEach(function (value) {
                 data[value.name] = Math.round(1 / value.stats.mean);
             });
-            console.log(bars(data, { sort: true }));
+            console.log(bars(data, { sort: false }));
     })
 // run async
         .run({'async': true});
