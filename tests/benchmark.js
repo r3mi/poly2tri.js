@@ -17,39 +17,73 @@ var bars = require('jstrace-bars');
 var suite = new Benchmark.Suite();
 
 
+function makePoint(x, y, poly2tri) {
+    return new poly2tri.Point(x, y);
+}
+function makeXY(x, y) {
+    return { x: x, y: y };
+}
+function makeXY_(x, y) {
+    return { x: x, y: y, _p2t_edge_list: null };
+}
+
 /*
  * Define the known poly2tri versions
  */
 
 var loaders = {
     // 1st version with Steiner points (and optional Namespace.js).
-    '1.1.1': function() {
+    '1.1.1': function () {
         // use "load" to work around missing Node.js support
-        return load('./versions/1.1.1/poly2tri').js.poly2tri;
+        var p = load('./versions/1.1.1/poly2tri').js.poly2tri;
+        return { poly2tri: p, makePoint: makePoint };
     },
-    '1.2.0': function() {
-        return require('./versions/1.2.0/poly2tri');
+    '1.2.0': function () {
+        var p = require('./versions/1.2.0/poly2tri');
+        return { poly2tri: p, makePoint: makePoint };
     },
     // Last version before browserify
-    '1.2.7': function() {
-        return require('./versions/1.2.7/poly2tri');
+    '1.2.7': function () {
+        var p = require('./versions/1.2.7/poly2tri');
+        return { poly2tri: p, makePoint: makePoint };
     },
     // Last version before atan2 improvements
-    '1.3.3': function() {
-        return require('./versions/1.3.3/poly2tri.min');
+    '1.3.3': function () {
+        var p = require('./versions/1.3.3/poly2tri.min');
+        return { poly2tri: p, makePoint: makePoint };
     },
     // atan2 improvements
-    '1.3.4': function() {
-        return require('./versions/1.3.4/poly2tri');
+    '1.3.4': function () {
+        var p = require('./versions/1.3.4/poly2tri');
+        return { poly2tri: p, makePoint: makePoint };
     },
-    'current.src': function() {
-        return require('../src/poly2tri');
+    'current.src': function () {
+        var p = require('../src/poly2tri');
+        return { poly2tri: p, makePoint: makePoint };
     },
-    'current.dist': function() {
-        return require('../dist/poly2tri');
+    'current.dist': function () {
+        var p = require('../dist/poly2tri');
+        return { poly2tri: p, makePoint: makePoint };
     },
-    'current.dist.min': function() {
-        return require('../dist/poly2tri.min');
+    'current.dist.min': function () {
+        var p = require('../dist/poly2tri.min');
+        return { poly2tri: p, makePoint: makePoint };
+    },
+    '1.3.4-XY_': function () {
+        var p = require('./versions/1.3.4/poly2tri');
+        return { poly2tri: p, makePoint: makeXY_ };
+    },
+    '1.3.4-XY': function () {
+        var p = require('./versions/1.3.4/poly2tri');
+        return { poly2tri: p, makePoint: makeXY };
+    },
+    'current.dist.XY_': function () {
+        var p = require('../dist/poly2tri');
+        return { poly2tri: p, makePoint: makeXY_ };
+    },
+    'current.dist.XY': function () {
+        var p = require('../dist/poly2tri');
+        return { poly2tri: p, makePoint: makeXY };
     }
 };
 
@@ -82,28 +116,28 @@ var hole1 = [-276, 747, 421, 745, 473, -65, 276, -61, 291, 2, 291, 8, 262, 123, 
 var hole2 = [161, 32, 172, -19, 171, -20, 184, -58, 127, -58, 138, -46, 141, -38, 144, -2, 157, 17, 160, 23];
 var points = [148, 127, 161, 70, 157, 82, 152, 98, 160, 35, 115, -58, 160, 65, 149, 117, -205, 428, -44, 356, 29, 330, 32, 326, 55, 292, 69, 271, 94, 251, 96, 245, 104, 169, 141, 143, 143, 138, 153, 78, 153, 75, 146, 26, 131, 2, 127, -35, 126, -39, 97, -72, 199, -72, 198, -57, 184, -16, 169, 59, 150, 120, 153, 129, 190, 150, 197, 150, 247, 121, 250, 116, 278, 6, 278, 3, 260, -74, 488, -80, 434, 759, -294, 761];
 
-function makePoints(Point, a) {
-    var i, len = a.length, points = [];
+function makePoints(arr, poly2tri, makePoint) {
+    var i, len = arr.length, points = [];
     for (i = 0; i < len; i += 2) {
-        points.push(new Point(a[i], a[i + 1]));
+        points.push(makePoint(arr[i], arr[i + 1], poly2tri));
     }
     return points;
 }
 
-function triangulate(P) {
-    var c = makePoints(P.Point, contour);
-    var h1 = makePoints(P.Point, hole1);
-    var h2 = makePoints(P.Point, hole2);
-    var p = makePoints(P.Point, points);
-    var swctx = new P.SweepContext(c);
+function triangulate(poly2tri, makePoint) {
+    var c = makePoints(contour, poly2tri, makePoint);
+    var h1 = makePoints(hole1, poly2tri, makePoint);
+    var h2 = makePoints(hole2, poly2tri, makePoint);
+    var p = makePoints(points, poly2tri, makePoint);
+    var swctx = new poly2tri.SweepContext(c);
     // Call methods with old names, in order to be compatible
     // with old and new version of poly2tri.
     swctx.AddHole(h1);
     swctx.AddHole(h2);
-    p.forEach(function(point) {
+    p.forEach(function (point) {
         swctx.AddPoint(point);
     });
-    P.sweep.Triangulate(swctx);
+    poly2tri.sweep.Triangulate(swctx);
     swctx.GetTriangles();
 }
 
@@ -112,23 +146,23 @@ function triangulate(P) {
  * Load the poly2tri versions and add to tests
  */
 
-versions.forEach(function(v) {
+versions.forEach(function (v) {
     var spin = new Linespin(v);
     try {
-        var poly2tri = loaders[v].call();
-        suite.add(v, function() {
-            triangulate(poly2tri);
+        var loaded = loaders[v].call();
+        suite.add(v, function () {
+            triangulate(loaded.poly2tri, loaded.makePoint);
         }, {
-            onStart: function() {
-                spin.start();
-            },
-            onError: function(event) {
-                spin.error(v + ": " + event.message);
-            },
-            onComplete: function(event) {
-                spin.stop(String(event.target));
-            }
-        });
+                onStart: function () {
+                    spin.start();
+                },
+                onError: function (event) {
+                    spin.error(v + ": " + event.message);
+                },
+                onComplete: function (event) {
+                    spin.stop(String(event.target));
+                }
+            });
         console.log("Loaded version " + v);
     } catch (e) {
         console.log("*** can't load or unknown '" + v + "' version");
@@ -143,20 +177,20 @@ versions.forEach(function(v) {
 
 // add listeners
 suite
-        .on('complete', function() {
-            console.log("");
-            console.log('Fastest is ' + this.filter('fastest').pluck('name'));
-            console.log("");
+    .on('complete', function () {
+        console.log("");
+        console.log('Fastest is ' + this.filter('fastest').pluck('name'));
+        console.log("");
 
-            // Sorted ouput with ascii bars
-            var successful = this.filter('successful');
-            var data = {};
-            successful.forEach(function (value) {
-                data[value.name] = Math.round(1 / value.stats.mean);
-            });
-            console.log(bars(data, { sort: false }));
+        // Sorted ouput with ascii bars
+        var successful = this.filter('successful');
+        var data = {};
+        successful.forEach(function (value) {
+            data[value.name] = Math.round(1 / value.stats.mean);
+        });
+        console.log(bars(data, { sort: false }));
     })
-// run async
-        .run({'async': true});
+    // run async
+    .run({ 'async': true });
 
 
