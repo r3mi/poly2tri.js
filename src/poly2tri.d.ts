@@ -74,11 +74,11 @@ export class Point implements XY {
     public x: number;
     public y: number;
 
-    constructor(x: number, y: number);
+    constructor(x?: number, y?: number);
 
     public toString(): string;
 
-    public toJSON(): JSON;
+    public toJSON(): any;
 
     public clone(): Point;
 
