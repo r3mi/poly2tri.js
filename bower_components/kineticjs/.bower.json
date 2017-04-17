@@ -1,14 +1,13 @@
 {
   "name": "kineticjs",
   "_cacheHeaders": {
-    "ETag": "\"65e80ce24f7844e10834a4b544bb295e\"",
-    "Last-Modified": "Fri, 08 Nov 2013 08:39:44 GMT",
-    "Content-Length": "101375",
-    "Content-Type": "application/x-javascript"
+    "ETag": "\"90c00-50a28e4edaf67\"",
+    "Last-Modified": "Sun, 14 Dec 2014 08:27:19 GMT",
+    "Content-Length": "592896",
+    "Content-Type": "application/x-tar"
   },
-  "_release": "e-tag:65e80ce24",
-  "main": "index.js",
-  "_source": "http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.7.4.min.js",
+  "_release": "e-tag:90c00-50a",
+  "_source": "http://kineticjs.com/tars/kinetic-v4.7.4.tar",
   "_target": "*",
-  "_originalSource": "http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.7.4.min.js"
+  "_originalSource": "http://kineticjs.com/tars/kinetic-v4.7.4.tar"
 }
