@@ -155,12 +155,24 @@ export class Triangle {
 
 
 /**
+ * SweepContext constructor option
+ */
+export interface SweepContextOptions {
+    /**
+     * cloneArrays - if `true`, do a shallow copy of the Array parameters (contour, holes).
+     * Points inside arrays are never copied.
+     * Default is `false` : keep a reference to the array arguments, who will be modified in place.
+     */
+    cloneArrays?: boolean;
+}
+
+
+/**
  * Triangulation context
  */
 export class SweepContext {
-    constructor(contour: Array<XY>);
 
-    constructor(contour: Array<XY>, options: JSON);
+    constructor(contour: Array<XY>, options?: SweepContextOptions);
 
     public addHole(polyline: Array<XY>): SweepContext;
 
