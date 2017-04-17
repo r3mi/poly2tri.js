@@ -2,6 +2,7 @@
 // Project: http://github.com/r3mi/poly2tri.js/
 // Definitions by: Elemar Junior <https://github.com/elemarjr/>
 // Updated by: Rémi Turboult <https://github.com/r3mi>
+// TypeScript Version: 2.0
 
 /*
  * Poly2Tri Copyright (c) 2009-2014, Poly2Tri Contributors
@@ -127,7 +128,7 @@ export class Point implements XY {
  * Custom exception class to indicate invalid Point values
  */
 export class PointError extends Error {
-    public points: Array<XY>;
+    public readonly points: ReadonlyArray<XY>;
 
     constructor(message: string, points: Array<XY>);
 }
