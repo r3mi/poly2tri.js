@@ -38,6 +38,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
+/**
+ * If you are not using a module system (e.g. CommonJS, RequireJS), you can access this library
+ * as a global variable `poly2tri` i.e. `window.poly2tri` in a browser.
+ */
+export as namespace poly2tri;
+
+
 /**
  * poly2tri.js supports using custom point class instead of {@linkcode Point}.
  * Any "Point like" object with `{x, y}` attributes is supported
