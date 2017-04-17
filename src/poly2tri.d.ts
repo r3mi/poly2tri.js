@@ -142,7 +142,7 @@ export class Triangle {
 
     public toString(): string;
 
-    public getPoint(index: number): XY;
+    public getPoint(index: 0 | 1 | 2): XY;
 
     public getPoints(): [XY, XY, XY];
 
