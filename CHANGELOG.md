@@ -1,6 +1,12 @@
 [demo]: http://r3mi.github.io/poly2tri.js
 [Browserify]: http://browserify.org/
 
+<a name="1.5.0"></a>
+# 1.5.0 (2017-04-17)
+
+- improve TypeScript typings (`poly2tri.d.ts`) : full JSDoc, type options (`SweepContextOptions`), minor fixes
+- development : add benchmarks for custom points `{X,Y}` in addition to `Point` 
+
 <a name="1.4.1"></a>
 # 1.4.1 (2017-03-20)
 
